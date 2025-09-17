@@ -4,7 +4,7 @@ A constitutional AI development framework that enforces specification-driven dev
 
 ## 🎖️ Attribution
 
-This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-kit)**, which provides the core Specification-Driven Development (SDD) methodology.
+This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-kit)**, which provides the core Specification-Driven Development (SDD) methodology. And is built using Claude code, if you plan to use other LLM's for this framework it will need to be tweaked a bit or just used as a reference to build your own. 
 
 ### Original SDD Framework
 - **spec-kit by GitHub** - The foundational SDD approach, templates, and workflow automation
