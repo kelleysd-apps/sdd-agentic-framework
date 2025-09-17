@@ -13,7 +13,7 @@ This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-
 
 ### Extensions and Enhancements
 This implementation extends spec-kit with:
-- **Constitutional AI governance** - Enforced development principles and quality gates
+- **Enhanced AI governance ** - Enforced development principles and quality gates
 - **Intelligent agent orchestration** - Department-based specialized agents with MCP integration
 - **Advanced workflow automation** - Enhanced scripts and command system
 - **Memory and context management** - Persistent agent knowledge and collaboration patterns
@@ -198,7 +198,7 @@ When creating an agent, the system automatically:
 - **Registers in agent registry** for tracking and management
 - **Configures collaboration triggers** for automatic invocation
 
-#### Departments and Their Capabilities
+#### Example Departments and Their Capabilities
 
 - **Architecture**: System design and planning
   - Tools: Read, Grep, Glob, WebSearch, TodoWrite
