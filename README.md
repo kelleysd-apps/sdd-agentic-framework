@@ -2,6 +2,24 @@
 
 A constitutional AI development framework that enforces specification-driven development through intelligent agent orchestration and workflow automation.
 
+## 🎖️ Attribution
+
+This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-kit)**, which provides the core Specification-Driven Development (SDD) methodology.
+
+### Original SDD Framework
+- **spec-kit by GitHub** - The foundational SDD approach, templates, and workflow automation
+- Licensed under MIT License
+- Original repository: https://github.com/github/spec-kit
+
+### Extensions and Enhancements
+This implementation extends spec-kit with:
+- **Constitutional AI governance** - Enforced development principles and quality gates
+- **Intelligent agent orchestration** - Department-based specialized agents with MCP integration
+- **Advanced workflow automation** - Enhanced scripts and command system
+- **Memory and context management** - Persistent agent knowledge and collaboration patterns
+- **Tool restriction framework** - Department-specific tool access control
+- **Automatic documentation updates** - Self-maintaining CLAUDE.md and agent registry
+
 ---
 
 ## ⚠️ IMPORTANT: Project Initialization Instructions
