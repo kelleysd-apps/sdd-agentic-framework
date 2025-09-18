@@ -3,6 +3,10 @@
 # Agent Creation Tool
 # Version: 1.0.0
 # Purpose: Automated agent creation with constitutional compliance
+#
+# NOTE: This script should be invoked through the subagent-architect agent
+# for proper SDD compliance and constitutional validation.
+# Use: Task tool with subagent-architect to create agents
 
 set -euo pipefail
 
@@ -113,29 +117,157 @@ analyze_existing_agents() {
 
 determine_department() {
     local purpose=$1
+    local agent_name=${2:-}
     local suggested_dept=""
 
     echo -e "${YELLOW}▶ Analyzing purpose to determine department...${NC}" >&2
 
-    # Keyword matching for department suggestion
-    if echo "$purpose" | grep -qiE "architect|design|system|integration|planning"; then
+    # Score-based department matching for better accuracy
+    local arch_score=0
+    local eng_score=0
+    local qual_score=0
+    local data_score=0
+    local prod_score=0
+    local ops_score=0
+
+    # Architecture patterns
+    echo "$purpose" | grep -qiE "architect|system.*(design|planning)|integration|planning" && ((arch_score+=2))
+    echo "$purpose" | grep -qiE "scalability|high.level|technical.planning" && ((arch_score+=1))
+
+    # Engineering patterns (prioritize specific frontend/backend keywords)
+    echo "$purpose" | grep -qiE "frontend|react|vue|angular|ui|component" && ((eng_score+=3))
+    echo "$purpose" | grep -qiE "backend|api|server|node|python|java" && ((eng_score+=3))
+    echo "$purpose" | grep -qiE "develop|implement|code|build|create" && ((eng_score+=2))
+    echo "$purpose" | grep -qiE "javascript|typescript|programming" && ((eng_score+=1))
+
+    # Quality patterns
+    echo "$purpose" | grep -qiE "test|qa|quality|review|audit" && ((qual_score+=2))
+    echo "$purpose" | grep -qiE "security.*(test|audit|scan)|vulnerability" && ((qual_score+=1))
+
+    # Data patterns
+    echo "$purpose" | grep -qiE "database|sql|nosql|data.*(model|pipeline)|etl" && ((data_score+=2))
+    echo "$purpose" | grep -qiE "analytics|warehouse|migration|schema" && ((data_score+=1))
+
+    # Product patterns
+    echo "$purpose" | grep -qiE "product|requirement|user.*(story|experience)|ux" && ((prod_score+=2))
+    echo "$purpose" | grep -qiE "feature|specification|business" && ((prod_score+=1))
+
+    # Operations patterns (enhanced for DevOps)
+    echo "$purpose" | grep -qiE "devops|ci.?cd|deploy|deployment|docker|kubernetes" && ((ops_score+=3))
+    echo "$purpose" | grep -qiE "infrastructure|terraform|cloud|aws|azure|gcp" && ((ops_score+=2))
+    echo "$purpose" | grep -qiE "monitor|observability|incident|release|pipeline" && ((ops_score+=2))
+    echo "$purpose" | grep -qiE "site.reliability|sre|production" && ((ops_score+=1))
+
+    # Check agent name for additional hints
+    if [[ -n "$agent_name" ]]; then
+        echo "$agent_name" | grep -qiE "frontend|ui|react" && ((eng_score+=2))
+        echo "$agent_name" | grep -qiE "backend|api|server" && ((eng_score+=2))
+        echo "$agent_name" | grep -qiE "devops|sre|ops" && ((ops_score+=2))
+        echo "$agent_name" | grep -qiE "architect" && ((arch_score+=2))
+        echo "$agent_name" | grep -qiE "data|analytics|etl" && ((data_score+=2))
+        echo "$agent_name" | grep -qiE "test|qa|quality" && ((qual_score+=2))
+        echo "$agent_name" | grep -qiE "product|pm|ux" && ((prod_score+=2))
+    fi
+
+    # Debug scoring (shown in verbose mode)
+    if [[ "${VERBOSE:-}" == "true" ]]; then
+        echo "Department scores:" >&2
+        echo "  Architecture: $arch_score" >&2
+        echo "  Engineering: $eng_score" >&2
+        echo "  Quality: $qual_score" >&2
+        echo "  Data: $data_score" >&2
+        echo "  Product: $prod_score" >&2
+        echo "  Operations: $ops_score" >&2
+    fi
+
+    # Find highest scoring department
+    local max_score=0
+    if [[ $arch_score -gt $max_score ]]; then
+        max_score=$arch_score
         suggested_dept="architecture"
-    elif echo "$purpose" | grep -qiE "develop|implement|backend|frontend|api|code"; then
+    fi
+    if [[ $eng_score -gt $max_score ]]; then
+        max_score=$eng_score
         suggested_dept="engineering"
-    elif echo "$purpose" | grep -qiE "test|qa|quality|review|audit|security"; then
+    fi
+    if [[ $qual_score -gt $max_score ]]; then
+        max_score=$qual_score
         suggested_dept="quality"
-    elif echo "$purpose" | grep -qiE "data|database|sql|pipeline|analytics|etl"; then
+    fi
+    if [[ $data_score -gt $max_score ]]; then
+        max_score=$data_score
         suggested_dept="data"
-    elif echo "$purpose" | grep -qiE "product|requirement|user|ux|feature|story"; then
+    fi
+    if [[ $prod_score -gt $max_score ]]; then
+        max_score=$prod_score
         suggested_dept="product"
-    elif echo "$purpose" | grep -qiE "deploy|release|devops|incident|monitor|operation"; then
+    fi
+    if [[ $ops_score -gt $max_score ]]; then
+        max_score=$ops_score
         suggested_dept="operations"
-    else
-        suggested_dept="engineering" # Default
+    fi
+
+    # Default to engineering if no clear match
+    if [[ -z "$suggested_dept" ]] || [[ $max_score -eq 0 ]]; then
+        suggested_dept="engineering"
     fi
 
     echo -e "${GREEN}✓ Suggested department: ${suggested_dept}${NC}" >&2
     echo "$suggested_dept"
+}
+
+validate_department_assignment() {
+    local agent_name=$1
+    local department=$2
+    local description=$3
+
+    echo -e "${YELLOW}▶ Validating department assignment...${NC}" >&2
+
+    local warnings=""
+
+    # Check for common mismatches
+    if [[ "$agent_name" =~ frontend|ui|react ]] && [[ "$department" != "engineering" ]]; then
+        warnings="${warnings}⚠ Frontend agent typically belongs in engineering department\n"
+    fi
+
+    if [[ "$agent_name" =~ backend|api|server ]] && [[ "$department" != "engineering" ]]; then
+        warnings="${warnings}⚠ Backend agent typically belongs in engineering department\n"
+    fi
+
+    if [[ "$agent_name" =~ devops|sre|ops ]] && [[ "$department" != "operations" ]]; then
+        warnings="${warnings}⚠ DevOps agent typically belongs in operations department\n"
+    fi
+
+    if [[ "$agent_name" =~ test|qa ]] && [[ "$department" != "quality" ]]; then
+        warnings="${warnings}⚠ QA/Test agent typically belongs in quality department\n"
+    fi
+
+    if [[ "$agent_name" =~ data|etl|analytics ]] && [[ "$department" != "data" ]]; then
+        warnings="${warnings}⚠ Data agent typically belongs in data department\n"
+    fi
+
+    if [[ "$agent_name" =~ product|pm|ux ]] && [[ "$department" != "product" ]]; then
+        warnings="${warnings}⚠ Product/UX agent typically belongs in product department\n"
+    fi
+
+    # Check description for additional validation
+    if echo "$description" | grep -qiE "react|vue|angular|frontend" && [[ "$department" != "engineering" ]]; then
+        warnings="${warnings}⚠ Description suggests frontend work (engineering department)\n"
+    fi
+
+    if echo "$description" | grep -qiE "ci.?cd|docker|kubernetes|deploy" && [[ "$department" != "operations" ]]; then
+        warnings="${warnings}⚠ Description suggests DevOps work (operations department)\n"
+    fi
+
+    # Report warnings if any
+    if [[ -n "$warnings" ]]; then
+        echo -e "${YELLOW}Department validation warnings:${NC}" >&2
+        echo -e "$warnings" >&2
+        return 1  # Return non-zero to indicate warnings exist
+    else
+        echo -e "${GREEN}✓ Department assignment validated${NC}" >&2
+        return 0
+    fi
 }
 
 create_agent_file() {
@@ -243,18 +375,18 @@ create_memory_structure() {
     mkdir -p "${memory_base}/decisions"
     mkdir -p "${memory_base}/performance"
 
-    # Create initial memory files
-    echo "# ${agent_name} Context" > "${memory_base}/context/README.md"
-    echo "Current working context and state for ${agent_name}" >> "${memory_base}/context/README.md"
+    # Create initial memory files with agent-specific names
+    echo "# ${agent_name} Context" > "${memory_base}/context/${agent_name}-context.md"
+    echo "Current working context and state for ${agent_name}" >> "${memory_base}/context/${agent_name}-context.md"
 
-    echo "# ${agent_name} Knowledge Base" > "${memory_base}/knowledge/README.md"
-    echo "Accumulated knowledge and learnings" >> "${memory_base}/knowledge/README.md"
+    echo "# ${agent_name} Knowledge Base" > "${memory_base}/knowledge/${agent_name}-knowledge.md"
+    echo "Accumulated knowledge and learnings" >> "${memory_base}/knowledge/${agent_name}-knowledge.md"
 
-    echo "# ${agent_name} Decision Log" > "${memory_base}/decisions/README.md"
-    echo "Historical decisions and rationales" >> "${memory_base}/decisions/README.md"
+    echo "# ${agent_name} Decision Log" > "${memory_base}/decisions/${agent_name}-decisions.md"
+    echo "Historical decisions and rationales" >> "${memory_base}/decisions/${agent_name}-decisions.md"
 
-    echo "# ${agent_name} Performance Metrics" > "${memory_base}/performance/README.md"
-    echo "Performance tracking and optimization data" >> "${memory_base}/performance/README.md"
+    echo "# ${agent_name} Performance Metrics" > "${memory_base}/performance/${agent_name}-performance.md"
+    echo "Performance tracking and optimization data" >> "${memory_base}/performance/${agent_name}-performance.md"
 
     echo -e "${GREEN}✓ Memory structure created at ${memory_base}${NC}"
 }
@@ -503,8 +635,8 @@ interactive_create() {
     echo
     read -p "Enter agent purpose/description (one line): " description
 
-    # Determine department
-    suggested_dept=$(determine_department "$description")
+    # Determine department (pass both description and agent name)
+    suggested_dept=$(determine_department "$description" "$agent_name")
     echo
     echo "Available departments:"
     for dept in "${!DEPARTMENTS[@]}"; do
@@ -539,6 +671,17 @@ interactive_create() {
         [[ -z "$line" ]] && break
         responsibilities+="- ${line}\n"
     done
+
+    # Validate department assignment
+    echo
+    if ! validate_department_assignment "$agent_name" "$department" "$description"; then
+        echo
+        read -p "Continue despite warnings? (y/n): " continue_anyway
+        if [[ "$continue_anyway" != "y" ]]; then
+            echo -e "${RED}✗ Agent creation cancelled${NC}"
+            exit 1
+        fi
+    fi
 
     # Create the agent
     echo
@@ -602,9 +745,9 @@ json_create() {
         exit 1
     fi
 
-    # Auto-determine department if not provided
+    # Auto-determine department if not provided (pass both description and agent name)
     if [[ -z "$department" ]]; then
-        department=$(determine_department "$description")
+        department=$(determine_department "$description" "$agent_name")
     fi
 
     # Use default tools if not provided
@@ -620,6 +763,12 @@ json_create() {
     if ! analyze_existing_agents "$agent_name" > /dev/null 2>&1; then
         echo '{"error": "Agent name already exists"}'
         exit 1
+    fi
+
+    # Validate department assignment in JSON mode (warnings only, no user interaction)
+    if ! validate_department_assignment "$agent_name" "$department" "$description" > /dev/null 2>&1; then
+        # Log warnings but continue in JSON mode
+        echo '{"warning": "Department assignment may not be optimal"}' >&2
     fi
 
     # Create agent

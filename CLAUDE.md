@@ -11,8 +11,20 @@ The constitution is the SINGLE SOURCE OF TRUTH for:
 - Workflow requirements and gates
 - Quality standards and constraints
 - All architectural decisions
+- **MANDATORY agent delegation requirements (Section X)**
 
 No work should proceed without first understanding and applying the constitution's principles. All features, code, and decisions must comply with constitutional requirements.
+
+## HARD STOP: Specialized Agent Delegation
+
+**CONSTITUTIONAL REQUIREMENT (Section X)**: You MUST use the Task tool to delegate to specialized agents:
+- `/create-agent` command → MUST invoke subagent-architect via Task tool
+- Database tasks → MUST invoke database-specialist via Task tool
+- Security reviews → MUST invoke security-specialist via Task tool
+- Frontend work → MUST invoke frontend-specialist via Task tool
+- Backend work → MUST invoke backend-architect or full-stack-developer via Task tool
+
+**Direct execution of specialized tasks is a CONSTITUTIONAL VIOLATION.**
 
 ## Project Overview
 
@@ -43,12 +55,15 @@ This is a specification-driven development framework that uses structured templa
 ### Agent Management Commands
 
 1. **Create new agent**: Use `/create-agent` command
+   - **CONSTITUTIONAL REQUIREMENT**: MUST delegate to subagent-architect via Task tool
+   - **DO NOT EXECUTE DIRECTLY** - Use: `Task(subagent_type="subagent-architect", prompt="Create agent: [specification]")`
    - Creates specialized subagent with constitutional compliance
    - Auto-determines department based on purpose
    - Sets appropriate tool restrictions
    - Initializes memory structure
-   - Script: `.specify/scripts/bash/create-agent.sh --json`
+   - Script executed BY subagent-architect: `.specify/scripts/bash/create-agent.sh --json`
    - Example: `/create-agent backend-engineer "API and database specialist"`
+   - Note: The subagent-architect agent should be used for all agent creation tasks
 
 ## Key Architecture
 
@@ -129,3 +144,78 @@ Check feature-specific quickstart.md and contracts/ directory for:
 - Validation requirements
 
 No standard test framework is assumed - check each feature's plan.md for tech stack decisions.
+## Available Agents
+
+The following specialized agents are available for specific tasks:
+
+### database-specialist (data)
+
+**Purpose**: Use PROACTIVELY for database schema design, query optimization, data migrations, performance tuning, and data architecture decisions.
+
+**Usage**: `Use the database-specialist agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### security-specialist (quality)
+
+**Purpose**: Security reviews, vulnerability assessment, secure coding practices
+
+**Usage**: `Use the security-specialist agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### full-stack-developer (engineering)
+
+**Purpose**: Use PROACTIVELY for end-to-end feature development, API integration, database operations, and rapid prototyping across the entire stack.
+
+**Usage**: `Use the full-stack-developer agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+
+### devops-engineer (operations)
+
+**Purpose**: Use PROACTIVELY for CI/CD pipeline setup, Docker containerization, cloud deployment, infrastructure as code, and production monitoring systems.
+
+**Usage**: `Use the devops-engineer agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### frontend-specialist (engineering)
+
+**Purpose**: Use PROACTIVELY for React/Next.js development, UI components, state management, responsive design, and frontend performance optimization.
+
+**Usage**: `Use the frontend-specialist agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### backend-architect (architecture)
+
+**Purpose**: Use PROACTIVELY for backend system design, API architecture, database schema design, and scalability planning. Expert in Node.js, Python, microservices, and cloud-native architectures.
+
+**Usage**: `Use the backend-architect agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### subagent-architect (architecture)
+
+**Purpose**: Use PROACTIVELY for creating SDD-compliant subagents, designing constitutional agent workflows, and managing specification-driven agent teams. Expert in TDD-enforced agent patterns and constitutional compliance.
+
+**Usage**: `Use the subagent-architect agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+

@@ -10,7 +10,16 @@ Claude Code should automatically consider using specialized agents when:
 - User asks about system design or architecture
 - Planning new features or major refactoring
 - Reviewing integration patterns
-- Keywords: "design", "architecture", "structure", "planning", "integration"
+- **Creating new agents**: Automatically invoke subagent-architect for /create-agent
+- Keywords: "design", "architecture", "structure", "planning", "integration", "create agent", "new agent", "subagent"
+
+##### Special: subagent-architect
+**Auto-invoke for:**
+- `/create-agent` command execution
+- Agent creation requests (e.g., "create an agent for...")
+- Agent architecture design
+- Constitutional compliance validation for agents
+- SDD workflow integration for agents
 
 #### Engineering Agent Triggers
 - Implementing new features

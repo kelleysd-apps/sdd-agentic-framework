@@ -3,10 +3,23 @@
 **Version**: 1.0.0
 **Effective Date**: 2025-01-17
 **Policy Owner**: System Architecture Team
+**Primary Architect**: subagent-architect (architecture department)
 
 ## Purpose
 
 This document defines the standards, workflows, and requirements for creating and managing subagents within the Claude Code framework. All agent creation must follow these policies to ensure consistency, constitutional compliance, and proper integration.
+
+## Agent Creation Workflow
+
+**IMPORTANT**: All agent creation MUST be performed through the subagent-architect agent to ensure:
+- Constitutional compliance validation
+- Proper SDD framework integration
+- Department classification accuracy
+- Tool restriction enforcement
+
+To create a new agent:
+1. Use the `/create-agent` command, which automatically invokes subagent-architect
+2. Or explicitly request: "Use the subagent-architect agent to create..."
 
 ## Agent Architecture Overview
 
@@ -22,8 +35,14 @@ This document defines the standards, workflows, and requirements for creating an
 └── operations/        # DevOps and maintenance agents
 
 .docs/agents/           # Agent memory and knowledge
-└── [mirrored structure with agent folders]
+└── [department]/[agent-name]/
+    ├── context/[agent-name]-context.md
+    ├── knowledge/[agent-name]-knowledge.md
+    ├── decisions/[agent-name]-decisions.md
+    └── performance/[agent-name]-performance.md
 ```
+
+**Note**: All agent memory files follow the naming convention defined in `/workspaces/ioun-ai/.docs/policies/agent-file-naming-convention.md`
 
 ### Department Classifications
 

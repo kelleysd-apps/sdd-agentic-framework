@@ -21,45 +21,34 @@ readonly CYAN='\033[36m'
 readonly WHITE='\033[37m'
 readonly GRAY='\033[90m'
 
-# Unicode box drawing and symbols
-readonly BOX_H='─'
-readonly BOX_V='│'
-readonly BOX_TL='┌'
-readonly BOX_TR='┐'
-readonly BOX_BL='└'
-readonly BOX_BR='┘'
-readonly BOX_L='├'
-readonly BOX_R='┤'
-readonly WIDGET_L='┤'
-readonly WIDGET_R='├'
+# Background colors for widgets
+readonly BG_BLUE='\033[44m'
+readonly BG_MAGENTA='\033[45m'
+readonly BG_CYAN='\033[46m'
+readonly BG_DARK_BLUE='\033[48;5;25m'  # Brighter blue
+readonly BG_PURPLE='\033[48;5;54m'
+readonly BG_DARK_CYAN='\033[48;5;31m'  # Better contrast cyan
+readonly BG_DARK_MAGENTA='\033[48;5;89m'
+readonly BG_DARK_RED='\033[48;5;52m'
+
+# Box drawing removed - no framing needed
 
 # Get latest session file
 session_file=$(ls -t /home/codespace/.claude/projects/-workspaces-ioun-ai/*.jsonl 2>/dev/null | head -1)
 
 # Extract live data from session file if it exists
-tokens_used="0"
 context_used="0"
 context_total="200000"
 last_action="Ready"
 model_name="Claude"
 
 if [ -n "$session_file" ] && [ -f "$session_file" ]; then
-    # Get the last entry with usage data
+    # Get the last entry for context and other info
     last_entry=$(tail -10 "$session_file" | grep '"usage":' | tail -1)
 
     if [ -n "$last_entry" ]; then
-        # Extract token counts using jq for proper JSON parsing
-        output_tokens=$(echo "$last_entry" | jq -r '.message.usage.output_tokens // 0' 2>/dev/null || echo "0")
-        input_tokens=$(echo "$last_entry" | jq -r '.message.usage.input_tokens // 0' 2>/dev/null || echo "0")
+        # Context is the cache_read_input_tokens from the last entry
         cache_read=$(echo "$last_entry" | jq -r '.message.usage.cache_read_input_tokens // 0' 2>/dev/null || echo "0")
-
-        # Calculate total tokens (output + input + cache)
-        total_tokens=$((output_tokens + input_tokens + cache_read))
-        if [ "$total_tokens" -gt 0 ]; then
-            tokens_used=$(awk "BEGIN { printf \"%.1fk\", $total_tokens / 1000 }" 2>/dev/null || echo "0k")
-        fi
-
-        # Context is essentially the cache_read_input_tokens
         if [ "$cache_read" -gt 0 ]; then
             context_used=$(awk "BEGIN { printf \"%.1f\", $cache_read / 1000 }" 2>/dev/null || echo "0")
         fi
@@ -154,108 +143,51 @@ if [ -n "$context_used" ] && [ "$context_used" != "0" ]; then
     context_percentage=$(awk "BEGIN { printf \"%.1f\", ($context_used * 100) / $context_total_k }" 2>/dev/null || echo "0")
 fi
 
-# Frame width calculation - fixed at 90 for consistent display
-frame_width=90
+# No framing needed - removed helper functions
 
-# Generate horizontal border
-border_length=$((frame_width - 2))
-horizontal_border=""
-i=0
-while [ $i -lt $border_length ]; do
-    horizontal_border="${horizontal_border}${BOX_H}"
-    i=$((i + 1))
-done
-
-# Helper function to frame a widget
-frame_widget() {
-    local widget_content="$1"
-    printf "${DIM}${WIDGET_L}${RESET}%s${DIM}${WIDGET_R}${RESET}" "$widget_content"
-}
-
-# Helper function to print a line with padding
-print_frame_line() {
-    local content="$1"
-    local target_width=$((frame_width - 2))
-
-    printf "${BOLD}${BOX_V}${RESET}"
-    printf "%b" "$content"
-
-    # Calculate visible length more accurately
-    # Remove ANSI escape sequences
-    local clean_content=$(echo "$content" | sed 's/\x1b\[[0-9;]*m//g')
-
-    # Count regular characters
-    local char_length=$(echo -n "$clean_content" | wc -c)
-
-    # Count emojis (each takes 2 spaces in terminal)
-    local emoji_count=$(echo "$clean_content" | grep -o '[🔧💻🌿🧠⚡📊🔢💬🐳☁️📗🐍]' | wc -l 2>/dev/null || echo 0)
-
-    # Count widget frames (each ┤ and ├ takes 1 space)
-    local frame_count=$(echo "$clean_content" | grep -o '[┤├]' | wc -l 2>/dev/null || echo 0)
-
-    # Calculate actual visible length
-    # Regular chars + (emojis * 2) + frames - spaces around widgets
-    local visible_length=$((char_length + emoji_count - 2))
-
-    # Calculate padding
-    local padding_needed=$((target_width - visible_length))
-    if [ $padding_needed -lt 0 ]; then
-        padding_needed=1
-    fi
-
-    printf "%*s" "$padding_needed" ""
-    printf "${BOLD}${BOX_V}${RESET}"
-}
-
-# Build the status line
-
-# Top border
-printf "${BOLD}${BOX_TL}${horizontal_border}${BOX_TR}${RESET}\n"
+# Build the status line (no borders)
 
 # Line 1: User, path, git, model
-line1=" "
-line1="${line1}$(frame_widget "💻 ${CYAN}${user}${RESET}${DIM}@${hostname}${RESET}") "
-line1="${line1}$(frame_widget "🔧 ${BLUE}${rel_path}${RESET}") "
+line1=""
+line1="${line1}${BG_DARK_BLUE}${BOLD}${WHITE} 💻 ${user}@${hostname} ${RESET}"
+line1="${line1} ${DIM}|${RESET} ${BG_DARK_CYAN}${BOLD}${WHITE} 🔧 ${rel_path} ${RESET}"
 
 if [ -n "$git_branch" ]; then
     git_display="$git_branch"
     if [ ${#git_display} -gt 8 ]; then
         git_display="${git_display:0:8}"
     fi
-    line1="${line1}$(frame_widget "🌿 ${GREEN}${git_display}${RESET}") "
+    line1="${line1} ${DIM}|${RESET} ${BG_PURPLE}${BOLD}${WHITE} 🌿 ${git_display} ${RESET}"
 fi
 
-line1="${line1}$(frame_widget "🧠 ${MAGENTA}${model_name}${RESET}")  "
+line1="${line1} ${DIM}|${RESET} ${BG_DARK_MAGENTA}${BOLD}${WHITE} 🧠 ${model_name} ${RESET}"
 
-print_frame_line "$line1"
-printf "\n"
-
-# Middle separator
-printf "${BOLD}${BOX_L}${horizontal_border}${BOX_R}${RESET}\n"
+printf "%b\n" "$line1"
 
 # Line 2: Environment, context, tokens, status
-line2=" "
+line2=""
+first_item=true
 
 if [ -n "$node_version" ]; then
-    line2="${line2}$(frame_widget "📗 ${GREEN}${node_version}${RESET}") "
+    line2="${line2}${BG_DARK_MAGENTA}${BOLD}${WHITE} 📗 ${node_version} ${RESET}"
+    first_item=false
 fi
 
 if [ -n "$python_version" ]; then
-    line2="${line2}$(frame_widget "🐍 ${YELLOW}${python_version}${RESET}") "
+    if [ "$first_item" = false ]; then
+        line2="${line2} ${DIM}|${RESET} "
+    fi
+    line2="${line2}${BG_DARK_BLUE}${BOLD}${WHITE} 🐍 ${python_version} ${RESET}"
+    first_item=false
 fi
 
 # Context widget (show 200k as the total)
-context_widget="📊 ${context_used}k/200k ${WHITE}(${context_percentage}%)${RESET}"
-line2="${line2}$(frame_widget "${context_widget}") "
-
-# Token widget
-line2="${line2}$(frame_widget "🔢 ${GRAY}${tokens_used} tokens${RESET}") "
+if [ "$first_item" = false ]; then
+    line2="${line2} ${DIM}|${RESET} "
+fi
+line2="${line2}${BG_PURPLE}${BOLD}${WHITE} 📊 ${context_used}k/200k (${context_percentage}%) ${RESET}"
 
 # Status widget
-line2="${line2}$(frame_widget "💬 ${last_action}")  "
+line2="${line2} ${DIM}|${RESET} ${BG_DARK_RED}${BOLD}${WHITE} 💬 ${last_action} ${RESET}"
 
-print_frame_line "$line2"
-printf "\n"
-
-# Bottom border
-printf "${BOLD}${BOX_BL}${horizontal_border}${BOX_BR}${RESET}"
+printf "%b" "$line2"

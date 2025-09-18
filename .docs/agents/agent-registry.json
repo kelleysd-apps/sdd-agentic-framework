@@ -1,0 +1,81 @@
+{
+  "agents": {
+    "subagent-architect": {
+      "department": "architecture",
+      "description": "Use PROACTIVELY for creating SDD-compliant subagents, designing constitutional agent workflows, and managing specification-driven agent teams. Expert in TDD-enforced agent patterns and constitutional compliance.",
+      "created": "2025-09-18T20:56:29Z",
+      "tools": "Read, Write, Edit, MultiEdit, Bash, Grep, Glob, TodoWrite",
+      "mcp_access": "mcp__ref-tools, mcp__supabase__search_docs, mcp__perplexity, mcp__claude-context",
+      "status": "active",
+      "file": "/workspaces/ioun-ai/.claude/agents/architecture/subagent-architect.md",
+      "memory": "/workspaces/ioun-ai/.docs/agents/architecture/subagent-architect/"
+    },
+    "backend-architect": {
+      "department": "architecture",
+      "description": "Use PROACTIVELY for backend system design, API architecture, database schema design, and scalability planning. Expert in Node.js, Python, microservices, and cloud-native architectures.",
+      "created": "2025-09-18T21:22:32Z",
+      "tools": "Read, Write, Bash, MultiEdit",
+      "mcp_access": "mcp__ref-tools, mcp__supabase__search_docs, mcp__perplexity, mcp__claude-context",
+      "status": "active",
+      "file": "/workspaces/ioun-ai/.claude/agents/architecture/backend-architect.md",
+      "memory": "/workspaces/ioun-ai/.docs/agents/architecture/backend-architect/"
+    },
+    "frontend-specialist": {
+      "department": "engineering",
+      "description": "Use PROACTIVELY for React/Next.js development, UI components, state management, responsive design, and frontend performance optimization.",
+      "created": "2025-09-18T21:39:47Z",
+      "tools": "Read, Write, Bash, MultiEdit",
+      "mcp_access": "mcp__ide, mcp__supabase, mcp__ref-tools, mcp__browsermcp, mcp__claude-context",
+      "status": "active",
+      "file": "/workspaces/ioun-ai/.claude/agents/engineering/frontend-specialist.md",
+      "memory": "/workspaces/ioun-ai/.docs/agents/engineering/frontend-specialist/"
+    },
+    "devops-engineer": {
+      "department": "operations",
+      "description": "Use PROACTIVELY for CI/CD pipeline setup, Docker containerization, cloud deployment, infrastructure as code, and production monitoring systems.",
+      "created": "2025-09-18T21:47:48Z",
+      "tools": "Read, Write, Bash, MultiEdit",
+      "mcp_access": "mcp__supabase__deploy_edge_function, mcp__supabase__get_logs, mcp__supabase__create_project",
+      "status": "active",
+      "file": "/workspaces/ioun-ai/.claude/agents/operations/devops-engineer.md",
+      "memory": "/workspaces/ioun-ai/.docs/agents/operations/devops-engineer/"
+    },
+    "full-stack-developer": {
+      "department": "engineering",
+      "description": "Use PROACTIVELY for end-to-end feature development, API integration, database operations, and rapid prototyping across the entire stack.",
+      "created": "2025-09-18T22:18:07Z",
+      "tools": "Read, Write, Bash, MultiEdit",
+      "mcp_access": "mcp__ide, mcp__supabase, mcp__ref-tools, mcp__browsermcp, mcp__claude-context",
+      "status": "active",
+      "file": "/workspaces/ioun-ai/.claude/agents/engineering/full-stack-developer.md",
+      "memory": "/workspaces/ioun-ai/.docs/agents/engineering/full-stack-developer/"
+    },
+    "security-specialist": {
+      "department": "quality",
+      "description": "Security reviews, vulnerability assessment, secure coding practices",
+      "created": "2025-09-18T22:41:45Z",
+      "tools": "Read, Write, Bash, MultiEdit",
+      "mcp_access": "mcp__ide__executeCode, mcp__ide__getDiagnostics, mcp__ref-tools",
+      "status": "active",
+      "file": "/workspaces/ioun-ai/.claude/agents/quality/security-specialist.md",
+      "memory": "/workspaces/ioun-ai/.docs/agents/quality/security-specialist/"
+    },
+    "database-specialist": {
+      "department": "data",
+      "description": "Use PROACTIVELY for database schema design, query optimization, data migrations, performance tuning, and data architecture decisions.",
+      "created": "2025-09-18T22:45:04Z",
+      "tools": "Read, Write, Bash, MultiEdit",
+      "mcp_access": "mcp__supabase, mcp__supabase__apply_migration, mcp__supabase__execute_sql",
+      "status": "active",
+      "file": "/workspaces/ioun-ai/.claude/agents/data/database-specialist.md",
+      "memory": "/workspaces/ioun-ai/.docs/agents/data/database-specialist/"
+    }
+  },
+  "departments": {
+    "architecture": 2,
+    "engineering": 2,
+    "operations": 1,
+    "quality": 1,
+    "data": 1
+  }
+}

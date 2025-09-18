@@ -2,6 +2,28 @@
 
 A constitutional AI development framework that enforces specification-driven development through intelligent agent orchestration and workflow automation.
 
+## 🚀 Quick Start
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd ioun-ai
+
+# Run automatic setup (installs dependencies, configures environment)
+npm run setup
+
+# Or run directly
+./.specify/scripts/setup.sh
+```
+
+That's it! The setup script will automatically:
+- ✅ Install all Node.js dependencies
+- ✅ Create .env file from template
+- ✅ Make all scripts executable
+- ✅ Configure your development environment
+
+No need to manually install anything - just clone and run setup!
+
 ## 🎖️ Attribution
 
 This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-kit)**, which provides the core Specification-Driven Development (SDD) methodology.
@@ -182,10 +204,11 @@ Each department gets appropriate MCP servers:
 
 ### Agent Management
 
-**`/create-agent`** - Create specialized agent
+**`/create-agent`** - Create specialized agent (automatically uses subagent-architect)
 ```bash
 /create-agent agent-name "Agent purpose and capabilities"
 ```
+**Note**: This command automatically invokes the `subagent-architect` agent to ensure SDD compliance and constitutional validation.
 
 #### Agent Creation Features
 

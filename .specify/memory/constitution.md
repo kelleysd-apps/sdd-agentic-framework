@@ -29,6 +29,14 @@ All operations should be safely repeatable without side effects. State mutations
 ### IX. Secure by Default
 Security is not optional or an afterthought. All inputs must be validated and sanitized. All outputs must be properly escaped. Secrets must never be logged or committed. Authentication and authorization must be enforced at every boundary. Dependencies must be regularly audited for vulnerabilities.
 
+### X. Specialized Agent Delegation (NON-NEGOTIABLE)
+When a task matches a specialized agent's purpose, delegation via Task tool is MANDATORY. Direct execution of specialized tasks without proper agent delegation is a constitutional violation. This specifically includes:
+- `/create-agent` commands MUST use subagent-architect via Task tool
+- Database operations MUST use database-specialist via Task tool
+- Security reviews MUST use security-specialist via Task tool
+- Frontend work MUST use frontend-specialist via Task tool
+No exceptions. Agent expertise must be leveraged through proper delegation.
+
 ## Development Workflow
 
 ### Git Operations
@@ -95,6 +103,6 @@ This constitution represents the team's shared agreement on development practice
 - Good faith efforts to comply are expected
 - Education preferred over punishment
 
-**Version**: 1.0.0
-**Ratified**: [Date of adoption]
-**Last Amended**: [Date of last change]
+**Version**: 1.1.0
+**Ratified**: 2025-01-17
+**Last Amended**: 2025-09-18

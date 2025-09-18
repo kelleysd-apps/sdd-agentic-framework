@@ -1,0 +1,31 @@
+{
+  "name": "ioun-ai",
+  "version": "0.1.0",
+  "description": "Specification-driven development framework with AI agent orchestration",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "./.specify/scripts/setup.sh",
+    "postinstall": "./.specify/scripts/setup.sh",
+    "test": "echo \"Error: no test framework configured\" && exit 1",
+    "lint": "echo \"Error: no linter configured\" && exit 1",
+    "format": "echo \"Error: no formatter configured\" && exit 1",
+    "typecheck": "echo \"Error: no type checking configured\" && exit 1"
+  },
+  "keywords": [
+    "specification-driven-development",
+    "ai-agents",
+    "claude",
+    "tdd"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "@bitwarden/sdk-napi": "^1.0.0"
+  }
+}

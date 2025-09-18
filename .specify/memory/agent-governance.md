@@ -51,6 +51,23 @@ Engineering and architecture agents MUST enforce:
 - Clear boundaries and interfaces
 - Reusability beyond immediate use case
 
+### VI. Mandatory Agent Delegation
+**CONSTITUTIONAL REQUIREMENT**: Claude Code MUST use Task tool to delegate to specialized agents when tasks match their expertise. Direct execution is PROHIBITED for:
+
+#### Required Delegations:
+- **`/create-agent` command** → MUST invoke subagent-architect
+- **Database schema/migration tasks** → MUST invoke database-specialist
+- **Security review requests** → MUST invoke security-specialist
+- **Frontend development** → MUST invoke frontend-specialist
+- **Backend development** → MUST invoke backend-architect or full-stack-developer
+- **DevOps/deployment tasks** → MUST invoke devops-engineer
+
+#### Enforcement:
+1. Violation = Constitutional breach requiring immediate correction
+2. Pattern matching on commands/keywords triggers mandatory delegation
+3. No user override permitted - specialization must be respected
+4. Audit log tracks all delegations and violations
+
 ## Agent Lifecycle Management
 
 ### Creation Standards
