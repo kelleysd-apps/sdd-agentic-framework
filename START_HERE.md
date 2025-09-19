@@ -1,4 +1,4 @@
-# SDD Agentic Framework - Setup Guide
+# START HERE - SDD Agentic Framework Setup Guide
 
 ## 📋 Prerequisites
 
@@ -12,7 +12,7 @@
 ### Optional Integrations
 
 - **GitHub CLI** (`gh`) - For pull request management
-- **Bitwarden CLI** - If using Bitwarden secrets manager
+- **Secret Manager CLI** - If using external secret management (optional)
 
 ## 🚀 Initial Setup
 
@@ -70,8 +70,8 @@ Edit `package.json`:
 
 Edit `.env` (created from `.env.example`):
 ```bash
-# Optional: Bitwarden Secrets Manager
-BWS_ACCESS_TOKEN=your_token_here
+# Optional: Add any project-specific secrets
+# SECRET_TOKEN=your_token_here
 
 # Add your project-specific variables
 DATABASE_URL=your_connection_string
@@ -163,7 +163,7 @@ your-project/
 ├── CLAUDE.md                # AI instructions (auto-updated)
 ├── README.md                # Your project readme
 ├── FRAMEWORK_README.md      # Framework documentation
-└── SETUP.md                 # This file
+└── START_HERE.md            # This file
 ```
 
 ## 🤖 Using the Framework

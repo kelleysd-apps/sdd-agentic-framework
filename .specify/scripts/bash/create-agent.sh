@@ -13,7 +13,7 @@ if [[ -f "${SCRIPT_DIR}/common.sh" ]]; then
 fi
 
 # Constants
-REPO_ROOT="/workspaces/ioun-ai"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 AGENTS_DIR="${REPO_ROOT}/.claude/agents"
 DOCS_DIR="${REPO_ROOT}/.docs/agents"
 TEMPLATE_FILE="${REPO_ROOT}/.specify/templates/agent-template.md"
@@ -201,7 +201,7 @@ create_agent_file() {
     esac
 
     # Replace remaining placeholders with defaults
-    sed -i "s|{{SHARED_MEMORY_REFS}}|- Department knowledge: /workspaces/ioun-ai/.docs/agents/${department}/|g" "$agent_file"
+    sed -i "s|{{SHARED_MEMORY_REFS}}|- Department knowledge: \${REPO_ROOT}/.docs/agents/${department}/|g" "$agent_file"
     sed -i "s|{{DEPARTMENT_GUIDELINES}}|- Follow ${department} best practices\n- Collaborate with other ${department} agents|g" "$agent_file"
     sed -i "s|{{TOOL_POLICIES}}|${tools}|g" "$agent_file"
     sed -i "s|{{RESTRICTED_OPERATIONS}}|- No unauthorized Git operations\n- No production changes without approval|g" "$agent_file"

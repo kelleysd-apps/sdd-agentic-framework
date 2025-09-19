@@ -157,6 +157,50 @@ else
     echo -e "${RED}Warning: Setup script not found${NC}"
 fi
 
+# Cleanup process (with user approval)
+echo ""
+echo -e "${BLUE}=====================================${NC}"
+echo -e "${BLUE}   Cleanup Phase${NC}"
+echo -e "${BLUE}=====================================${NC}"
+echo ""
+echo -e "${YELLOW}The following files are no longer needed after initialization:${NC}"
+echo -e "  - init-project.sh (this script)"
+echo -e "  - START_HERE.md (setup documentation)"
+echo -e "  - FRAMEWORK_README.md (if you've created your own README)"
+echo ""
+read -p "Would you like to remove these initialization files? (y/n): " CLEANUP_CONFIRM
+
+if [[ "$CLEANUP_CONFIRM" =~ ^[Yy]$ ]]; then
+    echo -e "${BLUE}Cleaning up initialization files...${NC}"
+
+    # Remove the init script itself
+    if [ -f "init-project.sh" ]; then
+        rm -f init-project.sh
+        echo -e "${GREEN}✓${NC} Removed init-project.sh"
+    fi
+
+    # Remove START_HERE.md
+    if [ -f "START_HERE.md" ]; then
+        rm -f START_HERE.md
+        echo -e "${GREEN}✓${NC} Removed START_HERE.md"
+    fi
+
+    # Ask about FRAMEWORK_README.md separately
+    if [ -f "FRAMEWORK_README.md" ]; then
+        read -p "Remove FRAMEWORK_README.md? You may want to keep this for reference (y/n): " REMOVE_FRAMEWORK_README
+        if [[ "$REMOVE_FRAMEWORK_README" =~ ^[Yy]$ ]]; then
+            rm -f FRAMEWORK_README.md
+            echo -e "${GREEN}✓${NC} Removed FRAMEWORK_README.md"
+        else
+            echo -e "${YELLOW}ℹ${NC}  Keeping FRAMEWORK_README.md for reference"
+        fi
+    fi
+
+    echo -e "${GREEN}✓${NC} Cleanup complete"
+else
+    echo -e "${YELLOW}ℹ${NC}  Skipping cleanup - you can manually remove these files later"
+fi
+
 echo ""
 echo -e "${GREEN}=====================================${NC}"
 echo -e "${GREEN}   Project Setup Complete! 🎉${NC}"

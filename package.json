@@ -25,8 +25,5 @@
     "npm": ">=9.0.0"
   },
   "devDependencies": {},
-  "dependencies": {},
-  "optionalDependencies": {
-    "@bitwarden/sdk-napi": "^1.0.0"
-  }
+  "dependencies": {}
 }
