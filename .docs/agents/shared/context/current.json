@@ -1,0 +1,19 @@
+{
+  "project": "ioun-ai",
+  "framework": "specification-driven-development",
+  "constitution_version": "1.1.0",
+  "active_features": [],
+  "agent_ecosystem": {
+    "total_agents": 12,
+    "departments": {
+      "architecture": 2,
+      "engineering": 2,
+      "quality": 2,
+      "data": 1,
+      "product": 3,
+      "operations": 2
+    },
+    "orchestrator": "task-orchestrator"
+  },
+  "last_updated": "2025-09-19T21:00:00Z"
+}

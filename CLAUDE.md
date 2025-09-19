@@ -40,6 +40,7 @@ This is a specification-driven development framework that uses structured templa
    - Default format when approved: `###-feature-name`
    - Generates spec file at `specs/###-feature-name/spec.md`
    - Script: `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"`
+   - **NOTE**: For complex specification creation, consider using the `specification-agent` via delegation
 
 2. **Generate implementation plan**: Use `/plan` command
    - Reads feature spec and constitution
@@ -148,6 +149,56 @@ No standard test framework is assumed - check each feature's plan.md for tech st
 
 The following specialized agents are available for specific tasks:
 
+### task-orchestrator (product)
+
+**Purpose**: Task Orchestration Agent that serves as a central coordination hub for multi-agent workflows in Claude Code environments. Intelligently analyzes complex requests, decomposes them into specialized tasks, and coordinates multiple specialized agents to deliver comprehensive solutions.
+
+**Usage**: `Use the task-orchestrator agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### specification-agent (product)
+
+**Purpose**: Use PROACTIVELY for creating detailed software specifications, user stories, functional requirements, and acceptance criteria using Spec-Driven Development methodology. Expert in translating business needs into executable specifications.
+
+**Usage**: `Use the specification-agent agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### tasks-agent (product)
+
+**Purpose**: Use PROACTIVELY for breaking down technical plans into actionable tasks, creating task lists, managing task dependencies, and coordinating task execution using Spec-Driven Development methodology.
+
+**Usage**: `Use the tasks-agent agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### performance-engineer (quality)
+
+**Purpose**: Use PROACTIVELY for performance analysis, bottleneck identification, scalability optimization, monitoring setup, and load testing.
+
+**Usage**: `Use the performance-engineer agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### testing-specialist (quality)
+
+**Purpose**: Use PROACTIVELY for test planning, test automation, quality assurance, bug analysis, and testing infrastructure setup.
+
+**Usage**: `Use the testing-specialist agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
 ### database-specialist (data)
 
 **Purpose**: Use PROACTIVELY for database schema design, query optimization, data migrations, performance tuning, and data architecture decisions.
@@ -163,6 +214,16 @@ The following specialized agents are available for specific tasks:
 **Purpose**: Security reviews, vulnerability assessment, secure coding practices
 
 **Usage**: `Use the security-specialist agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### testing-specialist (quality)
+
+**Purpose**: Use PROACTIVELY for test planning, test automation, quality assurance, bug analysis, and testing infrastructure setup.
+
+**Usage**: `Use the testing-specialist agent to...`
 
 **Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
 
@@ -214,6 +275,16 @@ The following specialized agents are available for specific tasks:
 **Purpose**: Use PROACTIVELY for creating SDD-compliant subagents, designing constitutional agent workflows, and managing specification-driven agent teams. Expert in TDD-enforced agent patterns and constitutional compliance.
 
 **Usage**: `Use the subagent-architect agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+
+### performance-engineer (operations)
+
+**Purpose**: Use PROACTIVELY for performance analysis, bottleneck identification, scalability optimization, monitoring setup, and load testing.
+
+**Usage**: `Use the performance-engineer agent to...`
 
 **Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
 

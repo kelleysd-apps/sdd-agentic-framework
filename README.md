@@ -407,6 +407,27 @@ Modify templates in `.specify/templates/` for your domain:
 4. Tool restrictions based on department
 5. Memory persists in `.docs/agents/{department}/{agent}/`
 
+## 🤖 Current Agents (9 Total)
+
+### Architecture Department (2)
+- **subagent-architect** - Creates SDD-compliant agents, manages constitutional compliance
+- **backend-architect** - Backend system design, API architecture, scalability planning
+
+### Engineering Department (2)
+- **frontend-specialist** - React/Next.js development, UI components, performance
+- **full-stack-developer** - End-to-end feature development, rapid prototyping
+
+### Quality Department (2)
+- **security-specialist** - Security reviews, vulnerability assessment, secure coding
+- **testing-specialist** - Test planning, automation, QA, bug analysis
+
+### Operations Department (2)
+- **devops-engineer** - CI/CD pipelines, Docker, cloud deployment, IaC
+- **performance-engineer** - Performance analysis, bottleneck identification, load testing
+
+### Data Department (1)
+- **database-specialist** - Schema design, query optimization, data migrations
+
 ## 🔍 Troubleshooting
 
 ### Common Issues

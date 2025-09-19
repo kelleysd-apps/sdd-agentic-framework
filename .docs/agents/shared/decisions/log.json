@@ -1,0 +1,30 @@
+{
+  "decisions": [
+    {
+      "id": "001",
+      "date": "2025-09-19",
+      "category": "architecture",
+      "decision": "Implement task-orchestrator as central coordination hub",
+      "rationale": "Need unified orchestration for multi-agent workflows to prevent coordination failures",
+      "alternatives_considered": [
+        "Direct agent-to-agent communication",
+        "Queue-based message passing"
+      ],
+      "made_by": "system-review",
+      "status": "implemented"
+    },
+    {
+      "id": "002",
+      "date": "2025-09-19",
+      "category": "governance",
+      "decision": "Grant task-orchestrator access to SDD commands with user approval hooks",
+      "rationale": "Orchestrator needs ability to initiate full SDD workflows while maintaining user control",
+      "alternatives_considered": [
+        "Delegate to specific agents only",
+        "Direct execution without approval"
+      ],
+      "made_by": "user-directive",
+      "status": "implemented"
+    }
+  ]
+}
