@@ -1,6 +1,6 @@
 {
-  "name": "ioun-ai",
-  "version": "0.1.0",
+  "name": "sdd-agentic-framework",
+  "version": "1.0.0",
   "description": "Specification-driven development framework with AI agent orchestration",
   "private": true,
   "type": "module",
@@ -25,7 +25,8 @@
     "npm": ">=9.0.0"
   },
   "devDependencies": {},
-  "dependencies": {
+  "dependencies": {},
+  "optionalDependencies": {
     "@bitwarden/sdk-napi": "^1.0.0"
   }
 }

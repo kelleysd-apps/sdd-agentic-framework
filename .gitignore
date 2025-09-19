@@ -1,2 +1,48 @@
 # Environment variables
 .env
+
+# Backup files
+package.json.backup
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+
+# Secret management
+retrieve-secrets.sh
+secrets/
+.secrets/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Local development
+.local/
+*.local
