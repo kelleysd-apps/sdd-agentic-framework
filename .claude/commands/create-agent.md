@@ -1,17 +1,8 @@
 ---
-description: Create a new specialized subagent with constitutional compliance and proper department classification. MUST use the subagent-architect agent for SDD-compliant agent creation.
+description: Create a new specialized subagent with constitutional compliance and proper department classification.
 ---
 
-**IMPORTANT**: This command MUST invoke the subagent-architect agent to ensure proper SDD compliance and constitutional validation.
-
 Given the agent name and description provided as arguments, do this:
-
-0. **FIRST**: Use the Task tool to invoke the subagent-architect agent:
-   ```
-   Task: Create SDD-compliant agent
-   Agent: subagent-architect
-   Purpose: Ensure constitutional compliance and proper architecture
-   ```
 
 1. Parse the arguments:
    - If no arguments: Start interactive mode

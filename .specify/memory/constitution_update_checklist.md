@@ -76,10 +76,9 @@ Watch for these often-forgotten updates:
 
 ## Template Sync Status
 
-Last sync check: 2025-09-18
-- Constitution version: 1.1.0
-- Templates aligned: ✅ (Added Section X: Specialized Agent Delegation)
-- Agent governance updated: ✅ (Added Section VI: Mandatory Agent Delegation)
+Last sync check: 2025-07-16
+- Constitution version: 2.1.1
+- Templates aligned: ❌ (missing versioning, observability details)
 
 ---
 

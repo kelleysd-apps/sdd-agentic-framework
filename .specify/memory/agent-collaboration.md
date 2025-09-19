@@ -10,16 +10,7 @@ Claude Code should automatically consider using specialized agents when:
 - User asks about system design or architecture
 - Planning new features or major refactoring
 - Reviewing integration patterns
-- **Creating new agents**: Automatically invoke subagent-architect for /create-agent
-- Keywords: "design", "architecture", "structure", "planning", "integration", "create agent", "new agent", "subagent"
-
-##### Special: subagent-architect
-**Auto-invoke for:**
-- `/create-agent` command execution
-- Agent creation requests (e.g., "create an agent for...")
-- Agent architecture design
-- Constitutional compliance validation for agents
-- SDD workflow integration for agents
+- Keywords: "design", "architecture", "structure", "planning", "integration"
 
 #### Engineering Agent Triggers
 - Implementing new features
@@ -32,21 +23,6 @@ Claude Code should automatically consider using specialized agents when:
 - Code review requests
 - Security or performance audits
 - Keywords: "test", "review", "audit", "quality", "coverage", "security"
-
-##### Special: testing-specialist
-**Auto-invoke for:**
-- Test planning and strategy development
-- Test automation framework setup
-- QA process implementation
-- Bug analysis and reproduction
-- Test infrastructure configuration
-
-##### Special: security-specialist
-**Auto-invoke for:**
-- Security vulnerability assessments
-- Secure coding practice reviews
-- Penetration testing planning
-- Security audit execution
 
 #### Data Agent Triggers
 - Database schema changes
@@ -65,22 +41,6 @@ Claude Code should automatically consider using specialized agents when:
 - Monitoring setup
 - CI/CD configuration
 - Keywords: "deploy", "monitor", "devops", "release", "pipeline"
-
-##### Special: performance-engineer
-**Auto-invoke for:**
-- Performance bottleneck analysis
-- Load testing and stress testing
-- Scalability optimization
-- Monitoring and APM setup
-- Performance metrics collection
-
-##### Special: devops-engineer
-**Auto-invoke for:**
-- CI/CD pipeline configuration
-- Docker containerization
-- Cloud deployment setup
-- Infrastructure as code
-- Production monitoring systems
 
 ## Agent Collaboration Patterns
 

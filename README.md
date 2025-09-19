@@ -2,31 +2,9 @@
 
 A constitutional AI development framework that enforces specification-driven development through intelligent agent orchestration and workflow automation.
 
-## 🚀 Quick Start
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd ioun-ai
-
-# Run automatic setup (installs dependencies, configures environment)
-npm run setup
-
-# Or run directly
-./.specify/scripts/setup.sh
-```
-
-That's it! The setup script will automatically:
-- ✅ Install all Node.js dependencies
-- ✅ Create .env file from template
-- ✅ Make all scripts executable
-- ✅ Configure your development environment
-
-No need to manually install anything - just clone and run setup!
-
 ## 🎖️ Attribution
 
-This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-kit)**, which provides the core Specification-Driven Development (SDD) methodology.
+This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-kit)**, which provides the core Specification-Driven Development (SDD) methodology. And is built using Claude code, if you plan to use other LLM's for this framework it will need to be tweaked a bit or just used as a reference to build your own. 
 
 ### Original SDD Framework
 - **spec-kit by GitHub** - The foundational SDD approach, templates, and workflow automation
@@ -204,11 +182,10 @@ Each department gets appropriate MCP servers:
 
 ### Agent Management
 
-**`/create-agent`** - Create specialized agent (automatically uses subagent-architect)
+**`/create-agent`** - Create specialized agent
 ```bash
 /create-agent agent-name "Agent purpose and capabilities"
 ```
-**Note**: This command automatically invokes the `subagent-architect` agent to ensure SDD compliance and constitutional validation.
 
 #### Agent Creation Features
 
@@ -406,27 +383,6 @@ Modify templates in `.specify/templates/` for your domain:
 3. Agents inherit constitutional compliance
 4. Tool restrictions based on department
 5. Memory persists in `.docs/agents/{department}/{agent}/`
-
-## 🤖 Current Agents (9 Total)
-
-### Architecture Department (2)
-- **subagent-architect** - Creates SDD-compliant agents, manages constitutional compliance
-- **backend-architect** - Backend system design, API architecture, scalability planning
-
-### Engineering Department (2)
-- **frontend-specialist** - React/Next.js development, UI components, performance
-- **full-stack-developer** - End-to-end feature development, rapid prototyping
-
-### Quality Department (2)
-- **security-specialist** - Security reviews, vulnerability assessment, secure coding
-- **testing-specialist** - Test planning, automation, QA, bug analysis
-
-### Operations Department (2)
-- **devops-engineer** - CI/CD pipelines, Docker, cloud deployment, IaC
-- **performance-engineer** - Performance analysis, bottleneck identification, load testing
-
-### Data Department (1)
-- **database-specialist** - Schema design, query optimization, data migrations
 
 ## 🔍 Troubleshooting
 
