@@ -34,7 +34,9 @@ readonly BG_DARK_RED='\033[48;5;52m'
 # Box drawing removed - no framing needed
 
 # Get latest session file
-session_file=$(ls -t /home/codespace/.claude/projects/-workspaces-ioun-ai/*.jsonl 2>/dev/null | head -1)
+# Dynamically find session file based on current project directory
+project_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
+session_file=$(ls -t /home/codespace/.claude/projects/-workspaces-${project_name}/*.jsonl 2>/dev/null | head -1)
 
 # Extract live data from session file if it exists
 context_used="0"
@@ -107,8 +109,9 @@ current_dir=$(pwd)
 
 # Calculate relative path
 rel_path="/"
-if [[ "$current_dir" == "/workspaces/ioun-ai"* ]]; then
-    rel_path="${current_dir#/workspaces/ioun-ai}"
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+if [[ "$current_dir" == "$repo_root"* ]]; then
+    rel_path="${current_dir#$repo_root}"
     if [ -z "$rel_path" ]; then
         rel_path="/"
     fi

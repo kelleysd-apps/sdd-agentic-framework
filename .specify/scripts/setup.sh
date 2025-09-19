@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Auto-setup script for ioun-ai
+# Auto-setup script for SDD Agentic Framework
 # This script automatically configures the development environment on first run
 
 set -e
@@ -12,7 +12,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}=====================================${NC}"
-echo -e "${BLUE}   ioun-ai Development Setup${NC}"
+echo -e "${BLUE}   SDD Framework Development Setup${NC}"
 echo -e "${BLUE}=====================================${NC}"
 echo ""
 
@@ -53,7 +53,7 @@ if [ ! -f ".env" ]; then
         echo -e "${BLUE}Creating .env file from template...${NC}"
         cp .env.example .env
         echo -e "${GREEN}✓${NC} .env file created"
-        echo -e "${YELLOW}⚠  Please update .env with your Bitwarden access token if needed${NC}"
+        echo -e "${YELLOW}ℹ${NC}  Please update .env with your project-specific configuration"
     fi
 else
     echo -e "${GREEN}✓${NC} .env file exists"
@@ -88,7 +88,7 @@ echo -e ""
 echo -e "${BLUE}Next steps:${NC}"
 echo -e "  1. Read ${YELLOW}.specify/memory/constitution.md${NC} for development principles"
 echo -e "  2. Check ${YELLOW}CLAUDE.md${NC} for AI assistant guidance"
-echo -e "  3. Review ${YELLOW}SETUP.md${NC} for detailed documentation"
+echo -e "  3. Review ${YELLOW}START_HERE.md${NC} for detailed setup instructions"
 echo -e ""
 
 exit 0

@@ -1,6 +1,6 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "bash /workspaces/ioun-ai/.claude/statusline.sh"
+    "command": "bash .claude/statusline.sh"
   }
 }

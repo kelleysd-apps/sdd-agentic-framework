@@ -60,15 +60,18 @@ This framework provides a structured approach to software development where:
 ### 1. Fork or Copy Repository
 
 ```bash
-# Clone this framework for your new project
-git clone [framework-repo] your-project-name
+# Option A: Clone and use init script (RECOMMENDED)
+git clone https://github.com/kelleysd-apps/sdd-agentic-framework.git your-project-name
 cd your-project-name
+rm -rf .git
+./init-project.sh  # Interactive setup script
 
-# Remove existing git history to start fresh
+# Option B: Manual setup
+git clone https://github.com/kelleysd-apps/sdd-agentic-framework.git your-project-name
+cd your-project-name
 rm -rf .git
 git init
-git add .
-git commit -m "Initial commit from SDD framework"
+npm run setup
 ```
 
 ### 2. Configure Project Constitution

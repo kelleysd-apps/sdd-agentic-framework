@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## CRITICAL: Read Constitution First
 
-**ALWAYS read `/workspaces/ioun-ai/.specify/memory/constitution.md` BEFORE starting any work.**
+**ALWAYS read `.specify/memory/constitution.md` BEFORE starting any work.**
 
 The constitution is the SINGLE SOURCE OF TRUTH for:
 - Core development principles and rules
@@ -85,7 +85,7 @@ specs/###-feature-name/       # Per-feature documentation
 
 ### Development Principles
 
-ALL development principles are defined in `/workspaces/ioun-ai/.specify/memory/constitution.md`.
+ALL development principles are defined in `.specify/memory/constitution.md`.
 
 The constitution supersedes all other practices and must be consulted for:
 - Architecture decisions and patterns
@@ -96,7 +96,7 @@ The constitution supersedes all other practices and must be consulted for:
 
 Never proceed with implementation without verifying constitutional compliance.
 
-**Note**: When updating the constitution, the `/workspaces/ioun-ai/.specify/memory/constitution_update_checklist.md` MUST be followed to ensure all dependent documents are updated.
+**Note**: When updating the constitution, the `.specify/memory/constitution_update_checklist.md` MUST be followed to ensure all dependent documents are updated.
 
 ### Git Operations (CRITICAL)
 
