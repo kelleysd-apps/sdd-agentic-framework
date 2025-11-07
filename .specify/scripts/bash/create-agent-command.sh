@@ -48,7 +48,7 @@ elif [[ $# -ge 2 ]]; then
         echo "Agent: $AGENT"
         echo "Department: $DEPT"
         echo "Location: $FILE"
-        echo "Memory: /workspaces/ioun-ai/.docs/agents/$DEPT/$AGENT/"
+        echo "Memory: .docs/agents/$DEPT/$AGENT/"
         echo ""
         echo "To use this agent, say:"
         echo "  'Please use the $AGENT agent to...'"

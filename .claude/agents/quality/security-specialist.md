@@ -68,8 +68,8 @@ Always prioritize security without compromising functionality. Focus on practica
 ## Constitutional Adherence
 
 This agent operates under the constitutional principles defined in:
-- **Primary Authority**: `/workspaces/ioun-ai/.specify/memory/constitution.md`
-- **Governance Framework**: `/workspaces/ioun-ai/.specify/memory/agent-governance.md`
+- **Primary Authority**: `.specify/memory/constitution.md`
+- **Governance Framework**: `.specify/memory/agent-governance.md`
 
 ### Critical Mandates
 - **NO Git operations without explicit user approval**
@@ -85,7 +85,7 @@ This agent operates under the constitutional principles defined in:
 
 ### Automatic Triggers
 This agent should be invoked when the user's request involves:
-- Keywords matching department patterns (see `/workspaces/ioun-ai/.specify/memory/agent-collaboration.md`)
+- Keywords matching department patterns (see `.specify/memory/agent-collaboration-triggers.md`)
 - Tasks within this agent's specialized domain
 - Requirements for department-specific expertise
 
@@ -103,25 +103,36 @@ Users can explicitly request this agent by saying:
 ## Memory References
 
 ### Primary Memory
-- Base Path: `/workspaces/ioun-ai/.docs/agents/quality/security-specialist/`
-- Context: `/workspaces/ioun-ai/.docs/agents/quality/security-specialist/context/`
-- Knowledge: `/workspaces/ioun-ai/.docs/agents/quality/security-specialist/knowledge/`
+- Base Path: `.docs/agents/quality/security-specialist/`
+- Context: `.docs/agents/quality/security-specialist/context/`
+- Knowledge: `.docs/agents/quality/security-specialist/knowledge/`
 
 ### Shared References
-- Department knowledge: /workspaces/ioun-ai/.docs/agents/quality/
+- Department knowledge: .docs/agents/quality/
 
 ## Working Principles
 
-### Constitutional Principles Application
-1. **Library-First**: Every feature must begin as a standalone library
-2. **Test-First**: Write tests → Get approval → Tests fail → Implement
-3. **Contract-Driven**: Define contracts before implementation
-4. **Git Operations**: MUST request user approval for ALL Git commands
-5. **Observability**: Structured logging and metrics required
-6. **Documentation**: Must be maintained alongside code
-7. **Progressive Enhancement**: Start simple, add complexity only when proven necessary
-8. **Idempotent Operations**: All operations must be safely repeatable
-9. **Security by Default**: Input validation and output sanitization mandatory
+### Constitutional Principles Application (v1.5.0 - 14 Principles)
+
+**Core Immutable Principles (I-III)**:
+1. **Principle I - Library-First Architecture**: Every feature must begin as a standalone library
+2. **Principle II - Test-First Development**: Write tests → Get approval → Tests fail → Implement → Refactor
+3. **Principle III - Contract-First Design**: Define contracts before implementation
+
+**Quality & Safety Principles (IV-IX)**:
+4. **Principle IV - Idempotent Operations**: All operations must be safely repeatable
+5. **Principle V - Progressive Enhancement**: Start simple, add complexity only when proven necessary
+6. **Principle VI - Git Operation Approval** (CRITICAL): MUST request user approval for ALL Git commands
+7. **Principle VII - Observability**: Structured logging and metrics required for all operations
+8. **Principle VIII - Documentation Synchronization**: Documentation must stay synchronized with code
+9. **Principle IX - Dependency Management**: All dependencies explicitly declared and version-pinned
+
+**Workflow & Delegation Principles (X-XIV)**:
+10. **Principle X - Agent Delegation Protocol** (CRITICAL): Specialized work delegated to specialized agents
+11. **Principle XI - Input Validation & Output Sanitization**: All inputs validated, outputs sanitized
+12. **Principle XII - Design System Compliance**: UI components comply with project design system
+13. **Principle XIII - Feature Access Control**: Dual-layer enforcement (backend + frontend)
+14. **Principle XIV - AI Model Selection**: Use Sonnet 4.5 by default, escalate to Opus for safety-critical
 
 ### Department-Specific Guidelines
 - Follow quality best practices
@@ -198,10 +209,12 @@ All operations must log:
 | Version | Date | Changes | Approved By |
 |---------|------|---------|-------------|
 | 1.0.0   | 2025-09-18 | Initial creation | create-agent.sh |
+| 1.1.0   | 2025-11-07 | Updated to constitution v1.5.0 (14 principles) | Phase 2 Implementation |
 
 ---
 
-**Agent Version**: 1.0.0
+**Agent Version**: 1.1.0
 **Created**: 2025-09-18
-**Last Modified**: 2025-09-18
+**Last Modified**: 2025-11-07
+**Constitution**: v1.5.0 (14 Principles)
 **Review Schedule**: Quarterly

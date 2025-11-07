@@ -5,6 +5,12 @@
 
 set -e
 
+# Source common functions for git approval
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/.specify/scripts/bash/common.sh" ]; then
+    source "$SCRIPT_DIR/.specify/scripts/bash/common.sh"
+fi
+
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -139,10 +145,38 @@ echo -e "${GREEN}✓${NC} Project README created"
 # Initialize git if not already initialized
 if [ ! -d ".git" ]; then
     echo -e "${BLUE}Initializing git repository...${NC}"
+<<<<<<< HEAD
     git init
     git add .
     git commit -m "Initial commit: $PROJECT_NAME setup with SDD Framework"
     echo -e "${GREEN}✓${NC} Git repository initialized"
+=======
+    echo ""
+
+    # Constitutional Principle VI: Request approval for git operations
+    if type request_git_approval &> /dev/null; then
+        if ! request_git_approval "Git Initialization" "Initialize git repo with initial commit for $PROJECT_NAME"; then
+            echo -e "${YELLOW}Git initialization skipped by user${NC}"
+            echo -e "${YELLOW}You can initialize git manually later with: git init${NC}"
+        else
+            git init
+            git add .
+            git commit -m "Initial commit: $PROJECT_NAME setup with SDD Framework"
+            echo -e "${GREEN}✓${NC} Git repository initialized"
+        fi
+    else
+        # Fallback if common.sh not available
+        read -p "Initialize git repository? (y/n): " INIT_GIT
+        if [[ "$INIT_GIT" =~ ^[Yy]$ ]]; then
+            git init
+            git add .
+            git commit -m "Initial commit: $PROJECT_NAME setup with SDD Framework"
+            echo -e "${GREEN}✓${NC} Git repository initialized"
+        else
+            echo -e "${YELLOW}Git initialization skipped${NC}"
+        fi
+    fi
+>>>>>>> kelleysd-apps-dev
 else
     echo -e "${YELLOW}ℹ${NC}  Git repository already exists"
 fi

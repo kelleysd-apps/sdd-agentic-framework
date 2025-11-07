@@ -35,3 +35,30 @@ EOF
 
 check_file() { [[ -f "$1" ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
 check_dir() { [[ -d "$1" && -n $(ls -A "$1" 2>/dev/null) ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
+
+# Git Operation Approval Function
+# Constitutional Principle VI: NO automatic git operations without explicit user approval
+request_git_approval() {
+    local operation="$1"
+    local details="$2"
+
+    echo ""
+    echo "=========================================="
+    echo "Git Operation Approval Required"
+    echo "=========================================="
+    echo "Operation: $operation"
+    echo "Details: $details"
+    echo ""
+    echo "Constitutional Principle VI requires explicit approval for all git operations."
+    echo ""
+    read -p "Approve this operation? (y/n): " APPROVAL
+    echo ""
+
+    if [[ "$APPROVAL" =~ ^[Yy]$ ]]; then
+        echo "✓ Operation approved by user"
+        return 0
+    else
+        echo "✗ Operation cancelled by user"
+        return 1
+    fi
+}

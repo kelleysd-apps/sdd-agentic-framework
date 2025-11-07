@@ -2,6 +2,10 @@
 # (Moved to scripts/bash/) Create a new feature with branch, directory structure, and template
 set -e
 
+# Source common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
+
 JSON_MODE=false
 ARGS=()
 for arg in "$@"; do
@@ -39,6 +43,12 @@ FEATURE_NUM=$(printf "%03d" "$NEXT")
 BRANCH_NAME=$(echo "$FEATURE_DESCRIPTION" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//')
 WORDS=$(echo "$BRANCH_NAME" | tr '-' '\n' | grep -v '^$' | head -3 | tr '\n' '-' | sed 's/-$//')
 BRANCH_NAME="${FEATURE_NUM}-${WORDS}"
+
+# Constitutional Principle VI: Request approval for branch creation
+if ! request_git_approval "Branch Creation" "Create new branch: $BRANCH_NAME"; then
+    echo "Branch creation cancelled. Exiting." >&2
+    exit 1
+fi
 
 git checkout -b "$BRANCH_NAME"
 

@@ -13,9 +13,11 @@ This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-
 
 ### Extensions and Enhancements
 This implementation extends spec-kit with:
-- **Enhanced AI governance ** - Enforced development principles and quality gates
-- **Intelligent agent orchestration** - Department-based specialized agents with MCP integration
-- **Advanced workflow automation** - Enhanced scripts and command system
+- **Enhanced AI governance** - Constitutional principles and enforced quality gates
+- **Intelligent agent orchestration** - 12 specialized agents across 6 departments with MCP integration
+- **Agent Skills system** - Progressive disclosure for procedural knowledge (30-50% context reduction)
+- **Governance policies** - 6 comprehensive policies (Testing, Security, Code Review, Deployment, Branching, Release)
+- **Advanced workflow automation** - Validation scripts and command system
 - **Memory and context management** - Persistent agent knowledge and collaboration patterns
 - **Tool restriction framework** - Department-specific tool access control
 - **Automatic documentation updates** - Self-maintaining CLAUDE.md and agent registry
@@ -76,17 +78,40 @@ npm run setup
 
 ### 2. Configure Project Constitution
 
-The constitution (`/.specify/memory/constitution.md`) defines your project's development principles. Review and adjust:
+The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your project's 14 enforceable principles:
 
-- **Article I**: Library-First Development approach
-- **Article II**: CLI Interface standards
-- **Article III**: Test-First Development requirements
-- **Article IV**: Integration Testing gates
-- **Article V**: Observability standards
-- **Article VI**: Versioning strategy
-- **Article VII**: Simplicity constraints
+**Core Immutable Principles** (I-III):
+- **Principle I**: Library-First Architecture
+- **Principle II**: Test-First Development (TDD)
+- **Principle III**: Contract-First Design
+
+**Quality & Safety Principles** (IV-IX):
+- **Principle IV**: Idempotent Operations
+- **Principle V**: Progressive Enhancement
+- **Principle VI**: Git Operation Approval (CRITICAL)
+- **Principle VII**: Observability and Structured Logging
+- **Principle VIII**: Documentation Synchronization
+- **Principle IX**: Dependency Management
+
+**Workflow & Delegation Principles** (X-XIV):
+- **Principle X**: Agent Delegation Protocol (CRITICAL)
+- **Principle XI**: Input Validation and Output Sanitization
+- **Principle XII**: Design System Compliance
+- **Principle XIII**: Feature Access Control
+- **Principle XIV**: AI Model Selection Protocol
 
 ⚠️ **Important**: When updating the constitution, follow `/.specify/memory/constitution_update_checklist.md`
+
+### Validation Scripts
+
+Run before commits and releases:
+```bash
+# Check constitutional compliance (all 14 principles)
+./.specify/scripts/bash/constitutional-check.sh
+
+# Verify framework sanitization
+./.specify/scripts/bash/sanitization-audit.sh
+```
 
 ### 3. Set Up MCP Integrations
 
@@ -164,6 +189,69 @@ Each department gets appropriate MCP servers:
 - **Limit scope** - Use least-privilege access principles
 - **Audit access** - Log and monitor secret usage
 
+## 🎨 Agent Skills System
+
+The framework includes an **Agent Skills** system that provides procedural "how-to" knowledge in addition to agent delegation. Skills use progressive disclosure (load only what's needed) for significant context efficiency.
+
+### Skills vs Agents
+
+- **Agents** (Delegation Layer): Handle specialized work autonomously, coordinate workflows, invoke other agents
+- **Skills** (Capability Layer): Provide step-by-step procedural guidance, reference agents for delegation
+
+### Core Skills Included
+
+**SDD Workflow Skills**:
+- `sdd-specification` - `/specify` command procedure
+- `sdd-planning` - `/plan` command procedure
+- `sdd-tasks` - `/tasks` command procedure
+
+**Validation Skills**:
+- `constitutional-compliance` - Validate all 14 constitutional principles
+- `domain-detection` - Identify domains and suggest appropriate agents
+
+### Creating Custom Skills
+
+Users can create custom skills without modifying the framework:
+
+```bash
+# Create skill directory
+mkdir -p .claude/skills/{category}/{skill-name}
+
+# Create SKILL.md with YAML frontmatter
+cat > .claude/skills/{category}/{skill-name}/SKILL.md <<'EOF'
+---
+name: skill-name
+description: What it does and when to use it (max 1024 chars)
+allowed-tools: Read, Write, Bash
+---
+
+# Skill Name
+
+## When to Use
+[Trigger conditions]
+
+## Procedure
+1. Step 1
+2. Step 2
+...
+EOF
+```
+
+See `.specify/templates/skill-template.md` for complete skill creation guide.
+
+## 📋 Governance Policies
+
+The framework includes 6 comprehensive policies establishing standards for all development activities:
+
+1. **Testing Policy** - TDD enforcement (Principle II - IMMUTABLE), testing pyramid, coverage requirements
+2. **Security Policy** - OWASP Top 10 mitigations, input validation, output sanitization (Principle XI)
+3. **Code Review Policy** - Constitutional compliance checklist, review process, quality gates
+4. **Deployment Policy** - Zero-downtime deployments, rollback procedures, feature flags
+5. **Branching Strategy Policy** - Git workflows, branch naming, Principle VI compliance
+6. **Release Management Policy** - Semantic versioning, release workflow, deprecation policy
+
+All policies located in `.docs/policies/` and aligned with Constitution v1.5.0.
+
 ## 📚 Core Commands
 
 ### Feature Development
@@ -233,11 +321,15 @@ When creating an agent, the system automatically:
 your-project/
 ├── .specify/                 # Framework core
 │   ├── memory/              # Constitutional documents
-│   │   ├── constitution.md  # Development principles
-│   │   ├── constitution_update_checklist.md
+│   │   ├── constitution.md  # 14 development principles (v1.5.0)
+│   │   ├── constitution_update_checklist.md  # Change management
+│   │   ├── agent-collaboration-triggers.md   # Agent delegation reference
 │   │   ├── agent-governance.md  # Agent compliance rules
 │   │   └── agent-collaboration.md  # Collaboration patterns
 │   ├── scripts/bash/        # Automation scripts
+│   │   ├── common.sh        # Shared functions + git approval
+│   │   ├── constitutional-check.sh  # 14-principle validator
+│   │   ├── sanitization-audit.sh    # Framework sanitization
 │   │   ├── create-agent.sh  # Agent creation with auto-updates
 │   │   └── ...
 │   └── templates/           # Document templates

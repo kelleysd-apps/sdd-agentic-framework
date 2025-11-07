@@ -53,6 +53,22 @@ Given the context provided as an argument, do this:
    - Dependency notes
    - Parallel execution guidance
 
+8. Validate task list: `.specify/scripts/bash/validate-tasks.sh --file FEATURE_DIR/tasks.md`
+   - Verify tasks follow constitutional principles (test-first, contract-first)
+   - Check for sufficient granularity and dependencies
+   - Report validation score and task statistics
+
+9. Run domain detection on tasks: `.specify/scripts/bash/detect-phase-domain.sh --file FEATURE_DIR/tasks.md`
+   - Identify specialized agents needed for task execution
+   - Determine if multi-agent orchestration is required
+
+10. Report completion with:
+    - Task file path
+    - Total task count and parallel task count
+    - Validation score
+    - Suggested agents for execution
+    - Ready for implementation
+
 Context for task generation: $ARGUMENTS
 
 The tasks.md should be immediately executable - each task must be specific enough that an LLM can complete it without additional context.

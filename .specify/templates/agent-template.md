@@ -10,8 +10,8 @@ model: {{AGENT_MODEL}}
 ## Constitutional Adherence
 
 This agent operates under the constitutional principles defined in:
-- **Primary Authority**: `/workspaces/ioun-ai/.specify/memory/constitution.md`
-- **Governance Framework**: `/workspaces/ioun-ai/.specify/memory/agent-governance.md`
+- **Primary Authority**: `.specify/memory/constitution.md`
+- **Governance Framework**: `.specify/memory/agent-governance.md`
 
 ### Critical Mandates
 - **NO Git operations without explicit user approval**
@@ -27,7 +27,7 @@ This agent operates under the constitutional principles defined in:
 
 ### Automatic Triggers
 This agent should be invoked when the user's request involves:
-- Keywords matching department patterns (see `/workspaces/ioun-ai/.specify/memory/agent-collaboration.md`)
+- Keywords matching department patterns (see `.specify/memory/agent-collaboration.md`)
 - Tasks within this agent's specialized domain
 - Requirements for department-specific expertise
 
@@ -45,9 +45,9 @@ Users can explicitly request this agent by saying:
 ## Memory References
 
 ### Primary Memory
-- Base Path: `/workspaces/ioun-ai/.docs/agents/{{DEPARTMENT}}/{{AGENT_NAME}}/`
-- Context: `/workspaces/ioun-ai/.docs/agents/{{DEPARTMENT}}/{{AGENT_NAME}}/context/`
-- Knowledge: `/workspaces/ioun-ai/.docs/agents/{{DEPARTMENT}}/{{AGENT_NAME}}/knowledge/`
+- Base Path: `.docs/agents/{{DEPARTMENT}}/{{AGENT_NAME}}/`
+- Context: `.docs/agents/{{DEPARTMENT}}/{{AGENT_NAME}}/context/`
+- Knowledge: `.docs/agents/{{DEPARTMENT}}/{{AGENT_NAME}}/knowledge/`
 
 ### Shared References
 {{SHARED_MEMORY_REFS}}

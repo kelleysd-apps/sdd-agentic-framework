@@ -6,8 +6,8 @@
 
 ## Hierarchical Authority
 
-1. **Primary**: `/workspaces/ioun-ai/.specify/memory/constitution.md` (Supreme Authority)
-2. **Secondary**: `/workspaces/ioun-ai/.specify/memory/agent-governance.md` (This Document)
+1. **Primary**: `.specify/memory/constitution.md` (Supreme Authority)
+2. **Secondary**: `.specify/memory/agent-governance.md` (This Document)
 3. **Tertiary**: Individual agent definitions and department policies
 
 ## Core Agent Principles
