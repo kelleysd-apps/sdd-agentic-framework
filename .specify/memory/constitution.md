@@ -640,6 +640,111 @@ Before any code can be merged:
 
 ---
 
+## Part IV-B: Agent Skills and Progressive Disclosure
+
+### Skills vs Agents: Complementary Systems
+
+The SDD Framework employs a **hybrid approach** combining agents and skills:
+
+**Agents** (Delegation Layer):
+- **Purpose**: Orchestration, delegation, and multi-agent coordination
+- **When**: Specialized work requiring autonomous decision-making
+- **How**: Use Task tool to invoke specialized agents
+- **Example**: task-orchestrator coordinates multiple specialists
+
+**Skills** (Capability Layer):
+- **Purpose**: Procedural "how-to" knowledge and step-by-step guidance
+- **When**: Reusable procedures, workflows, or validation checks
+- **How**: Claude loads skills dynamically using progressive disclosure
+- **Example**: sdd-specification provides /specify command procedure
+
+### Agent Skills Requirements
+
+All skills must comply with:
+
+1. **Constitutional Alignment**: Skills must reference applicable constitutional principles
+2. **Agent Collaboration**: Skills must specify when to delegate to agents (Principle X)
+3. **Progressive Disclosure**: Load information in layers (metadata → instructions → supporting files)
+4. **Git Safety**: Skills must never perform autonomous git operations (Principle VI)
+5. **Tool Restrictions**: Use `allowed-tools` YAML field to enforce least privilege
+
+### Skill Structure
+
+```
+.claude/skills/category/skill-name/
+├── SKILL.md          # Required: Instructions + YAML frontmatter
+├── reference.md      # Optional: Detailed documentation
+├── examples.md       # Optional: Usage examples
+└── scripts/          # Optional: Executable utilities
+```
+
+**Required SKILL.md Frontmatter**:
+```yaml
+---
+name: skill-name
+description: |
+  What the skill does and when to use it (max 1024 chars).
+  Include trigger conditions and expected outcomes.
+allowed-tools: Read, Write, Bash  # Optional: restricts tool access
+---
+```
+
+### Skill Categories
+
+1. **sdd-workflow/** - Core SDD methodology (specification, planning, tasks)
+2. **validation/** - Quality gates and compliance (constitutional-compliance, domain-detection)
+3. **technical/** - Domain-specific procedures (api-contract-design, test-first-development)
+4. **integration/** - External system integrations (mcp-server-integration)
+
+### Skills Decision Tree
+
+```
+Need procedural guidance?
+├─ YES: Activate SKILL
+│  └─ Self-contained "how-to" with steps
+└─ NO: Need delegation/orchestration?
+   ├─ YES: Invoke AGENT
+   │  └─ Autonomous specialist work
+   └─ NO: Execute directly
+```
+
+### Core Skills
+
+**Priority 1 (SDD Workflow)**:
+- `sdd-specification`: /specify command procedure
+- `sdd-planning`: /plan command procedure
+- `sdd-tasks`: /tasks command procedure
+
+**Priority 2 (Validation)**:
+- `constitutional-compliance`: Validate 14 principles
+- `domain-detection`: Identify domains and suggest agents
+
+**When to Use Skills vs Agents**:
+- **Use Skill**: Need step-by-step procedure guidance
+- **Use Agent**: Need specialized work executed autonomously
+- **Use Both**: Agent uses skill for procedural guidance
+- **Use Orchestrator**: Multi-domain work needs coordination
+
+### Benefits of Hybrid Approach
+
+| Benefit | Impact |
+|---------|--------|
+| **Context Efficiency** | 30-50% reduction in tokens |
+| **User Extensibility** | Users add custom skills without framework mods |
+| **Better Separation** | Agents delegate, skills guide procedures |
+| **Constitutional Enforcement** | Dual-layer validation (agents + skills) |
+| **Knowledge Sharing** | Skills capture procedural knowledge |
+
+### Skills Compliance Requirements
+
+- Skills MUST reference constitutional principles they enforce
+- Skills MUST specify agent collaboration points
+- Skills MUST NOT perform autonomous git operations
+- Skills MUST use tool restrictions appropriately
+- Skills MUST provide validation steps
+
+---
+
 ## Part V: Exceptions and Amendments
 
 ### Constitutional Authority
