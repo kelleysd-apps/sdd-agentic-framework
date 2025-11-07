@@ -21,7 +21,7 @@ Full custom prompt content...
 
 ```bash
 echo '{"name": "agent-name", "description": "description"}' | \
-/workspaces/ioun-ai/.specify/scripts/bash/create-agent.sh --json
+.specify/scripts/bash/create-agent.sh --json
 ```
 
 ### Step 3: Apply Custom Prompt (CRITICAL)
@@ -31,7 +31,7 @@ The script creates a generic template. You MUST update it:
 ```python
 # Use MultiEdit to update the agent file
 MultiEdit(
-    file_path="/workspaces/ioun-ai/.claude/agents/{department}/{agent-name}.md",
+    file_path=".claude/agents/{department}/{agent-name}.md",
     edits=[
         {
             "old_string": "model: inherit",
@@ -57,15 +57,15 @@ Check if department classification is correct:
 # If frontend-specialist ended up in architecture instead of engineering:
 
 # 1. Create correct department directory if needed
-mkdir -p /workspaces/ioun-ai/.claude/agents/engineering
+mkdir -p .claude/agents/engineering
 
 # 2. Move agent file
-mv /workspaces/ioun-ai/.claude/agents/architecture/frontend-specialist.md \
-   /workspaces/ioun-ai/.claude/agents/engineering/
+mv .claude/agents/architecture/frontend-specialist.md \
+   .claude/agents/engineering/
 
 # 3. Move memory structure
-mv /workspaces/ioun-ai/.docs/agents/architecture/frontend-specialist \
-   /workspaces/ioun-ai/.docs/agents/engineering/
+mv .docs/agents/architecture/frontend-specialist \
+   .docs/agents/engineering/
 ```
 
 ### Step 5: Update Registry
@@ -73,21 +73,21 @@ mv /workspaces/ioun-ai/.docs/agents/architecture/frontend-specialist \
 ```python
 # Update agent registry with correct tools
 Edit(
-    file_path="/workspaces/ioun-ai/.docs/agents/agent-registry.json",
+    file_path=".docs/agents/agent-registry.json",
     old_string='"tools": "Read, Grep, Glob, WebSearch, TodoWrite"',
     new_string='"tools": "Read, Write, Bash, MultiEdit"'
 )
 
 # Fix department
 Edit(
-    file_path="/workspaces/ioun-ai/.docs/agents/agent-registry.json",
+    file_path=".docs/agents/agent-registry.json",
     old_string='"department": "architecture"',
     new_string='"department": "engineering"'
 )
 
 # Update department counts
 Edit(
-    file_path="/workspaces/ioun-ai/.docs/agents/agent-registry.json",
+    file_path=".docs/agents/agent-registry.json",
     old_string='"architecture": 3, "engineering": 1',
     new_string='"architecture": 2, "engineering": 2'
 )
@@ -97,7 +97,7 @@ Edit(
 
 ```python
 Edit(
-    file_path="/workspaces/ioun-ai/CLAUDE.md",
+    file_path="CLAUDE.md",
     old_string="### agent-name (architecture)",
     new_string="### agent-name (engineering)"
 )
@@ -107,7 +107,7 @@ Edit(
 
 ```python
 Edit(
-    file_path="/workspaces/ioun-ai/.docs/agents/audit/creation-log.json",
+    file_path=".docs/agents/audit/creation-log.json",
     old_string='"department": "architecture"',
     new_string='"department": "engineering"'
 )
@@ -149,16 +149,16 @@ Edit(
 
 ```bash
 # Check agent location
-ls -la /workspaces/ioun-ai/.claude/agents/{department}/{agent-name}.md
+ls -la .claude/agents/{department}/{agent-name}.md
 
 # Verify memory structure
-ls -la /workspaces/ioun-ai/.docs/agents/{department}/{agent-name}/*/*.md
+ls -la .docs/agents/{department}/{agent-name}/*/*.md
 
 # Check registry
-grep "agent-name" /workspaces/ioun-ai/.docs/agents/agent-registry.json
+grep "agent-name" .docs/agents/agent-registry.json
 
 # Verify in CLAUDE.md
-grep "agent-name" /workspaces/ioun-ai/CLAUDE.md
+grep "agent-name" CLAUDE.md
 ```
 
 ## Required Tools for Subagent-Architect

@@ -6,11 +6,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **ALWAYS read `.specify/memory/constitution.md` BEFORE starting any work.**
 
+The constitution (v1.5.0) contains **14 enforceable principles**:
+- **3 Immutable Principles** (I-III): Library-First, Test-First, Contract-First
+- **6 Quality & Safety Principles** (IV-IX): Idempotency, Progressive Enhancement, Git Approval, Observability, Documentation Sync, Dependency Management
+- **5 Workflow & Delegation Principles** (X-XIV): Agent Delegation, Input Validation, Design System, Access Control, AI Model Selection
+
 The constitution is the SINGLE SOURCE OF TRUTH for:
 - Core development principles and rules
 - Workflow requirements and gates
 - Quality standards and constraints
 - All architectural decisions
+- Agent delegation protocol
+
+### Work Session Initiation Protocol (MANDATORY)
+
+Every task must follow these 4 steps:
+1. **READ CONSTITUTION** - First action, no exceptions
+2. **ANALYZE TASK DOMAIN** - Identify trigger keywords
+3. **DELEGATION DECISION** - Delegate if specialized work
+4. **EXECUTION** - Execute directly or via specialized agent
 
 No work should proceed without first understanding and applying the constitution's principles. All features, code, and decisions must comply with constitutional requirements.
 
@@ -50,38 +64,68 @@ This is a specification-driven development framework that uses structured templa
    - Script: `.specify/scripts/bash/create-agent.sh --json`
    - Example: `/create-agent backend-engineer "API and database specialist"`
 
+### Agent Delegation Protocol
+
+**Constitutional Principle X** requires specialized work be delegated to specialized agents.
+
+See `.specify/memory/agent-collaboration-triggers.md` for:
+- Domain trigger keywords (Frontend, Backend, Database, Testing, Security, Performance, DevOps, etc.)
+- Single-agent vs multi-agent decision tree
+- Context handoff format
+- 13 specialized agents across 6 departments
+
+**Quick Reference**: If task contains domain keywords (test, UI, database, API, security, etc.) → Delegate to specialized agent
+
 ## Key Architecture
 
 ### Directory Structure
 ```
 .specify/
 ├── memory/
-│   ├── constitution.md      # Core development principles
-│   └── constitution_update_checklist.md
-├── scripts/bash/            # Workflow automation scripts
-├── templates/               # Document templates
-│   ├── spec-template.md     # Feature specification
-│   ├── plan-template.md     # Implementation plan (9-step process)
-│   ├── tasks-template.md    # Task list generation
-│   └── agent-file-template.md
+│   ├── constitution.md                    # Core principles (v1.5.0 - 14 principles)
+│   ├── constitution_update_checklist.md   # Mandatory change management
+│   └── agent-collaboration-triggers.md    # Agent delegation reference
+├── scripts/bash/                          # Workflow automation scripts
+│   ├── common.sh                          # Shared functions + git approval
+│   ├── constitutional-check.sh            # 14-principle compliance validator
+│   ├── sanitization-audit.sh              # Framework sanitization checker
+│   ├── create-new-feature.sh              # Feature initialization
+│   ├── setup-plan.sh                      # Planning workflow
+│   └── check-task-prerequisites.sh        # Task generation validator
+├── templates/                             # Document templates
+│   ├── spec-template.md                   # Feature specification
+│   ├── plan-template.md                   # Implementation plan (9-step)
+│   ├── tasks-template.md                  # Task list generation
+│   └── agent-file-template.md             # New agent template
 
-specs/###-feature-name/       # Per-feature documentation
-├── spec.md                  # Feature requirements
-├── plan.md                  # Technical approach
-├── research.md              # Technical decisions
-├── data-model.md            # Entity definitions
-├── contracts/               # API contracts
-├── quickstart.md            # Test scenarios
-└── tasks.md                 # Implementation tasks
+specs/###-feature-name/                     # Per-feature documentation
+├── spec.md                                # Feature requirements
+├── plan.md                                # Technical approach
+├── research.md                            # Technical decisions
+├── data-model.md                          # Entity definitions
+├── contracts/                             # API contracts
+├── quickstart.md                          # Test scenarios
+└── tasks.md                               # Implementation tasks
 ```
 
 ### Workflow Scripts
 
-- **common.sh**: Shared functions for branch/path management
+- **common.sh**: Shared functions for branch/path management, git approval
 - **create-new-feature.sh**: Initialize feature branch and spec
 - **setup-plan.sh**: Prepare implementation planning
 - **check-task-prerequisites.sh**: Verify design artifacts exist
 - **update-agent-context.sh**: Update AI assistant context files
+
+### Validation Scripts
+
+- **constitutional-check.sh**: Automated compliance checking for all 14 principles
+- **sanitization-audit.sh**: Verifies framework sanitization (no project-specific elements)
+
+Run before commits and releases:
+```bash
+./.specify/scripts/bash/constitutional-check.sh
+./.specify/scripts/bash/sanitization-audit.sh
+```
 
 ### Development Principles
 

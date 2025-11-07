@@ -23,7 +23,7 @@ Given the agent name and description provided as arguments, do this:
 
 4. Execute agent creation:
    ```bash
-   echo '{"name": "AGENT_NAME", "description": "DESCRIPTION"}' | /workspaces/ioun-ai/.specify/scripts/bash/create-agent.sh --json
+   echo '{"name": "AGENT_NAME", "description": "DESCRIPTION"}' | .specify/scripts/bash/create-agent.sh --json
    ```
 
 5. Verify the agent was created successfully:

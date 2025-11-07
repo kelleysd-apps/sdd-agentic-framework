@@ -31,6 +31,20 @@ Given the implementation details provided as an argument, do this:
    - Ensure all required artifacts were generated
    - Confirm no ERROR states in execution
 
-6. Report results with branch name, file paths, and generated artifacts.
+6. Validate implementation plan: `.specify/scripts/bash/validate-plan.sh --file IMPL_PLAN`
+   - Check for constitutional principle compliance (Library-First, Test-First, Contract-First)
+   - Verify required artifacts exist (research.md, data-model.md, contracts/, quickstart.md)
+   - Report validation score and recommendations
+
+7. Run domain detection on plan: `.specify/scripts/bash/detect-phase-domain.sh --file IMPL_PLAN`
+   - Confirm domains match those identified in specification
+   - Identify any additional domains/agents needed for implementation
+
+8. Report results with:
+   - Branch name
+   - File paths and generated artifacts
+   - Validation score
+   - Suggested agents for task execution
+   - Readiness for the next phase (/tasks)
 
 Use absolute paths with the repository root for all file operations to avoid path issues.

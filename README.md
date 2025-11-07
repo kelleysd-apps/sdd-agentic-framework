@@ -76,17 +76,40 @@ npm run setup
 
 ### 2. Configure Project Constitution
 
-The constitution (`/.specify/memory/constitution.md`) defines your project's development principles. Review and adjust:
+The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your project's 14 enforceable principles:
 
-- **Article I**: Library-First Development approach
-- **Article II**: CLI Interface standards
-- **Article III**: Test-First Development requirements
-- **Article IV**: Integration Testing gates
-- **Article V**: Observability standards
-- **Article VI**: Versioning strategy
-- **Article VII**: Simplicity constraints
+**Core Immutable Principles** (I-III):
+- **Principle I**: Library-First Architecture
+- **Principle II**: Test-First Development (TDD)
+- **Principle III**: Contract-First Design
+
+**Quality & Safety Principles** (IV-IX):
+- **Principle IV**: Idempotent Operations
+- **Principle V**: Progressive Enhancement
+- **Principle VI**: Git Operation Approval (CRITICAL)
+- **Principle VII**: Observability and Structured Logging
+- **Principle VIII**: Documentation Synchronization
+- **Principle IX**: Dependency Management
+
+**Workflow & Delegation Principles** (X-XIV):
+- **Principle X**: Agent Delegation Protocol (CRITICAL)
+- **Principle XI**: Input Validation and Output Sanitization
+- **Principle XII**: Design System Compliance
+- **Principle XIII**: Feature Access Control
+- **Principle XIV**: AI Model Selection Protocol
 
 ⚠️ **Important**: When updating the constitution, follow `/.specify/memory/constitution_update_checklist.md`
+
+### Validation Scripts
+
+Run before commits and releases:
+```bash
+# Check constitutional compliance (all 14 principles)
+./.specify/scripts/bash/constitutional-check.sh
+
+# Verify framework sanitization
+./.specify/scripts/bash/sanitization-audit.sh
+```
 
 ### 3. Set Up MCP Integrations
 
@@ -233,11 +256,15 @@ When creating an agent, the system automatically:
 your-project/
 ├── .specify/                 # Framework core
 │   ├── memory/              # Constitutional documents
-│   │   ├── constitution.md  # Development principles
-│   │   ├── constitution_update_checklist.md
+│   │   ├── constitution.md  # 14 development principles (v1.5.0)
+│   │   ├── constitution_update_checklist.md  # Change management
+│   │   ├── agent-collaboration-triggers.md   # Agent delegation reference
 │   │   ├── agent-governance.md  # Agent compliance rules
 │   │   └── agent-collaboration.md  # Collaboration patterns
 │   ├── scripts/bash/        # Automation scripts
+│   │   ├── common.sh        # Shared functions + git approval
+│   │   ├── constitutional-check.sh  # 14-principle validator
+│   │   ├── sanitization-audit.sh    # Framework sanitization
 │   │   ├── create-agent.sh  # Agent creation with auto-updates
 │   │   └── ...
 │   └── templates/           # Document templates
