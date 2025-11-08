@@ -479,6 +479,325 @@ update_collaboration_triggers() {
     echo -e "${GREEN}✓ Collaboration triggers configured for ${department} department${NC}"
 }
 
+# Skill creation functions
+should_suggest_skill() {
+    local agent_name=$1
+    local department=$2
+    local description=$3
+
+    # Product/Operations departments often need procedural skills
+    if [[ "$department" == "product" || "$department" == "operations" ]]; then
+        return 0
+    fi
+
+    # Workflow/command keywords
+    if echo "$description" | grep -qiE "workflow|command|procedure|step-by-step|orchestration|coordination|validation|compliance|integration|setup|initialization|/plan|/specify|/tasks"; then
+        return 0
+    fi
+
+    # Agent name patterns
+    if [[ "$agent_name" =~ -orchestrator$|-validator$|-planner$ ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
+suggest_skill_creation() {
+    local agent_name=$1
+    local department=$2
+    local description=$3
+
+    if ! should_suggest_skill "$agent_name" "$department" "$description"; then
+        return
+    fi
+
+    echo
+    echo -e "${YELLOW}╔════════════════════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║     ✨ Skill Creation Opportunity Detected      ║${NC}"
+    echo -e "${YELLOW}╚════════════════════════════════════════════════════╝${NC}"
+    echo
+    echo -e "This agent appears to handle ${BLUE}procedural/workflow${NC} work."
+    echo -e "Creating an associated ${GREEN}skill${NC} provides:"
+    echo -e "  • Progressive disclosure (30-50% context reduction)"
+    echo -e "  • Reusable procedures across sessions"
+    echo -e "  • Self-documenting workflows"
+    echo
+    read -p "Create skill for ${agent_name}? (y/n): " create_skill
+
+    if [[ "$create_skill" =~ ^[Yy]$ ]]; then
+        create_skill_for_agent "$agent_name" "$department" "$description"
+    else
+        echo -e "${BLUE}ℹ  You can create a skill later using: /create-skill ${agent_name}${NC}"
+    fi
+}
+
+determine_skill_category() {
+    local department=$1
+
+    case "$department" in
+        product)
+            echo "sdd-workflow"
+            ;;
+        quality)
+            echo "validation"
+            ;;
+        operations)
+            echo "integration"
+            ;;
+        *)
+            echo "technical"
+            ;;
+    esac
+}
+
+create_skill_for_agent() {
+    local agent_name=$1
+    local department=$2
+    local description=$3
+
+    local skill_category=$(determine_skill_category "$department")
+    local skill_name="${agent_name}"
+    local skill_dir="${REPO_ROOT}/.claude/skills/${skill_category}/${skill_name}"
+
+    echo
+    echo -e "${YELLOW}▶ Creating skill: ${skill_name}${NC}"
+
+    # Create skill directory
+    mkdir -p "$skill_dir"
+
+    # Generate SKILL.md from template
+    generate_skill_template "$skill_dir/SKILL.md" "$skill_name" "$agent_name" "$description" "$department"
+
+    echo -e "${GREEN}✓ Skill created: .claude/skills/${skill_category}/${skill_name}/SKILL.md${NC}"
+    echo -e "${BLUE}ℹ  Next steps:${NC}"
+    echo -e "   1. Edit the skill file to add detailed procedure steps"
+    echo -e "   2. Add specific trigger keywords"
+    echo -e "   3. Include concrete examples"
+    echo -e "   4. Define validation steps"
+}
+
+generate_skill_template() {
+    local skill_file=$1
+    local skill_name=$2
+    local agent_name=$3
+    local description=$4
+    local department=$5
+
+    # Determine default tools based on department
+    local default_tools="Read, Write, Bash, Grep, Glob"
+    case "$department" in
+        product)
+            default_tools="Read, Write, Bash, Grep, Glob, TodoWrite"
+            ;;
+        operations)
+            default_tools="Read, Bash, Grep, Glob"
+            ;;
+        quality)
+            default_tools="Read, Bash, Grep, Glob"
+            ;;
+    esac
+
+    cat > "$skill_file" <<'EOF'
+---
+name: SKILL_NAME
+description: |
+  SKILL_DESCRIPTION
+
+  This skill provides step-by-step procedural guidance for tasks handled by
+  the AGENT_NAME agent. Use when you need to understand the workflow or
+  execute tasks that AGENT_NAME would typically handle.
+
+  Triggered by: [TODO: Add trigger phrases]
+allowed-tools: ALLOWED_TOOLS
+---
+
+# SKILL_NAME Skill
+
+## When to Use
+
+Activate this skill when:
+- [TODO: Add specific trigger conditions]
+- User requests work that AGENT_NAME handles
+- [TODO: Add workflow phase or command]
+- [TODO: Add domain-specific scenarios]
+
+**Trigger Keywords**: [TODO: Add comma-separated keywords]
+
+**Prerequisites**: [TODO: Add any required preconditions]
+
+## Procedure
+
+### Step 1: [TODO: Initialization/Setup]
+
+**Action**: [TODO: Describe what to do in this step]
+
+```bash
+# TODO: Add commands if applicable
+# Example: script.sh --flag value
+```
+
+**Expected Outcome**: [TODO: What should result from this step]
+
+### Step 2: [TODO: Main Processing]
+
+**Action**: [TODO: Describe core processing steps]
+
+**Details**:
+- [TODO: Important sub-step or consideration]
+- [TODO: Another important detail]
+- [TODO: Edge case handling]
+
+**Expected Outcome**: [TODO: What should be produced]
+
+### Step 3: [TODO: Validation/Completion]
+
+**Action**: [TODO: Describe validation or finalization steps]
+
+**Checklist**:
+- [ ] [TODO: Validation item 1]
+- [ ] [TODO: Validation item 2]
+- [ ] [TODO: Validation item 3]
+
+**Expected Outcome**: [TODO: Final deliverable or state]
+
+## Constitutional Compliance
+
+### Principle I: Library-First Architecture
+[TODO: How this skill ensures features start as standalone libraries]
+
+### Principle II: Test-First Development
+[TODO: How this skill enforces writing tests before implementation]
+
+### Principle VI: Git Operation Approval
+- **CRITICAL**: NO autonomous git operations
+- Request user approval for ANY git commands
+- Document git operations in procedure steps
+
+### Principle VIII: Documentation Synchronization
+[TODO: How this skill maintains documentation]
+
+### Principle X: Agent Delegation Protocol
+When to delegate to AGENT_NAME:
+- [TODO: Complex scenarios requiring agent autonomy]
+- [TODO: Multi-step orchestration]
+- [TODO: Specialized domain work]
+
+## Examples
+
+### Example 1: [TODO: Common Scenario Name]
+
+**User Request**: "[TODO: What the user asked for]"
+
+**Skill Execution**:
+1. [TODO: First action taken]
+2. [TODO: Second action taken]
+3. [TODO: Final action taken]
+
+**Generated Output**:
+```
+[TODO: Show what files/artifacts were created]
+```
+
+**Validation**: [TODO: How to verify success]
+
+### Example 2: [TODO: Alternative Scenario]
+
+**User Request**: "[TODO: Different user request]"
+
+**Skill Execution**:
+1. [TODO: Steps for this scenario]
+
+**Expected Result**: [TODO: Outcome]
+
+## Agent Collaboration
+
+### AGENT_NAME
+**When to delegate**: [TODO: Situations requiring this agent's autonomy]
+
+**What they handle**: [TODO: Specific capabilities of this agent]
+
+**Handoff format**: [TODO: How to invoke the agent]
+
+### Related Agents
+[TODO: List other agents this skill might reference]
+- **agent-name**: [TODO: When and why to use this agent]
+
+## Validation
+
+Verify the skill executed correctly:
+
+- [ ] [TODO: Primary deliverable created]
+- [ ] [TODO: Quality check passed]
+- [ ] [TODO: Constitutional compliance verified]
+- [ ] [TODO: Documentation updated]
+- [ ] [TODO: User notified of next steps]
+
+## Troubleshooting
+
+### Issue: [TODO: Common Problem 1]
+
+**Cause**: [TODO: Why this problem occurs]
+
+**Solution**: [TODO: Step-by-step resolution]
+
+**Prevention**: [TODO: How to avoid this in the future]
+
+### Issue: [TODO: Common Problem 2]
+
+**Cause**: [TODO: Root cause]
+
+**Solution**: [TODO: Fix procedure]
+
+## Notes
+
+**Important Considerations**:
+- [TODO: Critical information about this procedure]
+- [TODO: Performance implications]
+- [TODO: Known limitations]
+
+**Best Practices**:
+- [TODO: Recommended approach]
+- [TODO: Tips for efficiency]
+
+**Related Skills**:
+- **skill-name**: [TODO: How this skill relates]
+- **skill-name**: [TODO: Workflow sequence]
+
+## Supporting Files
+
+This skill directory can include:
+
+### scripts/ (optional)
+Executable utilities to automate parts of the procedure
+
+### templates/ (optional)
+Reusable content templates for generated artifacts
+
+### reference.md (optional)
+Detailed technical documentation and API references
+
+### examples.md (optional)
+Extended usage examples and edge cases
+
+---
+
+**Skill Version**: 1.0.0
+**Created**: CREATION_DATE
+**Last Updated**: CREATION_DATE
+**Department**: DEPARTMENT
+**Associated Agent**: AGENT_NAME
+EOF
+
+    # Replace placeholders
+    sed -i "s|SKILL_NAME|${skill_name}|g" "$skill_file"
+    sed -i "s|AGENT_NAME|${agent_name}|g" "$skill_file"
+    sed -i "s|SKILL_DESCRIPTION|${description}|g" "$skill_file"
+    sed -i "s|ALLOWED_TOOLS|${default_tools}|g" "$skill_file"
+    sed -i "s|DEPARTMENT|${department}|g" "$skill_file"
+    sed -i "s|CREATION_DATE|$(date +%Y-%m-%d)|g" "$skill_file"
+}
+
 # Interactive mode
 interactive_create() {
     print_header
@@ -573,6 +892,9 @@ interactive_create() {
         echo "  - CLAUDE.md (agent documentation)"
         echo "  - Agent registry (${DOCS_DIR}/agent-registry.json)"
         echo "  - Collaboration triggers configured"
+
+        # Suggest skill creation for workflow/procedural agents
+        suggest_skill_creation "$agent_name" "$department" "$description"
     else
         log_creation "$agent_name" "$department" "failed_validation"
         echo -e "${RED}Agent created but failed validation. Please review and fix.${NC}"
@@ -638,7 +960,18 @@ json_create() {
     agent_file="${AGENTS_DIR}/${department}/${agent_name}.md"
     if validate_agent_compliance "$agent_file" > /dev/null 2>&1; then
         log_creation "$agent_name" "$department" "success" > /dev/null 2>&1
-        echo "{\"success\": true, \"agent\": \"${agent_name}\", \"department\": \"${department}\", \"file\": \"${agent_file}\", \"mcp_access\": \"${mcp_access}\"}"
+
+        # Auto-create skill if detection passes (JSON mode creates automatically)
+        local skill_created="false"
+        local skill_file=""
+        if should_suggest_skill "$agent_name" "$department" "$description"; then
+            local skill_category=$(determine_skill_category "$department")
+            skill_file=".claude/skills/${skill_category}/${agent_name}/SKILL.md"
+            create_skill_for_agent "$agent_name" "$department" "$description" > /dev/null 2>&1
+            skill_created="true"
+        fi
+
+        echo "{\"success\": true, \"agent\": \"${agent_name}\", \"department\": \"${department}\", \"file\": \"${agent_file}\", \"mcp_access\": \"${mcp_access}\", \"skill_created\": ${skill_created}, \"skill_file\": \"${skill_file}\"}"
     else
         log_creation "$agent_name" "$department" "failed_validation" > /dev/null 2>&1
         echo '{"success": false, "error": "Validation failed"}'

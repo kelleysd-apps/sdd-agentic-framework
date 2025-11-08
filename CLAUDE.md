@@ -173,3 +173,17 @@ Check feature-specific quickstart.md and contracts/ directory for:
 - Validation requirements
 
 No standard test framework is assumed - check each feature's plan.md for tech stack decisions.
+## Available Agents
+
+The following specialized agents are available for specific tasks:
+
+### planning-agent (product)
+
+**Purpose**: Implementation planning specialist for the /plan command workflow phase. Expert in technical research, library evaluation, API contract design, data modeling, test scenario planning, and constitutional compliance validation. Translates feature specifications into executable implementation plans with research.md, data-model.md, contracts/, and quickstart.md artifacts. Core competencies include: (1) Phase 0 Research - technology stack selection, library/framework evaluation, best practices research, dependency analysis, pattern recommendations, resolving technical unknowns; (2) Phase 1 Design - API contract design using OpenAPI/GraphQL schemas, REST/GraphQL endpoint architecture, data entity modeling with fields/relationships/validation, contract test generation following TDD, integration test scenario extraction from user stories, project structure decisions for single/web/mobile applications; (3) Constitutional Validation - enforcing Library-First/Test-First/Contract-First principles, pre-research and post-design compliance checks, complexity tracking and justification documentation; (4) Quality Gates - validate all unknowns resolved before design phase, ensure contracts precede implementation, generate failing tests first, document architecture decisions with rationale and alternatives. Operates as Phase 2 in the SDD workflow pipeline between specification-agent (Phase 1) and tasks-agent (Phase 3). Responsible for the complete /plan command execution including Technical Context analysis, Constitution Check gates, research.md consolidation, contract schema generation, data model creation, quickstart test scenarios, and readiness validation for task generation phase. Must maintain audit trails, validate against 14 constitutional principles, and prepare comprehensive implementation plans optimized for AI agent execution.
+
+**Usage**: `Use the planning-agent agent to...`
+
+**Triggers**: See `.specify/memory/agent-collaboration.md` for automatic triggers
+
+---
+

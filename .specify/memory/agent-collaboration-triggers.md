@@ -48,6 +48,7 @@ Every work session must follow these 4 steps:
 
 **Product Department**:
 - `specification-agent` - Feature specs, requirements, user stories
+- `planning-agent` - Implementation planning, technical research, contract design
 - `tasks-agent` - Task breakdown, dependency tracking
 - `task-orchestrator` - Multi-agent workflow coordination
 
@@ -244,22 +245,62 @@ Every work session must follow these 4 steps:
 
 ---
 
+### Implementation Planning
+
+**Primary Keywords** (MUST delegate):
+- Implementation plan, technical plan, architecture plan, planning phase
+- /plan command, Phase 0, Phase 1, Phase 2
+- Technical research, library evaluation, framework selection
+- Technology stack, tech stack selection
+- API design, contract design, schema design, OpenAPI, GraphQL
+- Data model, entity design, relationship modeling
+- Quickstart, test scenario planning
+- NEEDS CLARIFICATION, technical unknowns
+- Research.md, data-model.md, contracts/, quickstart.md
+- Best practices research, pattern recommendations
+
+**Example Phrases**:
+- "Create implementation plan for feature"
+- "Execute the /plan command"
+- "Research technology stack options"
+- "Design API contracts and data models"
+- "Evaluate libraries for this feature"
+- "Generate contracts and test scenarios"
+
+**Workflow Context**:
+- Phase 2 of SDD workflow (between specification and tasks)
+- Receives: spec.md from specification-agent
+- Produces: plan.md, research.md, data-model.md, contracts/, quickstart.md
+- Hands off to: tasks-agent for task generation
+
+**Delegate To**: `planning-agent`
+
+---
+
 ### Task Management
 
 **Primary Keywords** (MUST delegate):
 - Task, todo, checklist, action items
+- /tasks command, task generation, task list
 - Dependency, prerequisite, blocker
 - Parallel, concurrent, sequential
 - Priority, critical, high, medium, low
 - Estimate, effort, timeline
-- Implementation plan, execution plan
 - Breakdown, decompose, split
+- tasks.md generation
 
 **Example Phrases**:
 - "Break down feature into tasks"
+- "Execute the /tasks command"
 - "Create task list with dependencies"
 - "Generate implementation checklist"
 - "Prioritize tasks by importance"
+
+**Workflow Context**:
+- Phase 3 of SDD workflow (after planning, before implementation)
+- Receives: plan.md + artifacts from planning-agent
+- Produces: tasks.md with dependency-ordered task list
+- Hands off to: Domain-specific agents for task execution
 
 **Delegate To**: `tasks-agent`
 

@@ -14,7 +14,7 @@ This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-
 ### Extensions and Enhancements
 This implementation extends spec-kit with:
 - **Enhanced AI governance** - Constitutional principles and enforced quality gates
-- **Intelligent agent orchestration** - 12 specialized agents across 6 departments with MCP integration
+- **Intelligent agent orchestration** - 13 specialized agents across 6 departments with MCP integration
 - **Agent Skills system** - Progressive disclosure for procedural knowledge (30-50% context reduction)
 - **Governance policies** - 6 comprehensive policies (Testing, Security, Code Review, Deployment, Branching, Release)
 - **Advanced workflow automation** - Validation scripts and command system

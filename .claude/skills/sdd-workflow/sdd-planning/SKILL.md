@@ -295,8 +295,33 @@ specs/001-user-list-api/
 
 ## Agent Collaboration
 
+### planning-agent (PRIMARY)
+**When to delegate**: ALL /plan command executions - this is the designated autonomous agent for implementation planning
+
+**What they handle**: Complete autonomous execution of the planning workflow including:
+- Phase 0: Technical research, library evaluation, technology stack selection
+- Phase 1: API contract design (OpenAPI/GraphQL), data model creation, test scenario extraction
+- Phase 2: Constitutional compliance validation (14 principles)
+- Quality gates: Pre-research and post-design compliance checks
+- Artifact generation: plan.md, research.md, data-model.md, contracts/, quickstart.md
+- Readiness validation for task generation phase
+
+**How to invoke**:
+```
+Use the Task tool to delegate to planning-agent:
+- subagent_type: "planning-agent"
+- description: "Execute /plan command"
+- prompt: "Execute the /plan command for this feature"
+```
+
+**Agent Location**: `.claude/agents/product/planning-agent.md`
+
+**Note**: This skill provides procedural guidance for the planning workflow. For autonomous execution, always delegate to the planning-agent which has specialized tools and constitutional compliance built-in.
+
+---
+
 ### backend-architect
-**When to delegate**: Multi-service architecture, complex backend systems
+**When to delegate**: Multi-service architecture, complex backend systems (for specialized research during Phase 0)
 
 **What they handle**: Backend system design, API architecture, service patterns
 
