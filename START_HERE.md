@@ -9,6 +9,15 @@
 - **Git** - [Download](https://git-scm.com/)
 - **Claude Code** - [Access](https://claude.ai/code)
 
+### Optional: DS-STAR Multi-Agent Features
+
+For enhanced quality gates, intelligent routing, and self-healing capabilities:
+
+- **Python** (v3.9 or higher) - [Download](https://python.org/)
+- **pip** - Python package manager (comes with Python)
+
+**Note**: The framework works without Python through graceful degradation. DS-STAR features will be disabled with warnings, and manual review is recommended.
+
 ### Optional Integrations
 
 - **GitHub CLI** (`gh`) - For pull request management
@@ -50,6 +59,7 @@ This script will:
 - ✅ Create `.env` file from template
 - ✅ Make bash scripts executable
 - ✅ Verify Claude configuration
+- ✅ Install DS-STAR Python dependencies (if Python available)
 
 ### 3. Customize for Your Project
 
@@ -172,21 +182,24 @@ your-project/
 
 Execute these in Claude Code:
 
-| Command | Purpose | Output |
-|---------|---------|---------|
-| `/specify` | Create feature specification | `specs/###-feature-name/spec.md` |
-| `/plan` | Generate implementation plan | Design artifacts |
-| `/tasks` | Create task list | `specs/###-feature-name/tasks.md` |
-| `/create-agent` | Create specialized agent | Agent definition + registry |
+| Command | Purpose | Output | DS-STAR Enhancement |
+|---------|---------|---------|---------------------|
+| `/specify` | Create feature specification | `specs/###-feature-name/spec.md` | ✅ Automatic refinement loop |
+| `/plan` | Generate implementation plan | Design artifacts | ✅ Quality verification gate |
+| `/tasks` | Create task list | `specs/###-feature-name/tasks.md` | - |
+| `/finalize` | Pre-commit validation | Compliance report | ✅ Constitutional compliance |
+| `/create-agent` | Create specialized agent | Agent definition + registry | - |
 
 ### Workflow Example
 
 ```bash
 # 1. Create a new feature specification
 /specify "User authentication with JWT"
+# DS-STAR: Automatically refines spec until quality threshold met (≥0.90)
 
 # 2. Generate implementation plan
 /plan
+# DS-STAR: Verifies plan quality (≥0.85) before allowing task generation
 
 # 3. Create task list
 /tasks
@@ -195,7 +208,25 @@ Execute these in Claude Code:
 /create-agent auth-specialist "JWT authentication and session management expert"
 
 # 5. Implementation begins automatically with appropriate agents
+# DS-STAR: RouterAgent coordinates multi-agent workflows
+# DS-STAR: AutoDebugAgent provides self-healing (>70% fix rate)
+
+# 6. Before committing
+/finalize
+# DS-STAR: Validates all 14 constitutional principles
+# Provides manual git commands to execute
 ```
+
+### DS-STAR Quality Gates
+
+When Python is available, the framework automatically:
+- **Refines specifications** up to 20 rounds until quality thresholds met
+- **Verifies plans** before task generation (blocks if insufficient)
+- **Routes tasks** to appropriate agents with dependency management
+- **Auto-repairs errors** with >70% success rate target
+- **Validates compliance** before commits (all 14 principles)
+
+**Configuration**: See `.specify/config/refinement.conf` for thresholds
 
 ## 🔍 Troubleshooting
 
