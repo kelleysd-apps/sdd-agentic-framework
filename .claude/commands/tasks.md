@@ -2,6 +2,27 @@
 description: Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts.
 ---
 
+**AGENT REQUIREMENT**: This command should be executed by the tasks-agent.
+
+**If you are NOT the tasks-agent**, delegate this work immediately:
+```
+Use the Task tool to invoke tasks-agent:
+- subagent_type: "tasks-agent"
+- description: "Execute /tasks command"
+- prompt: "Execute the /tasks command for this feature. Arguments: $ARGUMENTS"
+```
+
+The tasks-agent is specialized for:
+- Task decomposition and dependency management
+- TDD and Library-First task ordering
+- Parallel execution optimization
+- AI-optimized task creation
+- Constitutional compliance in task structure
+
+---
+
+## Execution Instructions (for tasks-agent)
+
 Given the context provided as an argument, do this:
 
 1. Run `.specify/scripts/bash/check-task-prerequisites.sh --json` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute.

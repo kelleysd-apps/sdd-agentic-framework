@@ -37,26 +37,65 @@ This is a specification-driven development framework that uses structured templa
 ### Feature Specification Workflow
 
 1. **Create feature specification**: Use `/specify` command
+   - **AGENT**: Executed by specification-agent (auto-delegated per Principle X)
    - **REQUIRES USER APPROVAL**: Will ask if you want a new feature branch created
    - If approved, will ask for desired branch format/name
    - Default format when approved: `###-feature-name`
    - Generates spec file at `specs/###-feature-name/spec.md`
    - Script: `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"`
+   - **DS-STAR Enhancement**: Automatically invokes refinement loop after spec generation
+     - Verifies specification quality against thresholds (completeness ≥0.90)
+     - Iteratively refines until sufficient or max 20 rounds
+     - Provides actionable feedback for improvements
+     - Escalates to human if quality threshold not met
 
 2. **Generate implementation plan**: Use `/plan` command
+   - **AGENT**: Executed by planning-agent (auto-delegated per Principle X)
    - Reads feature spec and constitution
    - Generates research, data models, contracts, and quickstart docs
    - Script: `.specify/scripts/bash/setup-plan.sh --json`
    - Stops before task generation
+   - **DS-STAR Enhancement**: Automatically invokes verification gate after plan generation
+     - Verifies plan quality against thresholds (completeness ≥0.85, spec alignment ≥0.90)
+     - Blocks progression to `/tasks` if quality insufficient
+     - Provides actionable feedback for improvements
+     - MUST address feedback before proceeding
 
 3. **Generate tasks**: Use `/tasks` command
+   - **AGENT**: Executed by tasks-agent (auto-delegated per Principle X)
    - Creates dependency-ordered task list from design artifacts
    - Script: `.specify/scripts/bash/check-task-prerequisites.sh --json`
    - Marks parallel-executable tasks with [P]
 
+4. **Validate compliance**: Use `/finalize` command (NEW - DS-STAR Enhancement)
+   - **PURPOSE**: Pre-commit constitutional compliance validation
+   - Validates all 14 constitutional principles before git operations
+   - Script: `.specify/scripts/bash/finalize-feature.sh --json`
+   - **CRITICAL**: NEVER performs git operations autonomously (Principle VI)
+   - Checks performed:
+     - Tests passing and coverage >80%
+     - No linting errors
+     - Code style compliance (black, isort)
+     - Documentation synchronized (CLAUDE.md, README, specs, API docs)
+     - No secrets in code (.env templates updated)
+     - Constitutional compliance across all principles
+   - Output: Compliance report with pass/fail status
+   - Suggests manual git commands for user execution
+   - **Usage Pattern**:
+     ```bash
+     # After implementation complete
+     ./.specify/scripts/bash/finalize-feature.sh
+
+     # If all checks pass, manually execute suggested git commands
+     git add <files>
+     git commit -m "message"
+     git push origin <branch>
+     ```
+
 ### Agent Management Commands
 
 1. **Create new agent**: Use `/create-agent` command
+   - **AGENT**: Executed by subagent-architect (auto-delegated per Principle X)
    - Creates specialized subagent with constitutional compliance
    - Auto-determines department based on purpose
    - Sets appropriate tool restrictions
@@ -89,14 +128,41 @@ See `.specify/memory/agent-collaboration-triggers.md` for:
 │   ├── common.sh                          # Shared functions + git approval
 │   ├── constitutional-check.sh            # 14-principle compliance validator
 │   ├── sanitization-audit.sh              # Framework sanitization checker
-│   ├── create-new-feature.sh              # Feature initialization
-│   ├── setup-plan.sh                      # Planning workflow
-│   └── check-task-prerequisites.sh        # Task generation validator
+│   ├── create-new-feature.sh              # Feature initialization + refinement
+│   ├── setup-plan.sh                      # Planning workflow + verification
+│   ├── check-task-prerequisites.sh        # Task generation validator
+│   └── finalize-feature.sh                # Pre-commit compliance validation (NEW)
 ├── templates/                             # Document templates
 │   ├── spec-template.md                   # Feature specification
 │   ├── plan-template.md                   # Implementation plan (9-step)
 │   ├── tasks-template.md                  # Task list generation
 │   └── agent-file-template.md             # New agent template
+├── config/                                # Configuration files (NEW - DS-STAR)
+│   └── refinement.conf                    # Refinement engine settings
+
+src/sdd/                                    # DS-STAR agent libraries (NEW)
+├── agents/
+│   ├── quality/
+│   │   ├── verifier.py                    # Quality gate verification
+│   │   └── finalizer.py                   # Pre-commit compliance
+│   ├── architecture/
+│   │   ├── router.py                      # Intelligent agent routing
+│   │   └── context_analyzer.py            # Codebase intelligence
+│   └── engineering/
+│       └── autodebug.py                   # Automatic error repair
+├── refinement/
+│   ├── engine.py                          # Iterative refinement loop
+│   └── models.py                          # Refinement state models
+├── feedback/                              # Feedback accumulation
+├── context/                               # Context intelligence
+└── metrics/                               # Performance metrics
+
+.docs/agents/                              # Agent decision logs and state (NEW)
+├── quality/verifier/decisions/            # Verification decisions
+├── architecture/router/decisions/         # Routing decisions
+└── shared/
+    ├── refinement-state/                  # Iteration state persistence
+    └── context-summaries/                 # Codebase context summaries
 
 specs/###-feature-name/                     # Per-feature documentation
 ├── spec.md                                # Feature requirements
@@ -111,9 +177,10 @@ specs/###-feature-name/                     # Per-feature documentation
 ### Workflow Scripts
 
 - **common.sh**: Shared functions for branch/path management, git approval
-- **create-new-feature.sh**: Initialize feature branch and spec
-- **setup-plan.sh**: Prepare implementation planning
+- **create-new-feature.sh**: Initialize feature branch and spec + DS-STAR refinement loop
+- **setup-plan.sh**: Prepare implementation planning + DS-STAR verification gate
 - **check-task-prerequisites.sh**: Verify design artifacts exist
+- **finalize-feature.sh**: Pre-commit compliance validation (no auto-git)
 - **update-agent-context.sh**: Update AI assistant context files
 
 ### Validation Scripts
@@ -156,6 +223,8 @@ When Git operations are needed:
 3. Never assume permission for Git operations
 4. SDD functions and scripts must not perform Git operations autonomously
 
+**DS-STAR Enhancement Note**: The `/finalize` command validates compliance but NEVER executes git commands. It provides a report and suggests commands for manual execution.
+
 ## Working with Features
 
 When implementing features:
@@ -164,6 +233,7 @@ When implementing features:
 3. Each contract requires a test, each entity needs a model
 4. Use parallel execution markers [P] for independent tasks
 5. All paths must be absolute from repository root
+6. **NEW**: Use `/finalize` to validate compliance before committing
 
 ## Testing Approach
 
@@ -173,6 +243,38 @@ Check feature-specific quickstart.md and contracts/ directory for:
 - Validation requirements
 
 No standard test framework is assumed - check each feature's plan.md for tech stack decisions.
+
+## DS-STAR Multi-Agent Enhancements (Feature 001)
+
+The framework now includes proven multi-agent patterns from Google's DS-STAR system:
+
+### Quality Gates
+- **Automatic Verification**: Specs and plans automatically verified for quality
+- **Iterative Refinement**: Specs refined up to 20 rounds until quality thresholds met
+- **Blocking Gates**: Insufficient plans block progression to tasks phase
+- **Actionable Feedback**: Clear guidance provided for improvements
+
+### Configuration
+Quality thresholds and behavior configured in `.specify/config/refinement.conf`:
+- `MAX_REFINEMENT_ROUNDS=20` - Maximum iterations before escalation
+- `EARLY_STOP_THRESHOLD=0.95` - Stop if quality exceeds this
+- `SPEC_COMPLETENESS_THRESHOLD=0.90` - Specification quality requirement
+- `PLAN_QUALITY_THRESHOLD=0.85` - Plan quality requirement
+- `TEST_COVERAGE_THRESHOLD=0.80` - Code coverage requirement (matches Principle II)
+
+### Graceful Degradation
+If DS-STAR components unavailable (Python not installed, dependencies missing):
+- Workflow continues without quality gates
+- Warning messages displayed
+- Manual review recommended
+- No workflow blocking
+
+### Performance Targets
+- Context retrieval: <2 seconds
+- Debug iteration cycle: <30 seconds
+- 3.5x improvement in task completion accuracy (target)
+- >70% automatic fix rate for common errors (target)
+
 ## Available Agents
 
 The following specialized agents are available for specific tasks:
