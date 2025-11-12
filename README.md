@@ -556,6 +556,28 @@ To improve the framework:
 4. Test automation scripts
 5. Update this README
 
+## 🙏 Acknowledgments
+
+This framework builds upon proven research and open-source foundations:
+
+### DS-STAR Multi-Agent System
+The DS-STAR enhancement (v2.0.0) integrates multi-agent patterns from MIT's research on sophisticated multi-agent orchestration systems. The quality gates, intelligent routing, and self-healing capabilities are adapted from proven patterns in academic research on autonomous agent coordination.
+
+**Key Research Influences**:
+- Binary quality decision gates (VerificationAgent, FinalizerAgent)
+- Dependency graph execution planning (RouterAgent)
+- Automatic error repair patterns (AutoDebugAgent)
+- Semantic context retrieval (ContextAnalyzerAgent)
+- Iterative refinement with feedback accumulation
+
+### Foundation
+- **spec-kit** by GitHub - Base specification-driven development patterns
+- **Claude Code** by Anthropic - AI-assisted development platform
+- **Model Context Protocol (MCP)** - AI integration architecture
+
+### Community
+Special thanks to the specification-driven development community and researchers advancing multi-agent systems for software engineering.
+
 ---
 
 **Remember**: The constitution is your north star. When in doubt, consult `/.specify/memory/constitution.md` for guidance.
