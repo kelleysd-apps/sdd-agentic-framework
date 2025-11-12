@@ -2,9 +2,30 @@
 description: Execute the implementation planning workflow using the plan template to generate design artifacts.
 ---
 
+**AGENT REQUIREMENT**: This command should be executed by the planning-agent.
+
+**If you are NOT the planning-agent**, delegate this work immediately:
+```
+Use the Task tool to invoke planning-agent:
+- subagent_type: "planning-agent"
+- description: "Execute /plan command"
+- prompt: "Execute the /plan command for this feature. Arguments: $ARGUMENTS"
+```
+
+The planning-agent is specialized for:
+- Phase 0: Technical research and library evaluation
+- Phase 1: API contract design and data modeling
+- Constitutional compliance validation
+- Implementation plan creation
+
+---
+
+## Execution Instructions (for planning-agent)
+
 Given the implementation details provided as an argument, do this:
 
 1. Run `.specify/scripts/bash/setup-plan.sh --json` from the repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. All future file paths must be absolute.
+
 2. Read and analyze the feature specification to understand:
    - The feature requirements and user stories
    - Functional and non-functional requirements
@@ -22,12 +43,12 @@ Given the implementation details provided as an argument, do this:
    - Let the template guide artifact generation in $SPECS_DIR:
      * Phase 0 generates research.md
      * Phase 1 generates data-model.md, contracts/, quickstart.md
-     * Phase 2 generates tasks.md
+     * Phase 2 describes task generation (DO NOT create tasks.md)
    - Incorporate user-provided details from arguments into Technical Context: $ARGUMENTS
    - Update Progress Tracking as you complete each phase
 
 5. Verify execution completed:
-   - Check Progress Tracking shows all phases complete
+   - Check Progress Tracking shows Phases 0-1 complete
    - Ensure all required artifacts were generated
    - Confirm no ERROR states in execution
 
@@ -48,3 +69,5 @@ Given the implementation details provided as an argument, do this:
    - Readiness for the next phase (/tasks)
 
 Use absolute paths with the repository root for all file operations to avoid path issues.
+
+**IMPORTANT**: The /plan command stops after Phase 1. Phase 2 (tasks.md generation) is handled by the /tasks command with tasks-agent.

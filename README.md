@@ -14,8 +14,15 @@ This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-
 ### Extensions and Enhancements
 This implementation extends spec-kit with:
 - **Enhanced AI governance** - Constitutional principles and enforced quality gates
-- **Intelligent agent orchestration** - 12 specialized agents across 6 departments with MCP integration
+- **DS-STAR Multi-Agent System** - Google's proven pattern with 5 specialized agents:
+  - Quality gates (VerificationAgent, FinalizerAgent) - Binary decisions at each workflow stage
+  - Intelligent routing (RouterAgent) - Multi-agent orchestration with dependency graphs
+  - Self-healing (AutoDebugAgent) - Automatic error repair with >70% fix rate target
+  - Codebase intelligence (ContextAnalyzerAgent) - Semantic search with <2s retrieval
+  - Constitutional validation - All 14 principles enforced before commits
+- **Intelligent agent orchestration** - 13 specialized agents across 6 departments with MCP integration
 - **Agent Skills system** - Progressive disclosure for procedural knowledge (30-50% context reduction)
+- **Iterative refinement** - Up to 20 rounds with early stopping at 95% quality threshold
 - **Governance policies** - 6 comprehensive policies (Testing, Security, Code Review, Deployment, Branching, Release)
 - **Advanced workflow automation** - Validation scripts and command system
 - **Memory and context management** - Persistent agent knowledge and collaboration patterns
@@ -257,16 +264,19 @@ All policies located in `.docs/policies/` and aligned with Constitution v1.5.0.
 ### Feature Development
 
 1. **`/specify`** - Create feature specification
+   - **Agent**: specification-agent (auto-delegated)
    - Generates structured spec document
    - Optionally creates feature branch
    - Output: `specs/###-feature-name/spec.md`
 
 2. **`/plan`** - Generate implementation plan
+   - **Agent**: planning-agent (auto-delegated)
    - Creates technical design documents
    - Produces contracts and data models
    - Output: Full design artifact set
 
 3. **`/tasks`** - Generate task list
+   - **Agent**: tasks-agent (auto-delegated)
    - Creates ordered implementation tasks
    - Marks parallel-executable items
    - Output: `specs/###-feature-name/tasks.md`
@@ -274,6 +284,7 @@ All policies located in `.docs/policies/` and aligned with Constitution v1.5.0.
 ### Agent Management
 
 **`/create-agent`** - Create specialized agent
+- **Agent**: subagent-architect (auto-delegated)
 ```bash
 /create-agent agent-name "Agent purpose and capabilities"
 ```

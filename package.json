@@ -1,7 +1,7 @@
 {
   "name": "sdd-agentic-framework",
-  "version": "1.0.0",
-  "description": "Specification-driven development framework with AI agent orchestration",
+  "version": "2.0.0",
+  "description": "Specification-driven development framework with DS-STAR multi-agent orchestration, quality gates, and intelligent routing",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,7 +16,12 @@
     "specification-driven-development",
     "ai-agents",
     "claude",
-    "tdd"
+    "tdd",
+    "ds-star",
+    "quality-gates",
+    "multi-agent-system",
+    "intelligent-routing",
+    "self-healing"
   ],
   "author": "",
   "license": "MIT",

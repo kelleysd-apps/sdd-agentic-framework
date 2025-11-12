@@ -2,6 +2,27 @@
 description: Create a new specialized subagent with constitutional compliance and proper department classification.
 ---
 
+**AGENT REQUIREMENT**: This command should be executed by the subagent-architect.
+
+**If you are NOT the subagent-architect**, delegate this work immediately:
+```
+Use the Task tool to invoke subagent-architect:
+- subagent_type: "subagent-architect"
+- description: "Execute /create-agent command"
+- prompt: "Execute the /create-agent command. Arguments: $ARGUMENTS"
+```
+
+The subagent-architect is specialized for:
+- Creating SDD-compliant agents
+- Constitutional agent workflows
+- Agent department classification
+- Tool access restrictions
+- Agent memory structure initialization
+
+---
+
+## Execution Instructions (for subagent-architect)
+
 Given the agent name and description provided as arguments, do this:
 
 1. Parse the arguments:

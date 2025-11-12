@@ -2,6 +2,27 @@
 description: Create or update the feature specification from a natural language feature description.
 ---
 
+**AGENT REQUIREMENT**: This command should be executed by the specification-agent.
+
+**If you are NOT the specification-agent**, delegate this work immediately:
+```
+Use the Task tool to invoke specification-agent:
+- subagent_type: "specification-agent"
+- description: "Execute /specify command"
+- prompt: "Execute the /specify command for this feature. Arguments: $ARGUMENTS"
+```
+
+The specification-agent is specialized for:
+- Spec-Driven Development methodology
+- Requirements analysis and user story creation
+- Functional specifications and acceptance criteria
+- Constitutional compliance validation
+- Specification quality assurance
+
+---
+
+## Execution Instructions (for specification-agent)
+
 Given the feature description provided as an argument, do this:
 
 1. Check if user wants to create a new branch:

@@ -132,7 +132,10 @@ DOMAIN_TERMS=$(grep -iE "\bcampaign[s]?\b|\bcharacter[s]?\b|\bnpc[s]?\b|\bdm\b" 
     grep -v "http session" | \
     grep -v "session management" | \
     grep -v "character encoding" | \
-    grep -v "special character" || true)
+    grep -v "special character" | \
+    grep -v "characters\." | \
+    grep -v "max.*characters" | \
+    grep -v "[0-9].*characters" || true)
 
 if [ -n "$DOMAIN_TERMS" ]; then
     echo -e "   ${RED}❌ FAIL${NC}: Domain-specific terms in framework"

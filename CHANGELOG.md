@@ -5,6 +5,141 @@ All notable changes to the SDD Agent Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-11-11
+
+### Major Feature: DS-STAR Multi-Agent Enhancement (Feature 001)
+
+This release integrates Google's proven DS-STAR multi-agent patterns into the SDD framework, bringing sophisticated quality gates, intelligent routing, and self-healing capabilities.
+
+#### Added - DS-STAR Agent Library
+
+- **VerificationAgent** (`src/sdd/agents/quality/verifier.py`)
+  - Binary quality decisions (sufficient/insufficient) at each workflow stage
+  - Specification completeness validation (≥0.90 threshold)
+  - Plan quality validation (≥0.85 threshold, ≥0.90 spec alignment)
+  - Blocks progression when quality insufficient
+  - Provides actionable feedback for improvements
+
+- **FinalizerAgent** (`src/sdd/agents/quality/finalizer.py`)
+  - Pre-commit constitutional compliance validation
+  - All 14 constitutional principles validation
+  - Test coverage verification (≥80%)
+  - Code style compliance (black, isort)
+  - Documentation synchronization checks
+  - No automatic git operations (Principle VI compliant)
+
+- **RouterAgent** (`src/sdd/agents/architecture/router.py`)
+  - Intelligent multi-agent task orchestration
+  - Domain detection and agent selection
+  - Dependency graph (DAG) execution planning
+  - Parallel execution optimization
+  - Routing decision audit trails
+
+- **AutoDebugAgent** (`src/sdd/agents/engineering/autodebug.py`)
+  - Automatic error repair with >70% fix rate target
+  - <30 second debug iteration cycles
+  - Common error pattern recognition
+  - Self-healing code corrections
+
+- **ContextAnalyzerAgent** (`src/sdd/agents/architecture/context_analyzer.py`)
+  - Semantic codebase search with <2 second retrieval
+  - Context intelligence and summarization
+  - Codebase understanding for agent tasks
+
+#### Added - Refinement Engine
+
+- **Iterative Refinement Loop** (`src/sdd/refinement/engine.py`)
+  - Up to 20 refinement rounds with configurable thresholds
+  - Early stopping at 0.95 quality threshold
+  - State persistence between iterations
+  - Feedback accumulation across rounds
+  - Graceful escalation to human when needed
+
+- **Configuration System** (`.specify/config/refinement.conf`)
+  - `MAX_REFINEMENT_ROUNDS=20` - Maximum iteration limit
+  - `EARLY_STOP_THRESHOLD=0.95` - High quality early exit
+  - `SPEC_COMPLETENESS_THRESHOLD=0.90` - Specification requirement
+  - `PLAN_QUALITY_THRESHOLD=0.85` - Plan requirement
+  - `TEST_COVERAGE_THRESHOLD=0.80` - Code coverage requirement
+
+#### Enhanced - Workflow Commands
+
+- **`/specify` Command**
+  - Automatic refinement loop after spec generation
+  - Iterative improvement until quality threshold met
+  - Actionable feedback for specification improvements
+  - Human escalation when quality unachievable
+
+- **`/plan` Command**
+  - Automatic verification gate after plan generation
+  - Quality blocking before task generation phase
+  - Plan-to-spec alignment validation
+  - Actionable feedback for plan improvements
+
+- **`/finalize` Command** (NEW)
+  - Pre-commit compliance validation
+  - All 14 constitutional principles checked
+  - Test and coverage verification
+  - Code style and linting validation
+  - Documentation synchronization checks
+  - Manual git command suggestions (no auto-execution)
+
+#### Added - Testing Infrastructure
+
+- **Contract Tests** (39 tests, 100% pass rate)
+  - VerificationAgent contract tests (13 tests)
+  - FinalizerAgent contract tests (13 tests)
+  - RouterAgent contract tests (13 tests)
+  - Full interface validation coverage
+
+- **Integration Tests** (37 tests)
+  - End-to-end verification workflow tests
+  - Multi-agent routing orchestration tests
+  - Context intelligence tests
+  - Refinement loop tests
+  - Autodebug healing tests
+
+#### Added - Documentation
+
+- **Feature Specification** (`specs/001-ds-star-multi/`)
+  - Complete DS-STAR implementation spec
+  - Technical design documentation
+  - API contracts and data models
+  - Test scenarios and quickstart guide
+
+- **Integration Guides**
+  - DS-STAR integration guide
+  - Implementation status tracking
+  - Test results documentation
+  - Production readiness report
+
+#### Enhanced - Framework Features
+
+- **Graceful Degradation**
+  - Framework works without Python/DS-STAR components
+  - Warning messages when components unavailable
+  - Manual review recommendations
+  - No workflow blocking
+
+- **Performance Targets**
+  - Context retrieval: <2 seconds
+  - Debug iteration: <30 seconds
+  - 3.5x task completion accuracy improvement (target)
+  - >70% automatic fix rate (target)
+
+### Changed
+
+- Updated README.md with DS-STAR feature documentation
+- Updated CLAUDE.md with DS-STAR workflow enhancements
+- Enhanced directory structure with `src/sdd/` Python library
+- Added `.docs/agents/shared/` for cross-agent state
+
+### Breaking Changes
+
+None - DS-STAR enhancements are fully backward compatible with graceful degradation.
+
+---
+
 ## [1.2.0] - 2025-09-19
 
 ### Added
