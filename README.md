@@ -66,6 +66,17 @@ This framework provides a structured approach to software development where:
 
 ## 🚀 Quick Start for New Projects
 
+### Prerequisites
+
+- **Claude Code** (REQUIRED) - [Install first](https://claude.ai/code)
+- **Node.js** v18+ and npm v9+
+- **Git** - [Download](https://git-scm.com/)
+- **Git Bash** (Windows users) - Included with Git for Windows
+
+**🪟 Windows Users**: See [WINDOWS_SETUP.md](./WINDOWS_SETUP.md) for detailed Windows-specific setup instructions. You MUST use Git Bash, not PowerShell or CMD.
+
+---
+
 ### 1. Fork or Copy Repository
 
 ```bash
@@ -73,15 +84,18 @@ This framework provides a structured approach to software development where:
 git clone https://github.com/kelleysd-apps/sdd-agentic-framework.git your-project-name
 cd your-project-name
 rm -rf .git
-./init-project.sh  # Interactive setup script
+bash init-project.sh  # Interactive setup script
 
 # Option B: Manual setup
 git clone https://github.com/kelleysd-apps/sdd-agentic-framework.git your-project-name
 cd your-project-name
 rm -rf .git
 git init
-npm run setup
+npm run setup          # macOS/Linux
+npm run setup:windows  # Windows (Git Bash)
 ```
+
+**Note for Windows users**: Always use Git Bash terminal, not PowerShell or CMD.
 
 ### 2. Configure Project Constitution
 

@@ -1,13 +1,40 @@
 # START HERE - SDD Agentic Framework Setup Guide
 
+## 🚨 CRITICAL FIRST STEP: Install Claude Code
+
+**Before proceeding with ANY setup steps, you MUST have Claude Code installed and configured.**
+
+### Why Claude Code First?
+
+This framework is designed to work **with Claude Code as your AI development assistant**. Claude Code:
+- ✅ Provides **interactive guidance** throughout setup
+- ✅ Helps **troubleshoot any errors** during installation
+- ✅ Assists with **project customization** and configuration
+- ✅ Executes **framework commands** (`/specify`, `/plan`, `/tasks`, `/create-prd`)
+- ✅ **Coordinates multi-agent workflows** for feature development
+
+**Without Claude Code, you cannot use this framework effectively.**
+
+### Install Claude Code
+
+1. **Get Access**: Visit [claude.ai/code](https://claude.ai/code)
+2. **Install CLI**: Follow the installation instructions for your platform
+3. **Verify Installation**: Run `claude --version` in your terminal
+4. **Login**: Run `claude login` and authenticate
+
+Once Claude Code is installed, **use it to help you with ALL remaining setup steps**. If you encounter ANY errors or issues during setup, ask Claude Code for help!
+
+---
+
 ## 📋 Prerequisites
 
 ### Required Software
 
+- **Claude Code** - [Install First](https://claude.ai/code) ⚠️ **REQUIRED BEFORE STARTING**
 - **Node.js** (v18.0.0 or higher) - [Download](https://nodejs.org/)
 - **npm** (v9.0.0 or higher) - Comes with Node.js
 - **Git** - [Download](https://git-scm.com/)
-- **Claude Code** - [Access](https://claude.ai/code)
+- **Bash/Git Bash** (Windows users) - Comes with Git for Windows
 
 ### Optional: DS-STAR Multi-Agent Features
 
@@ -24,6 +51,36 @@ For enhanced quality gates, intelligent routing, and self-healing capabilities:
 - **Secret Manager CLI** - If using external secret management (optional)
 
 ## 🚀 Initial Setup
+
+### Platform-Specific Notes
+
+#### Windows Users 🪟
+
+**📖 Detailed Windows Guide Available**: See [WINDOWS_SETUP.md](./WINDOWS_SETUP.md) for a complete Windows-specific setup guide with screenshots and troubleshooting.
+
+This framework requires bash scripts. You have two options:
+
+**Option 1: Git Bash (Recommended) ⭐**
+- Git Bash is automatically installed with Git for Windows
+- Open "Git Bash" (not Windows PowerShell or CMD)
+- All commands work natively in Git Bash
+- This is the easiest option for Windows users
+- **Full guide**: [WINDOWS_SETUP.md](./WINDOWS_SETUP.md)
+
+**Option 2: WSL2 (Advanced)**
+- Install Windows Subsystem for Linux 2 (WSL2)
+- Use Ubuntu or your preferred Linux distribution
+- Follow Linux setup instructions
+
+**⚠️ DO NOT use Windows PowerShell or CMD** - bash scripts will not work!
+
+**Need help?** See [WINDOWS_SETUP.md](./WINDOWS_SETUP.md) for detailed Windows setup instructions.
+
+#### macOS/Linux Users 🐧🍎
+- Use your default terminal
+- All commands work natively
+
+---
 
 ### 1. Clone or Fork the Repository
 
@@ -47,11 +104,22 @@ git init
 
 ### 2. Run Automatic Setup
 
+**IMPORTANT**: If you encounter ANY errors during setup, ask Claude Code for help!
+
 The framework includes an automatic setup script:
 
 ```bash
+# macOS/Linux
 npm run setup
+
+# Windows (Git Bash) - Use this if npm run setup fails
+npm run setup:windows
+
+# Alternative: Run script directly with bash
+bash .specify/scripts/setup.sh
 ```
+
+**💡 Troubleshooting Tip**: If you see an error like `'.' is not recognized`, you're in the wrong terminal. Open Git Bash instead of PowerShell/CMD. Try `npm run setup:windows` instead.
 
 This script will:
 - ✅ Check Node.js and npm versions
@@ -230,7 +298,38 @@ When Python is available, the framework automatically:
 
 ## 🔍 Troubleshooting
 
+### 🤖 When in Doubt, Ask Claude Code!
+
+**This is the most important troubleshooting advice**: If you encounter ANY error during setup or usage:
+
+1. **Open Claude Code** in your project directory
+2. **Paste the error message** into the conversation
+3. **Ask for help**: "I got this error during setup, can you help me fix it?"
+4. **Follow Claude's guidance** - it has full context of the framework
+
+Claude Code has access to:
+- All framework documentation
+- Constitutional principles
+- Setup scripts and configurations
+- Your project state and environment
+
+**Claude Code is your first line of support.** Use it!
+
+---
+
 ### Common Issues
+
+#### Windows: `'.' is not recognized` Error
+
+**Problem**: You're in PowerShell or CMD instead of Git Bash
+
+**Solution**:
+1. Close PowerShell/CMD
+2. Open **Git Bash** (installed with Git for Windows)
+3. Navigate to your project: `cd /c/Users/YourName/your-project`
+4. Run commands in Git Bash
+
+**Ask Claude Code**: "I'm on Windows and getting a '.' is not recognized error. How do I fix this?"
 
 #### "Permission denied" when running scripts
 
@@ -239,12 +338,16 @@ chmod +x .specify/scripts/bash/*.sh
 chmod +x .specify/scripts/setup.sh
 ```
 
+**Ask Claude Code**: "I'm getting permission denied errors. Can you help?"
+
 #### "Module not found" errors
 
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
+
+**Ask Claude Code**: "I'm getting module not found errors after npm install. What should I do?"
 
 #### "Constitution not found" errors
 
@@ -253,11 +356,15 @@ Ensure the file exists and has correct permissions:
 ls -la .specify/memory/constitution.md
 ```
 
+**Ask Claude Code**: "The constitution file isn't being found. Can you check what's wrong?"
+
 #### MCP server connection issues
 
 1. Verify MCP is configured in Claude
 2. Check environment variables
 3. Validate service credentials
+
+**Ask Claude Code**: "I'm having MCP server connection issues. Can you help me debug?"
 
 ### Debug Mode
 
@@ -266,6 +373,13 @@ Enable verbose logging:
 export SDD_DEBUG=true
 npm run setup
 ```
+
+### Still Stuck?
+
+1. **Try Claude Code first** - Paste your error and ask for help
+2. Check the framework documentation in `FRAMEWORK_README.md`
+3. Review the constitution at `.specify/memory/constitution.md`
+4. Create an issue on GitHub with the error details
 
 ## 🛠️ Advanced Configuration
 
@@ -314,30 +428,88 @@ chmod +x .git/hooks/pre-commit
 
 ## 🤝 Getting Help
 
-1. Check the framework documentation
-2. Review the constitution for principles
-3. Consult CLAUDE.md for AI guidance
-4. Create an issue on GitHub
+### Primary Support: Claude Code 🤖
+
+**Claude Code is your built-in AI assistant and primary support resource.**
+
+When you need help:
+1. **Open Claude Code** in your project directory
+2. **Describe your issue** or paste error messages
+3. **Ask specific questions** about setup, configuration, or usage
+4. **Request guidance** on best practices and framework features
+
+Claude Code can:
+- ✅ Debug errors in real-time
+- ✅ Explain framework concepts and principles
+- ✅ Guide you through setup and configuration
+- ✅ Help customize the constitution for your project
+- ✅ Assist with feature development workflows
+- ✅ Answer questions about agents, commands, and workflows
+
+### Additional Resources
+
+1. **CLAUDE.md** - Instructions for Claude Code (auto-consulted)
+2. **FRAMEWORK_README.md** - Comprehensive framework documentation
+3. **Constitution** - `.specify/memory/constitution.md` (14 core principles)
+4. **GitHub Issues** - [Report bugs or request features](https://github.com/kelleysd-apps/sdd-agentic-framework/issues)
+
+### Example: Getting Help from Claude Code
+
+```
+You: "I'm setting up the framework on Windows and getting
+      errors when running npm run setup. Can you help?"
+
+Claude: "I can help! It looks like you might be in PowerShell
+         instead of Git Bash. Here's what to do..."
+```
+
+**Remember**: Claude Code has full context of your project and the framework. It's designed to be your first line of support!
 
 ## ✅ Setup Checklist
 
+- [ ] **Claude Code installed and configured** ⚠️ **DO THIS FIRST**
+- [ ] Git Bash installed (Windows users) or terminal ready (macOS/Linux)
 - [ ] Node.js v18+ installed
 - [ ] Repository cloned/forked
-- [ ] `npm run setup` completed successfully
+- [ ] Opened project in correct terminal (Git Bash on Windows)
+- [ ] `npm run setup` completed successfully (asked Claude for help if errors)
 - [ ] `.env` file configured
 - [ ] Project name updated in `package.json`
-- [ ] Constitution reviewed
+- [ ] Constitution reviewed (with Claude Code's guidance)
 - [ ] README.md customized for your project
-- [ ] First feature specification created
+- [ ] First feature specification created using `/specify`
 - [ ] Git repository initialized with your remote
 
 ## 🎯 Next Steps
 
-1. **Define Your Constitution**: Customize `.specify/memory/constitution.md`
-2. **Create First Feature**: Run `/specify` in Claude Code
-3. **Configure Integrations**: Set up needed MCP servers
-4. **Start Development**: Follow the SDD workflow
+**All of these steps should be done WITH Claude Code open to assist you:**
+
+1. **Open Claude Code**: Navigate to your project directory and start Claude Code
+2. **Review Constitution**: Ask Claude Code to explain `.specify/memory/constitution.md`
+3. **Customize for Your Project**: Use `/create-prd` to define your product requirements
+4. **Create First Feature**: Run `/specify` in Claude Code for your first feature
+5. **Configure Integrations**: Set up needed MCP servers (ask Claude for guidance)
+6. **Start Development**: Follow the SDD workflow with Claude Code as your assistant
+
+### Recommended First Commands in Claude Code
+
+```bash
+# 1. Ask Claude Code for an overview
+"Can you explain how this SDD framework works?"
+
+# 2. Create a PRD for your project (optional but recommended)
+/create-prd
+
+# 3. Create your first feature specification
+/specify "your-feature-name"
+
+# 4. Get help anytime
+"I need help understanding [topic]"
+```
 
 ---
 
-**Remember**: The constitution is your guide. When in doubt, consult `.specify/memory/constitution.md`.
+**Remember**:
+- Claude Code is your co-pilot - use it for EVERYTHING!
+- The constitution is your guide: `.specify/memory/constitution.md`
+- When in doubt, ask Claude Code!
