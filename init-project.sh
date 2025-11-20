@@ -145,12 +145,6 @@ echo -e "${GREEN}✓${NC} Project README created"
 # Initialize git if not already initialized
 if [ ! -d ".git" ]; then
     echo -e "${BLUE}Initializing git repository...${NC}"
-<<<<<<< HEAD
-    git init
-    git add .
-    git commit -m "Initial commit: $PROJECT_NAME setup with SDD Framework"
-    echo -e "${GREEN}✓${NC} Git repository initialized"
-=======
     echo ""
 
     # Constitutional Principle VI: Request approval for git operations
@@ -176,7 +170,6 @@ if [ ! -d ".git" ]; then
             echo -e "${YELLOW}Git initialization skipped${NC}"
         fi
     fi
->>>>>>> kelleysd-apps-dev
 else
     echo -e "${YELLOW}ℹ${NC}  Git repository already exists"
 fi
