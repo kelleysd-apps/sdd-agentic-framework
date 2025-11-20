@@ -184,42 +184,48 @@ else
     echo -e "${RED}Warning: Setup script not found${NC}"
 fi
 
-# PRD Creation (Product Requirements Document)
+# PRD-First Workflow Guidance
 echo ""
 echo -e "${BLUE}=====================================${NC}"
-echo -e "${BLUE}   Product Requirements Document${NC}"
+echo -e "${BLUE}   Recommended: PRD-First Workflow${NC}"
 echo -e "${BLUE}=====================================${NC}"
 echo ""
-echo -e "${YELLOW}A Product Requirements Document (PRD) serves as the Single Source of Truth for:${NC}"
-echo -e "  • Feature specifications and user stories"
-echo -e "  • Constitutional customizations (14 principles)"
-echo -e "  • Custom agent planning"
-echo -e "  • Technical constraints and requirements"
+echo -e "${GREEN}For best results, follow this initialization sequence:${NC}"
 echo ""
-echo -e "Creating a PRD ${GREEN}before${NC} building features helps:"
-echo -e "  ✓ Align stakeholders on vision and goals"
-echo -e "  ✓ Define clear success metrics"
-echo -e "  ✓ Customize framework for your project"
-echo -e "  ✓ Guide all feature development"
+echo -e "${YELLOW}1. Create Product Requirements Document (PRD)${NC}"
+echo -e "   Use: ${GREEN}/create-prd${NC} in Claude Code"
+echo -e "   → Defines product vision, goals, features, and success metrics"
+echo -e "   → Serves as Single Source of Truth (SSOT) for your project"
 echo ""
-read -p "Would you like to create a PRD now? (recommended) (y/n): " CREATE_PRD
-
-if [[ "$CREATE_PRD" =~ ^[Yy]$ ]]; then
-    echo -e "${BLUE}Creating PRD...${NC}"
-    if [ -f ".specify/scripts/bash/create-prd.sh" ]; then
-        chmod +x .specify/scripts/bash/create-prd.sh
-        ./.specify/scripts/bash/create-prd.sh "$PROJECT_NAME"
-        echo ""
-        echo -e "${GREEN}✓${NC} PRD created successfully!"
-        echo -e "${YELLOW}Next: Open .docs/prd/prd.md in Claude Code and complete all sections${NC}"
-        echo -e "${YELLOW}Use the prd-specialist agent for guidance${NC}"
-    else
-        echo -e "${RED}Warning: PRD creation script not found${NC}"
-    fi
-else
-    echo -e "${YELLOW}Skipped PRD creation${NC}"
-    echo -e "${YELLOW}You can create it later with: /create-prd${NC}"
-fi
+echo -e "${YELLOW}2. Customize Constitutional Principles${NC}"
+echo -e "   Edit: ${GREEN}.specify/memory/constitution.md${NC}"
+echo -e "   → Use PRD to customize all 14 principles for your project"
+echo -e "   → Document project-specific rules and quality thresholds"
+echo -e "   → Define exceptions and justifications"
+echo ""
+echo -e "${YELLOW}3. Create Custom Agents${NC}"
+echo -e "   Use: ${GREEN}/create-agent${NC} in Claude Code"
+echo -e "   → Create specialized agents identified in PRD"
+echo -e "   → Use PRD's Principle X section for agent planning"
+echo ""
+echo -e "${YELLOW}4. Begin Feature Development${NC}"
+echo -e "   Use: ${GREEN}/specify${NC}, ${GREEN}/plan${NC}, ${GREEN}/tasks${NC}"
+echo -e "   → All commands will reference PRD as SSOT"
+echo -e "   → Features align with PRD goals and constraints"
+echo ""
+echo -e "${BLUE}=====================================${NC}"
+echo -e "${BLUE}   Why PRD-First?${NC}"
+echo -e "${BLUE}=====================================${NC}"
+echo ""
+echo -e "✓ ${GREEN}Alignment${NC}: Stakeholders aligned on vision before code"
+echo -e "✓ ${GREEN}Clarity${NC}: Clear success metrics and acceptance criteria"
+echo -e "✓ ${GREEN}Customization${NC}: Framework tailored to YOUR needs"
+echo -e "✓ ${GREEN}Efficiency${NC}: Less rework from unclear requirements"
+echo -e "✓ ${GREEN}Quality${NC}: Better specs and plans downstream"
+echo ""
+echo -e "${YELLOW}Note:${NC} You can create the PRD anytime with ${GREEN}/create-prd${NC}"
+echo -e "${YELLOW}      It's flexible - use it for projects, major features, or pivots${NC}"
+echo ""
 
 # Cleanup process (with user approval)
 echo ""

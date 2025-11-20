@@ -1,35 +1,58 @@
 # /create-prd - Create Product Requirements Document
 
-Creates a comprehensive Product Requirements Document (PRD) that serves as the **Single Source of Truth (SSOT)** for your entire project.
+Creates a comprehensive Product Requirements Document (PRD) that can serve as **Single Source of Truth (SSOT)** for various purposes throughout your development lifecycle.
 
 ## Purpose
 
-The PRD is the **first step** in the SDD workflow, establishing:
-- Product vision, goals, and success metrics
-- User personas and journeys
-- Core features and requirements
-- Constitutional customizations (all 14 principles)
-- Technical constraints and boundaries
-- Release strategy and MVP definition
-- Custom agent planning
+A PRD provides structured requirements documentation for:
+- **Project initialization** - Establish product vision, goals, and strategy
+- **Major features** - Document complex feature requirements before development
+- **Product pivots** - Re-define product direction and priorities
+- **Stakeholder alignment** - Create shared understanding of goals and scope
+- **Constitutional customization** - Define project-specific framework rules
+- **Compliance documentation** - Meet regulatory or business documentation requirements
+- **Any purpose requiring structured requirements** - Flexible tool for any planning need
 
 ## When to Use
 
-**Use this command when**:
-- Starting a new project
-- Establishing project foundation before any feature work
-- Defining product strategy and requirements
-- Customizing the SDD framework for your specific needs
+**Use this command whenever you need structured requirements documentation**:
 
-**Typical workflow position**:
+### At Project Start (Recommended First Step)
+- **Primary Use**: Initialize new projects with complete product foundation
+- **Result**: SSOT that guides constitution customization, agent creation, and all feature work
+- **Workflow**: Create PRD → Customize constitution → Create agents → Begin features
+
+### During Development (Anytime)
+- **Major Features**: Document complex features before /specify
+- **New Modules**: Define requirements for significant new capabilities
+- **Product Changes**: Document pivots, re-scoping, or strategic shifts
+- **Team Onboarding**: Create shared understanding for new team members
+- **Stakeholder Communication**: Formalize requirements and decisions
+
+### For Specific Needs
+- **Compliance**: Create documentation for audits or regulatory requirements
+- **Fundraising**: Document product vision and roadmap for investors
+- **Planning**: Think through product strategy before committing to implementation
+- **Retrospectives**: Document lessons learned and future direction
+
+## Flexibility
+
+**PRDs are flexible documents - use what you need**:
+- Can be project-wide or feature-specific
+- Can cover entire product or single module
+- Can be detailed or high-level based on need
+- Can be created at any time, not just at project start
+- Multiple PRDs can exist (e.g., project PRD + major feature PRDs)
+
+**Typical workflow for project initialization**:
 ```
-1. /create-prd          ← Start here for new projects
-2. Customize constitution based on PRD
-3. Create custom agents identified in PRD
-4. /specify             ← Create feature specs (references PRD)
-5. /plan                ← Plan implementation (references PRD)
-6. /tasks               ← Generate tasks
-7. Implementation
+1. /create-prd "MyProject"     ← Create project-wide PRD (SSOT)
+2. Complete PRD with prd-specialist agent
+3. Use PRD to customize .specify/memory/constitution.md
+4. Create custom agents identified in PRD
+5. /specify                     ← Create feature specs (reference PRD)
+6. /plan                        ← Implementation planning (reference PRD)
+7. /tasks → Implementation
 ```
 
 ## Usage
