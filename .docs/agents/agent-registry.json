@@ -9,9 +9,20 @@
       "status": "active",
       "file": "/workspaces/sdd-agentic-framework/.claude/agents/architecture/planning-agent.md",
       "memory": "/workspaces/sdd-agentic-framework/.docs/agents/architecture/planning-agent/"
+    },
+    "prd-specialist": {
+      "department": "product",
+      "description": "Product Requirements Document (PRD) creation specialist for the /create-prd command (Phase 0 - Project Initialization). Expert in product strategy, user research, requirements gathering, business-technical alignment, and constitutional customization. Creates comprehensive PRDs that serve as Single Source of Truth (SSOT) for all project specifications, agent configurations, and framework customizations. Can be used anytime during development for any purpose requiring structured requirements documentation.",
+      "created": "2025-11-20T12:00:00Z",
+      "tools": "Read, Write, Edit, Grep, Glob, AskUserQuestion, TodoWrite",
+      "mcp_access": "mcp__ref-tools, mcp__browsermcp, mcp__perplexity",
+      "status": "active",
+      "file": "/workspaces/sdd-agentic-framework/.claude/agents/product/prd-specialist.md",
+      "memory": "/workspaces/sdd-agentic-framework/.docs/agents/product/prd-specialist/"
     }
   },
   "departments": {
-    "architecture": 1
+    "architecture": 1,
+    "product": 1
   }
 }

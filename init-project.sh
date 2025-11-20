@@ -145,12 +145,6 @@ echo -e "${GREEN}✓${NC} Project README created"
 # Initialize git if not already initialized
 if [ ! -d ".git" ]; then
     echo -e "${BLUE}Initializing git repository...${NC}"
-<<<<<<< HEAD
-    git init
-    git add .
-    git commit -m "Initial commit: $PROJECT_NAME setup with SDD Framework"
-    echo -e "${GREEN}✓${NC} Git repository initialized"
-=======
     echo ""
 
     # Constitutional Principle VI: Request approval for git operations
@@ -176,7 +170,6 @@ if [ ! -d ".git" ]; then
             echo -e "${YELLOW}Git initialization skipped${NC}"
         fi
     fi
->>>>>>> kelleysd-apps-dev
 else
     echo -e "${YELLOW}ℹ${NC}  Git repository already exists"
 fi
@@ -190,6 +183,49 @@ if [ -f ".specify/scripts/setup.sh" ]; then
 else
     echo -e "${RED}Warning: Setup script not found${NC}"
 fi
+
+# PRD-First Workflow Guidance
+echo ""
+echo -e "${BLUE}=====================================${NC}"
+echo -e "${BLUE}   Recommended: PRD-First Workflow${NC}"
+echo -e "${BLUE}=====================================${NC}"
+echo ""
+echo -e "${GREEN}For best results, follow this initialization sequence:${NC}"
+echo ""
+echo -e "${YELLOW}1. Create Product Requirements Document (PRD)${NC}"
+echo -e "   Use: ${GREEN}/create-prd${NC} in Claude Code"
+echo -e "   → Defines product vision, goals, features, and success metrics"
+echo -e "   → Serves as Single Source of Truth (SSOT) for your project"
+echo ""
+echo -e "${YELLOW}2. Customize Constitutional Principles${NC}"
+echo -e "   Edit: ${GREEN}.specify/memory/constitution.md${NC}"
+echo -e "   → Use PRD to customize all 14 principles for your project"
+echo -e "   → Document project-specific rules and quality thresholds"
+echo -e "   → Define exceptions and justifications"
+echo ""
+echo -e "${YELLOW}3. Create Custom Agents${NC}"
+echo -e "   Use: ${GREEN}/create-agent${NC} in Claude Code"
+echo -e "   → Create specialized agents identified in PRD"
+echo -e "   → Use PRD's Principle X section for agent planning"
+echo ""
+echo -e "${YELLOW}4. Begin Feature Development${NC}"
+echo -e "   Use: ${GREEN}/specify${NC}, ${GREEN}/plan${NC}, ${GREEN}/tasks${NC}"
+echo -e "   → All commands will reference PRD as SSOT"
+echo -e "   → Features align with PRD goals and constraints"
+echo ""
+echo -e "${BLUE}=====================================${NC}"
+echo -e "${BLUE}   Why PRD-First?${NC}"
+echo -e "${BLUE}=====================================${NC}"
+echo ""
+echo -e "✓ ${GREEN}Alignment${NC}: Stakeholders aligned on vision before code"
+echo -e "✓ ${GREEN}Clarity${NC}: Clear success metrics and acceptance criteria"
+echo -e "✓ ${GREEN}Customization${NC}: Framework tailored to YOUR needs"
+echo -e "✓ ${GREEN}Efficiency${NC}: Less rework from unclear requirements"
+echo -e "✓ ${GREEN}Quality${NC}: Better specs and plans downstream"
+echo ""
+echo -e "${YELLOW}Note:${NC} You can create the PRD anytime with ${GREEN}/create-prd${NC}"
+echo -e "${YELLOW}      It's flexible - use it for projects, major features, or pivots${NC}"
+echo ""
 
 # Cleanup process (with user approval)
 echo ""
