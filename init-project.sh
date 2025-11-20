@@ -184,6 +184,43 @@ else
     echo -e "${RED}Warning: Setup script not found${NC}"
 fi
 
+# PRD Creation (Product Requirements Document)
+echo ""
+echo -e "${BLUE}=====================================${NC}"
+echo -e "${BLUE}   Product Requirements Document${NC}"
+echo -e "${BLUE}=====================================${NC}"
+echo ""
+echo -e "${YELLOW}A Product Requirements Document (PRD) serves as the Single Source of Truth for:${NC}"
+echo -e "  • Feature specifications and user stories"
+echo -e "  • Constitutional customizations (14 principles)"
+echo -e "  • Custom agent planning"
+echo -e "  • Technical constraints and requirements"
+echo ""
+echo -e "Creating a PRD ${GREEN}before${NC} building features helps:"
+echo -e "  ✓ Align stakeholders on vision and goals"
+echo -e "  ✓ Define clear success metrics"
+echo -e "  ✓ Customize framework for your project"
+echo -e "  ✓ Guide all feature development"
+echo ""
+read -p "Would you like to create a PRD now? (recommended) (y/n): " CREATE_PRD
+
+if [[ "$CREATE_PRD" =~ ^[Yy]$ ]]; then
+    echo -e "${BLUE}Creating PRD...${NC}"
+    if [ -f ".specify/scripts/bash/create-prd.sh" ]; then
+        chmod +x .specify/scripts/bash/create-prd.sh
+        ./.specify/scripts/bash/create-prd.sh "$PROJECT_NAME"
+        echo ""
+        echo -e "${GREEN}✓${NC} PRD created successfully!"
+        echo -e "${YELLOW}Next: Open .docs/prd/prd.md in Claude Code and complete all sections${NC}"
+        echo -e "${YELLOW}Use the prd-specialist agent for guidance${NC}"
+    else
+        echo -e "${RED}Warning: PRD creation script not found${NC}"
+    fi
+else
+    echo -e "${YELLOW}Skipped PRD creation${NC}"
+    echo -e "${YELLOW}You can create it later with: /create-prd${NC}"
+fi
+
 # Cleanup process (with user approval)
 echo ""
 echo -e "${BLUE}=====================================${NC}"

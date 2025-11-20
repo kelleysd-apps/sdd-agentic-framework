@@ -34,6 +34,39 @@ This is a specification-driven development framework that uses structured templa
 
 ## Commands
 
+### Product Requirements (Phase 0)
+
+**Create Product Requirements Document**: Use `/create-prd` command
+   - **AGENT**: Executed by prd-specialist (auto-delegated per Principle X)
+   - **PURPOSE**: Establishes Single Source of Truth (SSOT) for entire project
+   - Creates comprehensive PRD at `.docs/prd/prd.md`
+   - Script: `.specify/scripts/bash/create-prd.sh [project_name]`
+   - **INTEGRATED**: Part of `init-project.sh` workflow
+   - **Outputs**:
+     - Product vision, goals, and success metrics
+     - User personas and journeys
+     - Core features and requirements with acceptance criteria
+     - Constitutional customizations (all 14 principles)
+     - Technical constraints and integration requirements
+     - Release strategy and MVP definition
+     - Custom agent planning
+     - Quick reference guide
+   - **Workflow Integration**:
+     - `/specify` → References PRD for user stories, personas, acceptance criteria
+     - `/plan` → References PRD for technical constraints, architecture principles
+     - Constitution → Updated with project-specific guidance from PRD
+     - Custom agents → Created based on needs identified in PRD
+   - **When to Use**:
+     - Starting a new project (first step before any features)
+     - Establishing product foundation and strategy
+     - Defining framework customizations for your context
+     - Aligning stakeholders on vision and priorities
+   - **Usage**:
+     ```bash
+     /create-prd                # Interactive mode
+     /create-prd MyProject      # With project name
+     ```
+
 ### Feature Specification Workflow
 
 1. **Create feature specification**: Use `/specify` command
@@ -278,6 +311,16 @@ If DS-STAR components unavailable (Python not installed, dependencies missing):
 ## Available Agents
 
 The following specialized agents are available for specific tasks:
+
+### prd-specialist (product)
+
+**Purpose**: Product Requirements Document (PRD) creation specialist for the /create-prd command (Phase 0 - Project Initialization). Expert in product strategy, user research, requirements gathering, business-technical alignment, and constitutional customization. Creates comprehensive PRDs that serve as Single Source of Truth (SSOT) for all project specifications, agent configurations, and framework customizations. Core competencies include: (1) Discovery & Vision Alignment - stakeholder interviews, vision validation, problem-solution fit, success definition, scope boundaries; (2) User Research & Persona Development - realistic persona creation, user journey mapping, pain point analysis, behavioral patterns, opportunity identification; (3) Requirements Definition & Structuring - feature categorization, user story writing, acceptance criteria definition, dependency mapping, priority assignment, constraint documentation; (4) Constitutional Customization - review and customize all 14 constitutional principles for project context, document exceptions with justification, define project-specific quality thresholds, map compliance requirements; (5) Technical Context & Constraints - define high-level boundaries without prescribing implementation, document required/prohibited technologies, performance/security/compliance requirements, integration constraints, scalability expectations; (6) Release Strategy & Phasing - MVP definition, feature phasing, timeline recommendations, success criteria, risk assessment; (7) Agent & Workflow Planning - identify specialized agents needed, define PRD integration with /specify and /plan commands, create SSOT reference mapping. Operates as Phase 0 in the SDD workflow pipeline, before specification-agent. Responsible for complete PRD creation including vision/goals/metrics, personas/journeys, features/requirements, constitutional guidance, technical constraints, release strategy, and agent planning. Must ensure PRD serves as authoritative reference for all downstream specification and planning work.
+
+**Usage**: `Use the prd-specialist agent to...`
+
+**Triggers**: Automatically invoked by /create-prd command. See `.specify/memory/agent-collaboration.md` for automatic triggers.
+
+---
 
 ### planning-agent (product)
 
