@@ -2,6 +2,7 @@
 
 # Auto-setup script for SDD Agentic Framework
 # This script automatically configures the development environment on first run
+# Supports macOS and Linux with automatic dependency installation
 
 set -e
 
@@ -12,15 +13,55 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}=====================================${NC}"
-echo -e "${BLUE}   SDD Framework Development Setup${NC}"
+echo -e "${BLUE}   SDD Framework Setup${NC}"
 echo -e "${BLUE}=====================================${NC}"
 echo ""
 
-# Check if Node.js is installed
+# Detect OS
+OS="$(uname -s)"
+case "${OS}" in
+    Linux*)     PLATFORM=Linux;;
+    Darwin*)    PLATFORM=macOS;;
+    *)          PLATFORM="Unknown";;
+esac
+
+echo -e "${BLUE}Detected platform: ${PLATFORM}${NC}"
+echo ""
+
+# Check if Node.js is installed, guide installation if not
 if ! command -v node &> /dev/null; then
     echo -e "${RED}❌ Node.js is not installed${NC}"
-    echo -e "${YELLOW}Please install Node.js (v18 or higher) from https://nodejs.org/${NC}"
-    exit 1
+    echo ""
+    echo -e "${YELLOW}Installing Node.js...${NC}"
+
+    if [ "$PLATFORM" == "macOS" ]; then
+        if command -v brew &> /dev/null; then
+            echo -e "${BLUE}Using Homebrew to install Node.js...${NC}"
+            brew install node
+        else
+            echo -e "${YELLOW}Homebrew not found. Please install from https://brew.sh/${NC}"
+            echo -e "${YELLOW}Then install Node.js: brew install node${NC}"
+            echo -e "${YELLOW}Or download directly from https://nodejs.org/${NC}"
+            exit 1
+        fi
+    elif [ "$PLATFORM" == "Linux" ]; then
+        echo -e "${BLUE}Installing Node.js via package manager...${NC}"
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y nodejs npm
+        elif command -v yum &> /dev/null; then
+            sudo yum install -y nodejs npm
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y nodejs npm
+        else
+            echo -e "${YELLOW}Could not detect package manager${NC}"
+            echo -e "${YELLOW}Please install Node.js from https://nodejs.org/${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${YELLOW}Please install Node.js (v18 or higher) from https://nodejs.org/${NC}"
+        exit 1
+    fi
 fi
 
 NODE_VERSION=$(node -v)
@@ -29,12 +70,66 @@ echo -e "${GREEN}✓${NC} Node.js ${NODE_VERSION} detected"
 # Check if npm is installed
 if ! command -v npm &> /dev/null; then
     echo -e "${RED}❌ npm is not installed${NC}"
-    echo -e "${YELLOW}Please install npm${NC}"
+    echo -e "${YELLOW}npm should come with Node.js. Please reinstall Node.js from https://nodejs.org/${NC}"
     exit 1
 fi
 
 NPM_VERSION=$(npm -v)
 echo -e "${GREEN}✓${NC} npm ${NPM_VERSION} detected"
+
+# Check if Git is installed, guide installation if not
+if ! command -v git &> /dev/null; then
+    echo ""
+    echo -e "${YELLOW}⚠ Git is not installed${NC}"
+    echo ""
+
+    if [ "$PLATFORM" == "macOS" ]; then
+        echo -e "${BLUE}Installing Git via Homebrew...${NC}"
+        if command -v brew &> /dev/null; then
+            brew install git
+        else
+            echo -e "${YELLOW}Homebrew not found. Install from https://brew.sh/${NC}"
+            echo -e "${YELLOW}Or install Xcode Command Line Tools: xcode-select --install${NC}"
+        fi
+    elif [ "$PLATFORM" == "Linux" ]; then
+        echo -e "${BLUE}Installing Git...${NC}"
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y git
+        elif command -v yum &> /dev/null; then
+            sudo yum install -y git
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y git
+        fi
+    fi
+else
+    GIT_VERSION=$(git --version)
+    echo -e "${GREEN}✓${NC} ${GIT_VERSION}"
+fi
+
+# Check if Claude Code CLI is installed
+echo ""
+if ! command -v claude &> /dev/null; then
+    echo -e "${YELLOW}⚠ Claude Code CLI is not installed${NC}"
+    echo ""
+    echo -e "${BLUE}Claude Code is your AI assistant for this framework.${NC}"
+    echo -e "${BLUE}It provides:${NC}"
+    echo -e "  • Interactive guidance throughout development"
+    echo -e "  • Troubleshooting support for any errors"
+    echo -e "  • Automated workflows (/specify, /plan, /tasks, /create-prd)"
+    echo ""
+    echo -e "${YELLOW}To install Claude Code:${NC}"
+    echo -e "  1. Visit: ${BLUE}https://claude.ai/code${NC}"
+    echo -e "  2. Sign in or create an account"
+    echo -e "  3. Follow installation instructions for ${PLATFORM}"
+    echo -e "  4. Run: ${BLUE}claude login${NC}"
+    echo ""
+    read -p "Press Enter to continue without Claude Code, or Ctrl+C to install it first..."
+else
+    CLAUDE_VERSION=$(claude --version 2>&1 || echo "installed")
+    echo -e "${GREEN}✓${NC} Claude Code CLI ${CLAUDE_VERSION}"
+fi
+
+echo ""
 
 # Install dependencies if node_modules doesn't exist
 if [ ! -d "node_modules" ]; then
@@ -77,18 +172,50 @@ echo -e "${GREEN}=====================================${NC}"
 echo -e "${GREEN}   Setup Complete! 🎉${NC}"
 echo -e "${GREEN}=====================================${NC}"
 echo ""
-echo -e "You can now start developing with the SDD framework."
-echo -e ""
-echo -e "${BLUE}Available commands in Claude Code:${NC}"
-echo -e "  /specify     - Create new feature specification"
-echo -e "  /plan        - Generate implementation plan"
-echo -e "  /tasks       - Create task list"
-echo -e "  /create-agent - Create specialized AI agent"
-echo -e ""
-echo -e "${BLUE}Next steps:${NC}"
-echo -e "  1. Read ${YELLOW}.specify/memory/constitution.md${NC} for development principles"
-echo -e "  2. Check ${YELLOW}CLAUDE.md${NC} for AI assistant guidance"
-echo -e "  3. Review ${YELLOW}START_HERE.md${NC} for detailed setup instructions"
-echo -e ""
+
+echo -e "${BLUE}Recommended workflow for project initialization:${NC}"
+echo ""
+echo -e "${YELLOW}Step 1: Create a Product Requirements Document (PRD)${NC}"
+echo -e "  The PRD serves as your Single Source of Truth (SSOT)"
+echo -e "  It guides constitution customization, agent creation, and all feature work"
+echo ""
+echo -e "  ${BLUE}In Claude Code, run:${NC} ${GREEN}/create-prd${NC}"
+echo ""
+echo -e "${YELLOW}Step 2: Customize the Constitution${NC}"
+echo -e "  Edit: ${GREEN}.specify/memory/constitution.md${NC}"
+echo -e "  Use your PRD to customize all 14 principles for your project"
+echo ""
+echo -e "${YELLOW}Step 3: Create specialized agents (if needed)${NC}"
+echo -e "  ${BLUE}In Claude Code, run:${NC} ${GREEN}/create-agent${NC}"
+echo ""
+echo -e "${YELLOW}Step 4: Start feature development${NC}"
+echo -e "  ${BLUE}Available commands in Claude Code:${NC}"
+echo -e "    ${GREEN}/specify${NC}      - Create feature specification"
+echo -e "    ${GREEN}/plan${NC}         - Generate implementation plan"
+echo -e "    ${GREEN}/tasks${NC}        - Create task list"
+echo -e "    ${GREEN}/finalize${NC}     - Pre-commit compliance validation"
+echo ""
+
+# Offer to launch Claude Code
+if command -v claude &> /dev/null; then
+    echo ""
+    read -p "Would you like to launch Claude Code now? (y/n): " launch_claude
+    if [[ "$launch_claude" =~ ^[Yy]$ ]]; then
+        echo ""
+        echo -e "${BLUE}Launching Claude Code...${NC}"
+        claude code .
+    fi
+else
+    echo ""
+    echo -e "${YELLOW}💡 Tip: Install Claude Code for AI-assisted development${NC}"
+    echo -e "   Visit: ${BLUE}https://claude.ai/code${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}For more information:${NC}"
+echo -e "  • ${GREEN}START_HERE.md${NC} - Complete setup and usage guide"
+echo -e "  • ${GREEN}.specify/memory/constitution.md${NC} - Development principles"
+echo -e "  • ${GREEN}CLAUDE.md${NC} - AI assistant instructions"
+echo ""
 
 exit 0
