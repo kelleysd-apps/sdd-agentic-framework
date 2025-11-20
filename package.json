@@ -6,6 +6,10 @@
   "type": "module",
   "scripts": {
     "setup": "./.specify/scripts/setup.sh",
+    "setup:windows": "powershell -ExecutionPolicy Bypass -File .specify/scripts/setup-windows.ps1",
+    "setup:macos": "bash .specify/scripts/setup.sh",
+    "setup:linux": "bash .specify/scripts/setup.sh",
+    "init": "bash init-project.sh",
     "postinstall": "./.specify/scripts/setup.sh",
     "test": "echo \"Error: no test framework configured\" && exit 1",
     "lint": "echo \"Error: no linter configured\" && exit 1",
