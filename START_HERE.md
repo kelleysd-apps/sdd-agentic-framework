@@ -237,6 +237,62 @@ Claude Code is your AI development assistant for this framework. It:
   bash .specify/scripts/setup.sh
   ```
 
+### Line Ending Errors (CRLF Issues)
+
+**Symptoms:**
+```bash
+bash: $'\r': command not found
+syntax error near unexpected token `$'\r''
+cannot execute: required file not found
+```
+
+**Cause:** Scripts have Windows line endings (CRLF) instead of Unix line endings (LF)
+
+**Quick Fix:**
+```bash
+# Run the emergency line ending fixer
+bash fix-line-endings.sh
+```
+
+**Manual Fix:**
+```bash
+# Remove carriage returns from all scripts
+find .specify/scripts -name "*.sh" -type f -exec sed -i 's/\r$//' {} \;
+
+# Make scripts executable
+chmod +x .specify/scripts/*.sh
+chmod +x .specify/scripts/bash/*.sh
+
+# Try setup again
+bash .specify/scripts/setup.sh
+```
+
+**Why this happens:**
+- Git on Windows may checkout files with CRLF line endings
+- Running the scripts in WSL/Git Bash requires LF endings
+- The framework now includes `.gitattributes` to prevent this
+
+### PowerShell Parse Errors
+
+**Symptoms:**
+```powershell
+Unexpected token 'Path","User")
+Missing expression after unary operator '--'
+```
+
+**Cause:** Character encoding issues or corrupted script
+
+**Fix:**
+```powershell
+# Re-clone the repository
+cd ..
+git clone https://github.com/kelleysd-apps/sdd-agentic-framework.git
+cd sdd-agentic-framework
+
+# Try setup again
+powershell -ExecutionPolicy Bypass -File .specify\scripts\setup-windows.ps1
+```
+
 ### Downloads Fail
 
 - Check your internet connection

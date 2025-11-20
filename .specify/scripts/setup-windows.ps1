@@ -12,9 +12,9 @@ $ErrorActionPreference = "Stop"
 
 # Colors for output
 function Write-Info { Write-Host $args -ForegroundColor Cyan }
-function Write-Success { Write-Host "✓ $args" -ForegroundColor Green }
-function Write-Warning { Write-Host "⚠ $args" -ForegroundColor Yellow }
-function Write-Error { Write-Host "✗ $args" -ForegroundColor Red }
+function Write-Success { Write-Host "[OK] $args" -ForegroundColor Green }
+function Write-Warning { Write-Host "[WARNING] $args" -ForegroundColor Yellow }
+function Write-Error { Write-Host "[ERROR] $args" -ForegroundColor Red }
 
 Write-Info "========================================="
 Write-Info "   SDD Framework Windows Setup"
