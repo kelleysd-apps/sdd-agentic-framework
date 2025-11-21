@@ -6,6 +6,13 @@
 
 set -e
 
+# Prevent recursive calls from npm postinstall hooks
+if [ "$SDD_SETUP_RUNNING" = "true" ]; then
+    echo "Setup already running, skipping recursive call"
+    exit 0
+fi
+export SDD_SETUP_RUNNING=true
+
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -65,7 +72,7 @@ if ! command -v node &> /dev/null; then
 fi
 
 NODE_VERSION=$(node -v)
-echo -e "${GREEN}✓${NC} Node.js ${NODE_VERSION} detected"
+echo -e "${GREEN}[OK]${NC} Node.js ${NODE_VERSION} detected"
 
 # Check if npm is installed
 if ! command -v npm &> /dev/null; then
@@ -75,12 +82,12 @@ if ! command -v npm &> /dev/null; then
 fi
 
 NPM_VERSION=$(npm -v)
-echo -e "${GREEN}✓${NC} npm ${NPM_VERSION} detected"
+echo -e "${GREEN}[OK]${NC} npm ${NPM_VERSION} detected"
 
 # Check if Git is installed, guide installation if not
 if ! command -v git &> /dev/null; then
     echo ""
-    echo -e "${YELLOW}⚠ Git is not installed${NC}"
+    echo -e "${YELLOW}[WARNING] Git is not installed${NC}"
     echo ""
 
     if [ "$PLATFORM" == "macOS" ]; then
@@ -103,13 +110,13 @@ if ! command -v git &> /dev/null; then
     fi
 else
     GIT_VERSION=$(git --version)
-    echo -e "${GREEN}✓${NC} ${GIT_VERSION}"
+    echo -e "${GREEN}[OK]${NC} ${GIT_VERSION}"
 fi
 
 # Check if Claude Code CLI is installed
 echo ""
 if ! command -v claude &> /dev/null; then
-    echo -e "${YELLOW}⚠ Claude Code CLI is not installed${NC}"
+    echo -e "${YELLOW}[WARNING] Claude Code CLI is not installed${NC}"
     echo ""
     echo -e "${BLUE}Claude Code is your AI assistant for this framework.${NC}"
     echo -e "${BLUE}It provides:${NC}"
@@ -126,7 +133,7 @@ if ! command -v claude &> /dev/null; then
     read -p "Press Enter to continue without Claude Code, or Ctrl+C to install it first..."
 else
     CLAUDE_VERSION=$(claude --version 2>&1 || echo "installed")
-    echo -e "${GREEN}✓${NC} Claude Code CLI ${CLAUDE_VERSION}"
+    echo -e "${GREEN}[OK]${NC} Claude Code CLI ${CLAUDE_VERSION}"
 fi
 
 echo ""
@@ -136,9 +143,9 @@ if [ ! -d "node_modules" ]; then
     echo ""
     echo -e "${BLUE}Installing dependencies...${NC}"
     npm install
-    echo -e "${GREEN}✓${NC} Dependencies installed"
+    echo -e "${GREEN}[OK]${NC} Dependencies installed"
 else
-    echo -e "${GREEN}✓${NC} Dependencies already installed"
+    echo -e "${GREEN}[OK]${NC} Dependencies already installed"
 fi
 
 # Create .env file from template if it doesn't exist
@@ -147,24 +154,24 @@ if [ ! -f ".env" ]; then
         echo ""
         echo -e "${BLUE}Creating .env file from template...${NC}"
         cp .env.example .env
-        echo -e "${GREEN}✓${NC} .env file created"
-        echo -e "${YELLOW}ℹ${NC}  Please update .env with your project-specific configuration"
+        echo -e "${GREEN}[OK]${NC} .env file created"
+        echo -e "${YELLOW}[INFO]${NC}  Please update .env with your project-specific configuration"
     fi
 else
-    echo -e "${GREEN}✓${NC} .env file exists"
+    echo -e "${GREEN}[OK]${NC} .env file exists"
 fi
 
 # Make all bash scripts executable
 echo ""
 echo -e "${BLUE}Setting up SDD workflow scripts...${NC}"
 chmod +x .specify/scripts/bash/*.sh 2>/dev/null || true
-echo -e "${GREEN}✓${NC} Scripts are executable"
+echo -e "${GREEN}[OK]${NC} Scripts are executable"
 
 # Check Claude configuration
 if [ -d ".claude" ]; then
-    echo -e "${GREEN}✓${NC} Claude Code configuration found"
+    echo -e "${GREEN}[OK]${NC} Claude Code configuration found"
 else
-    echo -e "${YELLOW}ℹ  Claude Code configuration not found (optional)${NC}"
+    echo -e "${YELLOW}[INFO]  Claude Code configuration not found (optional)${NC}"
 fi
 
 echo ""
@@ -207,7 +214,7 @@ if command -v claude &> /dev/null; then
     fi
 else
     echo ""
-    echo -e "${YELLOW}💡 Tip: Install Claude Code for AI-assisted development${NC}"
+    echo -e "${YELLOW}[TIP] Tip: Install Claude Code for AI-assisted development${NC}"
     echo -e "   Visit: ${BLUE}https://claude.ai/code${NC}"
 fi
 
