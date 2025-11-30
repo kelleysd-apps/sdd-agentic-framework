@@ -90,18 +90,34 @@ After changing constitution, update ALL of the following:
 
 ### Step 2: Update Main Instruction Files
 
-**CLAUDE.md** (`.claude/CLAUDE.md` or `CLAUDE.md`):
-- [ ] Update constitutional principle references
+**CRITICAL: CLAUDE.md and AGENTS.md are TANDEM FILES - update BOTH together**
+
+**CLAUDE.md** (`CLAUDE.md` at repo root):
+- [ ] Update constitutional principle references (count, version)
 - [ ] Add new principle to relevant sections
 - [ ] Update workflow descriptions if changed
 - [ ] Update command documentation if affected
+- [ ] Update domain → agent mapping table (if agents changed)
+- [ ] Update pre-flight compliance check (if principles changed)
 - [ ] Verify cross-references to constitution
 
-**AGENTS.md** (if exists):
-- [ ] Update universal agent instructions
-- [ ] Add new constitutional requirements
-- [ ] Update delegation protocol if changed
+**AGENTS.md** (`AGENTS.md` at repo root):
+- [ ] Update version number and date
+- [ ] Update constitution version reference
+- [ ] Update total agent count
+- [ ] Update department agent counts
+- [ ] Update agent tables (if agents changed)
+- [ ] Update domain → agent mapping table
+- [ ] Update slash command → agent mapping
+- [ ] Update constitutional compliance section
+- [ ] Update tandem update rules (if process changed)
 - [ ] Verify all principle references
+
+**CLAUDE.md ↔ AGENTS.md Tandem Verification**:
+- [ ] Agent count matches in both files
+- [ ] Domain → agent mappings are consistent
+- [ ] Constitutional version matches in both files
+- [ ] Delegation triggers align between files
 
 **README.md**:
 - [ ] Update framework overview if principles changed fundamentally
@@ -356,19 +372,28 @@ If constitutional change breaks existing projects:
 **Always check these files when constitution changes**:
 
 1. `.specify/memory/constitution.md` (the constitution itself)
-2. `CLAUDE.md` (main AI instructions)
-3. `.specify/scripts/bash/constitutional-check.sh` (automated validation)
-4. `.specify/templates/agent-file-template.md` (new agents must comply)
-5. `.docs/policies/agent-collaboration-triggers.md` (if Principle X changes)
-6. All agent files in `.claude/agents/**/*.md` (13+ files)
+2. `CLAUDE.md` (main AI instructions) **← TANDEM with AGENTS.md**
+3. `AGENTS.md` (agent registry) **← TANDEM with CLAUDE.md**
+4. `.specify/scripts/bash/constitutional-check.sh` (automated validation)
+5. `.specify/templates/agent-file-template.md` (new agents must comply)
+6. `.specify/memory/agent-collaboration-triggers.md` (if Principle X changes)
+7. All agent files in `.claude/agents/**/*.md` (14 files)
 
 **Often need updates**:
 
-7. `.specify/templates/spec-template.md`
-8. `.specify/templates/plan-template.md`
-9. `.specify/templates/tasks-template.md`
-10. README.md
-11. `.docs/sdd-framework-enhancements-sow.md` (if significant change)
+8. `.specify/templates/spec-template.md`
+9. `.specify/templates/plan-template.md`
+10. `.specify/templates/tasks-template.md`
+11. README.md
+12. `.docs/sdd-framework-enhancements-sow.md` (if significant change)
+13. `.claude/skills/validation/message-preflight/SKILL.md` (if principles change)
+
+**TANDEM UPDATE RULE**: CLAUDE.md and AGENTS.md MUST be updated together when:
+- Agent count changes
+- Agent capabilities change
+- Domain → agent mappings change
+- Constitutional version changes
+- Delegation protocol changes
 
 ---
 

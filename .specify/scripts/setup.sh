@@ -124,13 +124,65 @@ if ! command -v claude &> /dev/null; then
     echo -e "  • Troubleshooting support for any errors"
     echo -e "  • Automated workflows (/specify, /plan, /tasks, /create-prd)"
     echo ""
-    echo -e "${YELLOW}To install Claude Code:${NC}"
-    echo -e "  1. Visit: ${BLUE}https://claude.ai/code${NC}"
-    echo -e "  2. Sign in or create an account"
-    echo -e "  3. Follow installation instructions for ${PLATFORM}"
-    echo -e "  4. Run: ${BLUE}claude login${NC}"
-    echo ""
-    read -p "Press Enter to continue without Claude Code, or Ctrl+C to install it first..."
+
+    # Attempt automatic installation
+    echo -e "${BLUE}Attempting to install Claude Code...${NC}"
+    CLAUDE_INSTALLED=false
+
+    if [ "$PLATFORM" == "macOS" ]; then
+        # Try npm global install first (most reliable cross-platform)
+        if npm install -g @anthropic-ai/claude-code 2>/dev/null; then
+            CLAUDE_INSTALLED=true
+            echo -e "${GREEN}[OK]${NC} Claude Code installed via npm"
+        # Try Homebrew as fallback on macOS
+        elif command -v brew &> /dev/null; then
+            if brew install claude-code 2>/dev/null; then
+                CLAUDE_INSTALLED=true
+                echo -e "${GREEN}[OK]${NC} Claude Code installed via Homebrew"
+            fi
+        fi
+    elif [ "$PLATFORM" == "Linux" ]; then
+        # Try npm global install
+        if npm install -g @anthropic-ai/claude-code 2>/dev/null; then
+            CLAUDE_INSTALLED=true
+            echo -e "${GREEN}[OK]${NC} Claude Code installed via npm"
+        fi
+    fi
+
+    if [ "$CLAUDE_INSTALLED" = false ]; then
+        echo ""
+        echo -e "${YELLOW}Automatic installation failed. Please install manually:${NC}"
+        echo ""
+        echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BLUE}                    CLAUDE CODE INSTALLATION                         ${NC}"
+        echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        echo -e "${YELLOW}Option 1: npm (Recommended)${NC}"
+        echo -e "  ${GREEN}npm install -g @anthropic-ai/claude-code${NC}"
+        echo ""
+        echo -e "${YELLOW}Option 2: Homebrew (macOS only)${NC}"
+        echo -e "  ${GREEN}brew install claude-code${NC}"
+        echo ""
+        echo -e "${YELLOW}Option 3: Direct Download${NC}"
+        echo -e "  Visit: ${GREEN}https://claude.ai/code${NC}"
+        echo -e "  Follow installation instructions for ${PLATFORM}"
+        echo ""
+        echo -e "${YELLOW}After installation, authenticate:${NC}"
+        echo -e "  ${GREEN}claude login${NC}"
+        echo ""
+        echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        read -p "Press Enter to continue without Claude Code, or Ctrl+C to install it first..."
+    else
+        echo ""
+        echo -e "${YELLOW}Please authenticate Claude Code:${NC}"
+        echo -e "  ${GREEN}claude login${NC}"
+        echo ""
+        read -p "Would you like to login now? (y/n): " login_now
+        if [[ "$login_now" =~ ^[Yy]$ ]]; then
+            claude login || echo -e "${YELLOW}Login skipped or failed. Run 'claude login' later.${NC}"
+        fi
+    fi
 else
     CLAUDE_VERSION=$(claude --version 2>&1 || echo "installed")
     echo -e "${GREEN}[OK]${NC} Claude Code CLI ${CLAUDE_VERSION}"

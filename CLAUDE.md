@@ -2,14 +2,85 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## MANDATORY: Message Pre-Flight Compliance Check
+
+**EVERY user message MUST trigger this 4-step protocol BEFORE any work begins.**
+
+```
+STEP 1: CONSTITUTION ACKNOWLEDGMENT
+       └─ Confirm awareness of 15 principles (I-XV)
+       └─ Key: II (Test-First), VI (Git Approval), X (Agent Delegation)
+
+STEP 2: DOMAIN ANALYSIS
+       └─ Scan message for domain trigger keywords
+       └─ Identify: frontend, backend, database, testing, security, etc.
+
+STEP 3: DELEGATION DECISION
+       └─ 0 domains → may execute directly
+       └─ 1 domain → MUST delegate to specialist agent
+       └─ 2+ domains → MUST delegate to task-orchestrator
+
+STEP 4: EXECUTION AUTHORIZATION
+       └─ Confirm all steps complete
+       └─ Output compliance summary
+       └─ Proceed with action
+```
+
+### Quick Reference: Domain → Agent Mapping
+
+| Domain | Trigger Keywords | Delegate To |
+|--------|------------------|-------------|
+| Frontend | UI, component, React, CSS, form | frontend-specialist |
+| Backend | API, endpoint, server, auth, service | backend-architect |
+| Database | schema, migration, query, RLS, SQL | database-specialist |
+| Testing | test, TDD, E2E, coverage, QA | testing-specialist |
+| Security | encryption, XSS, secrets, vulnerability | security-specialist |
+| Performance | optimize, cache, benchmark, latency | performance-engineer |
+| DevOps | deploy, CI/CD, Docker, pipeline | devops-engineer |
+| Specification | spec, requirements, user story | specification-agent |
+| Planning | /plan, research, contract design | planning-agent |
+| Tasks | /tasks, task list, dependencies | tasks-agent |
+| Multi-Domain | 2+ domains detected | task-orchestrator |
+
+### Compliance Summary Format
+
+After completing the 4-step protocol, output:
+
+```
+Constitutional Compliance Check:
+- Domain(s): [none | single: <domain> | multi: <domains>]
+- Delegation: [direct execution | <agent-name>]
+- Git operations: [none planned | will request approval]
+- Proceeding with: [action description]
+```
+
+### Violation Self-Correction
+
+If you start work without completing the pre-flight check:
+
+1. **STOP** immediately
+2. **ACKNOWLEDGE** the violation
+3. **CORRECT** by running the 4-step protocol
+4. **PROCEED** only after completing all steps
+
+### Critical Principles Quick Reference
+
+| Principle | Requirement | Consequence |
+|-----------|-------------|-------------|
+| **II (Test-First)** | TDD mandatory, >80% coverage | IMMUTABLE - blocks merge |
+| **VI (Git Approval)** | NO autonomous git operations | CRITICAL - always ask user |
+| **X (Agent Delegation)** | Specialized work → specialists | CRITICAL - delegate or violate |
+
+---
+
 ## CRITICAL: Read Constitution First
 
 **ALWAYS read `.specify/memory/constitution.md` BEFORE starting any work.**
 
-The constitution (v1.5.0) contains **14 enforceable principles**:
+The constitution (v1.6.0) contains **15 enforceable principles**:
 - **3 Immutable Principles** (I-III): Library-First, Test-First, Contract-First
 - **6 Quality & Safety Principles** (IV-IX): Idempotency, Progressive Enhancement, Git Approval, Observability, Documentation Sync, Dependency Management
-- **5 Workflow & Delegation Principles** (X-XIV): Agent Delegation, Input Validation, Design System, Access Control, AI Model Selection
+- **6 Workflow & Delegation Principles** (X-XV): Agent Delegation, Input Validation, Design System, Access Control, AI Model Selection, File Organization
 
 The constitution is the SINGLE SOURCE OF TRUTH for:
 - Core development principles and rules
@@ -46,7 +117,7 @@ This is a specification-driven development framework that uses structured templa
      - Product vision, goals, and success metrics
      - User personas and journeys
      - Core features and requirements with acceptance criteria
-     - Constitutional customizations (all 14 principles)
+     - Constitutional customizations (all 15 principles)
      - Technical constraints and integration requirements
      - Release strategy and MVP definition
      - Custom agent planning
@@ -66,6 +137,66 @@ This is a specification-driven development framework that uses structured templa
      /create-prd                # Interactive mode
      /create-prd MyProject      # With project name
      ```
+
+**Initialize Project After PRD**: Use `/initialize-project` command
+   - **AGENT**: Executed by prd-specialist (auto-delegated per Principle X)
+   - **PURPOSE**: Customizes framework based on completed PRD
+   - **PREREQUISITE**: PRD must exist at `.docs/prd/prd.md`
+   - **Skill**: `.claude/skills/project-initialization/SKILL.md`
+   - **What It Does**:
+     - Updates constitution with project-specific customizations
+     - Creates custom agents identified in PRD (Principle X)
+     - Updates workflow documentation for project context
+     - Configures design system and access tiers per PRD
+     - Validates initialization with constitutional checks
+   - **User Approval Required For**:
+     - Constitution modifications
+     - Agent creation
+     - Any git operations (Principle VI)
+   - **Outputs**:
+     - Updated `.specify/memory/constitution.md` with project customizations
+     - Custom agents in `.claude/agents/`
+     - Updated CLAUDE.md and AGENTS.md
+     - Initialization report with next steps
+   - **Usage**:
+     ```bash
+     /initialize-project        # After PRD completion
+     ```
+   - **Recommended Workflow**:
+     ```
+     1. /create-prd            → Create Product Requirements Document
+     2. [Complete PRD sections with prd-specialist]
+     3. /initialize-project    → Customize framework + configure MCPs
+     4. [Add credentials to .env for any MCPs]
+     5. /specify               → Begin first feature specification
+     ```
+
+### MCP Server Configuration
+
+MCP (Model Context Protocol) servers extend Claude Code's capabilities. The `/initialize-project` command includes MCP setup, but you can also configure them manually.
+
+**Ask Claude for help with MCPs**:
+- "What MCP servers would benefit my project?" (based on PRD)
+- "Help me install the supabase MCP server"
+- "Configure browser automation for E2E testing"
+
+**Common MCP Servers by Use Case**:
+
+| Use Case | MCP Server | Purpose |
+|----------|------------|---------|
+| **Database** | `supabase`, `postgres`, `sqlite` | Database operations, migrations |
+| **Cloud** | `aws`, `gcp`, `azure`, `vercel` | Deployment, infrastructure |
+| **Testing** | `browsermcp`, `playwright` | E2E testing, browser automation |
+| **Search** | `perplexity`, `brave-search` | Research, documentation lookup |
+| **Docs** | `context7`, `notion`, `github` | Library docs, knowledge bases |
+| **Projects** | `linear`, `jira`, `github` | Issue tracking, project management |
+
+**Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
+
+**Security Notes**:
+- Store all MCP credentials in `.env` (never commit!)
+- Use `env:VAR_NAME` syntax in MCP configuration
+- Use least-privilege API keys when possible
 
 ### Feature Specification Workflow
 
@@ -140,11 +271,21 @@ This is a specification-driven development framework that uses structured templa
 
 **Constitutional Principle X** requires specialized work be delegated to specialized agents.
 
+**See `AGENTS.md`** for complete agent registry including:
+- All 14 agents by department
+- Agent capabilities and tools
+- Domain → agent mapping (detailed)
+- Slash command → agent mapping
+- Agent collaboration workflows
+
+**Note**: CLAUDE.md and AGENTS.md are **tandem files** - they must be updated together.
+See `.docs/policies/instruction-files-policy.md` for tandem update rules.
+
 See `.specify/memory/agent-collaboration-triggers.md` for:
 - Domain trigger keywords (Frontend, Backend, Database, Testing, Security, Performance, DevOps, etc.)
 - Single-agent vs multi-agent decision tree
 - Context handoff format
-- 13 specialized agents across 6 departments
+- 14 specialized agents across 6 departments
 
 **Quick Reference**: If task contains domain keywords (test, UI, database, API, security, etc.) → Delegate to specialized agent
 
@@ -154,7 +295,7 @@ See `.specify/memory/agent-collaboration-triggers.md` for:
 ```
 .specify/
 ├── memory/
-│   ├── constitution.md                    # Core principles (v1.5.0 - 14 principles)
+│   ├── constitution.md                    # Core principles (v1.6.0 - 15 principles)
 │   ├── constitution_update_checklist.md   # Mandatory change management
 │   └── agent-collaboration-triggers.md    # Agent delegation reference
 ├── scripts/bash/                          # Workflow automation scripts
@@ -218,7 +359,7 @@ specs/###-feature-name/                     # Per-feature documentation
 
 ### Validation Scripts
 
-- **constitutional-check.sh**: Automated compliance checking for all 14 principles
+- **constitutional-check.sh**: Automated compliance checking for all 15 principles
 - **sanitization-audit.sh**: Verifies framework sanitization (no project-specific elements)
 
 Run before commits and releases:
@@ -242,6 +383,23 @@ Never proceed with implementation without verifying constitutional compliance.
 
 **Note**: When updating the constitution, the `.specify/memory/constitution_update_checklist.md` MUST be followed to ensure all dependent documents are updated.
 
+### AI Model Selection (Principle XIV)
+
+**Default**: All specialized agents use **Opus 4.5** for maximum capability.
+
+| Model | Use Case | When to Use |
+|-------|----------|-------------|
+| **Opus 4.5** | Default for all agents | Specialized work, architecture, security, complex reasoning |
+| **Sonnet 4.5** | Fallback | Cost optimization, high-volume tasks, quota limits |
+| **Haiku** | Quick tasks | Simple lookups, formatting, file operations |
+
+**Model IDs**:
+- Opus: `claude-opus-4-5-20251101`
+- Sonnet: `claude-sonnet-4-5-20250929`
+- Haiku: `claude-haiku` (latest)
+
+See Constitution Principle XIV for full model selection protocol.
+
 ### Git Operations (CRITICAL)
 
 **NO automatic Git operations without user approval.** This includes:
@@ -257,6 +415,107 @@ When Git operations are needed:
 4. SDD functions and scripts must not perform Git operations autonomously
 
 **DS-STAR Enhancement Note**: The `/finalize` command validates compliance but NEVER executes git commands. It provides a report and suggests commands for manual execution.
+
+## File Creation Rules (Principle XV)
+
+**ALWAYS verify before creating files or folders.**
+
+### Pre-Creation Checklist (MANDATORY)
+
+```
+[ ] Is this file necessary? (Can existing file be modified?)
+[ ] Does the parent directory exist?
+[ ] Does a file with this name already exist?
+[ ] Does this follow naming conventions?
+[ ] Is there a template for this file type?
+[ ] Am I using absolute paths from repo root?
+```
+
+### Core Rules
+
+1. **Verify Before Create**: Check parent directory exists with `ls` before creating files
+2. **Edit Over Create**: Prefer modifying existing files over creating new ones
+3. **Templates First**: Use templates from `.specify/templates/` when available
+4. **Absolute Paths**: Always use absolute paths from repository root
+5. **No Proactive Docs**: Never create README.md or documentation files unless explicitly requested
+
+### Naming Conventions
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Agent | `[role]-[function].md` | `backend-architect.md` |
+| Skill folder | `[skill-name]/` | `domain-detection/` |
+| Skill file | `SKILL.md` | `SKILL.md` |
+| Policy | `[topic]-policy.md` | `testing-policy.md` |
+| Agent memory | `[agent]-[type].md` | `planning-agent-context.md` |
+| Feature dir | `###-[name]/` | `001-user-auth/` |
+
+### Directory Structure (SSOT)
+
+```
+.claude/agents/[dept]/          # Agent definitions
+.claude/skills/[category]/      # Skill definitions
+.docs/agents/[dept]/[agent]/    # Agent memory
+.docs/policies/                 # Framework policies
+specs/###-[feature]/            # Feature specifications
+```
+
+### Prohibited Actions
+
+- Creating files without checking existence first
+- Using generic names (README.md) in agent memory directories
+- Creating documentation files proactively without request
+- Creating arbitrary directory structures outside established locations
+
+**Policy**: See `.docs/policies/file-structure-policy.md`
+**Skill**: See `.claude/skills/validation/file-organization/SKILL.md`
+
+## Task Management (SSOT Architecture)
+
+The framework uses a **Single Source of Truth (SSOT)** architecture for tasks:
+
+### Three-Level Task Hierarchy
+
+| Level | Location | Purpose | Scope |
+|-------|----------|---------|-------|
+| **Project** | `specs/###-feature/tasks.md` | Full implementation checklist | Persists in git |
+| **Session** | TodoWrite tool | Active work tracking | Current session |
+| **Agent** | `.docs/agents/*/decisions/tasks/` | Completion history | Cross-session |
+
+### TodoWrite Rules (CRITICAL)
+
+1. **ONE task `in_progress`** at any time - never multiple
+2. **Mark `completed` IMMEDIATELY** - don't batch completions
+3. **Use for 3+ step tasks** - skip for trivial single-step work
+4. **Keep focused** - 3-10 items max
+5. **Derive from tasks.md** - session tasks come from project tasks
+
+### Task Flow
+
+```
+/tasks generates → specs/###-feature/tasks.md (Project SSOT)
+                            ↓
+         Agent reads → TodoWrite (Session tracking)
+                            ↓
+              Complete → Update both tasks.md AND TodoWrite
+                            ↓
+                   /finalize → Validates all complete
+```
+
+### Task Status Reference
+
+**Project Level (tasks.md)**:
+- `- [ ]` Not started
+- `- [x]` Completed
+- `- [~]` In progress
+- `- [!]` Blocked
+
+**Session Level (TodoWrite)**:
+- `pending` - Queued
+- `in_progress` - Active (ONE only)
+- `completed` - Done
+
+**Policy**: See `.docs/policies/todo-architecture-policy.md` for complete details.
 
 ## Working with Features
 

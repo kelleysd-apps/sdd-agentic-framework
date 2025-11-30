@@ -2,7 +2,7 @@
 name: specification-agent
 description: Use PROACTIVELY for creating detailed software specifications, user stories, functional requirements, and acceptance criteria using Spec-Driven Development methodology. Expert in translating business needs into executable specifications.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # specification-agent Agent

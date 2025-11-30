@@ -136,49 +136,67 @@ Run before commits and releases:
 
 ### 3. Set Up MCP Integrations
 
-Model Context Protocol (MCP) servers extend Claude's capabilities. Configure based on your project needs:
+Model Context Protocol (MCP) servers extend Claude's capabilities. The `/initialize-project` command will recommend MCPs based on your PRD, but you can also configure them manually.
 
-#### Required MCP Servers
+#### Claude Helps with MCP Setup
 
-1. **File System Access** (usually pre-configured)
-   - Enables file read/write operations
-   - Required for all framework operations
+Ask Claude to help you identify and configure MCPs:
 
-2. **Project-Specific MCPs**
-   ```json
-   // Example MCP configuration structure
-   {
-     "mcpServers": {
-       "your-service": {
-         "command": "npx",
-         "args": ["-y", "@your-org/mcp-server"],
-         "env": {
-           "API_KEY": "env:YOUR_API_KEY"
-         }
-       }
-     }
-   }
-   ```
+```
+"What MCP servers would benefit my project?"
+"Help me install the supabase MCP server"
+"Configure browser automation for E2E testing"
+```
 
-#### Common MCP Integrations
+**Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
 
-- **Database**: For schema management and migrations (e.g., `mcp__supabase`)
-- **Cloud Providers**: AWS, GCP, Azure for deployment
-- **Documentation**: API docs, knowledge bases (e.g., `mcp__ref-tools`)
-- **IDE Integration**: Code execution and diagnostics (e.g., `mcp__ide`)
-- **Browser Control**: Web automation and testing (e.g., `mcp__browsermcp`)
-- **Search & AI**: Enhanced search and AI capabilities (e.g., `mcp__perplexity`)
-- **Context Management**: Code indexing and search (e.g., `mcp__claude-context`)
+#### Common MCP Servers by Category
 
-#### Department-Specific MCP Access
+| Category | MCP Server | Install Command | Purpose |
+|----------|------------|-----------------|---------|
+| **Database** | supabase | `npx -y @anthropic-ai/mcp-supabase` | PostgreSQL, Auth, Storage via Supabase |
+| | postgres | `npx -y @anthropic-ai/mcp-postgres` | Direct PostgreSQL connections |
+| | sqlite | `npx -y @anthropic-ai/mcp-sqlite` | Local SQLite databases |
+| | firebase | `npx -y @anthropic-ai/mcp-firebase` | Firebase/Firestore projects |
+| **Cloud** | aws | `npx -y @anthropic-ai/mcp-aws` | AWS services (S3, Lambda, etc.) |
+| | gcp | `npx -y @anthropic-ai/mcp-gcp` | Google Cloud Platform |
+| | azure | `npx -y @anthropic-ai/mcp-azure` | Microsoft Azure |
+| | vercel | `npx -y @anthropic-ai/mcp-vercel` | Vercel deployment |
+| **Testing** | browsermcp | `npx -y @anthropic-ai/mcp-browsermcp` | Browser automation, E2E testing |
+| | playwright | `npx -y @anthropic-ai/mcp-playwright` | Playwright-based testing |
+| **Search** | perplexity | `npx -y @anthropic-ai/mcp-perplexity` | AI-powered research |
+| | context7 | `npx -y @anthropic-ai/mcp-context7` | Library documentation |
+| **Projects** | github | `npx -y @anthropic-ai/mcp-github` | GitHub repos, issues, PRs |
+| | linear | `npx -y @anthropic-ai/mcp-linear` | Linear project management |
+| | notion | `npx -y @anthropic-ai/mcp-notion` | Notion workspaces |
 
-Each department gets appropriate MCP servers:
-- **Architecture**: Documentation, search, analysis tools
-- **Engineering**: IDE, database, browser automation
-- **Quality**: Test execution, diagnostics
-- **Data**: Database management, migrations
-- **Product**: Documentation, browser, search
-- **Operations**: Deployment, logging, infrastructure
+#### MCP Configuration Example
+
+```json
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-supabase"],
+      "env": {
+        "SUPABASE_URL": "env:SUPABASE_URL",
+        "SUPABASE_ANON_KEY": "env:SUPABASE_ANON_KEY"
+      }
+    }
+  }
+}
+```
+
+#### Department-Specific MCP Recommendations
+
+| Department | Agents | Recommended MCPs |
+|------------|--------|------------------|
+| **Architecture** | backend-architect | aws/gcp/azure, postgres/supabase |
+| **Engineering** | frontend-specialist, full-stack-developer | browsermcp, github, context7 |
+| **Data** | database-specialist | postgres, supabase, firebase |
+| **Quality** | testing-specialist, security-specialist | browsermcp, playwright |
+| **Product** | specification-agent, planning-agent | github, notion, linear |
+| **Operations** | devops-engineer, performance-engineer | aws/gcp/azure, docker |
 
 ### 4. Secrets Management
 

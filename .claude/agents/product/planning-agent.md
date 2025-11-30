@@ -2,7 +2,7 @@
 name: planning-agent
 description: Use PROACTIVELY for implementation planning via the /plan command. Expert in technical research, library evaluation, API contract design, data modeling, test scenario planning, and constitutional compliance validation. Translates feature specifications into executable implementation plans.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # planning-agent Agent

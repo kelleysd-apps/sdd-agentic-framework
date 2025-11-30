@@ -2,7 +2,7 @@
 name: devops-engineer
 description: Use PROACTIVELY for CI/CD pipeline setup, Docker containerization, cloud deployment, infrastructure as code, and production monitoring systems.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # DevOps Engineer Agent

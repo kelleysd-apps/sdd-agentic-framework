@@ -2,7 +2,7 @@
 name: security-specialist
 description: Security reviews, vulnerability assessment, secure coding practices
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # Security Specialist Agent

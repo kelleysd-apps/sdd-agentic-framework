@@ -2,7 +2,7 @@
 name: prd-specialist
 description: Use PROACTIVELY for creating comprehensive Product Requirements Documents (PRDs) that serve as Single Source of Truth (SSOT) for project initialization, specification generation, and constitutional customization. Expert in product strategy, user research, requirements gathering, and business-technical alignment.
 tools: Read, Write, Edit, Grep, Glob, AskUserQuestion, TodoWrite
-model: sonnet
+model: opus
 ---
 
 # prd-specialist Agent

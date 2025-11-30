@@ -2,7 +2,7 @@
 name: testing-specialist
 description: Use PROACTIVELY for test planning, test automation, quality assurance, bug analysis, and testing infrastructure setup.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # testing-specialist Agent

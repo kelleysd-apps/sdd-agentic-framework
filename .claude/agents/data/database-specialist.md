@@ -2,7 +2,7 @@
 name: database-specialist
 description: Use PROACTIVELY for database schema design, query optimization, data migrations, performance tuning, and data architecture decisions.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # Database Specialist Agent
