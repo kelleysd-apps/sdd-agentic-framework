@@ -526,6 +526,34 @@ Modify templates in `.specify/templates/` for your domain:
 
 ### Common Issues
 
+**Claude Code update fails with ENOTEMPTY error**
+```
+npm error ENOTEMPTY: directory not empty, rename '.../claude-code' -> '.../.claude-code-XXXXX'
+```
+
+This happens when a previous update was interrupted, leaving stale temp directories.
+
+**Quick fix:**
+```bash
+npm_prefix=$(npm config get prefix)
+rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+npm install -g @anthropic-ai/claude-code
+```
+
+**Permanent fix - add to ~/.bashrc or ~/.zshrc:**
+```bash
+# Claude Code update helper - cleans stale temp dirs before updating
+update-claude-code() {
+    local npm_prefix=$(npm config get prefix)
+    rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+    npm install -g @anthropic-ai/claude-code
+}
+```
+
+Then use `update-claude-code` instead of `npm install -g @anthropic-ai/claude-code`.
+
+---
+
 **"Constitution not found"**
 - Ensure `.specify/memory/constitution.md` exists
 - Check file permissions
