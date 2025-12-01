@@ -19,8 +19,8 @@ This implementation extends spec-kit with:
   - Intelligent routing (RouterAgent) - Multi-agent orchestration with dependency graphs
   - Self-healing (AutoDebugAgent) - Automatic error repair with >70% fix rate target
   - Codebase intelligence (ContextAnalyzerAgent) - Semantic search with <2s retrieval
-  - Constitutional validation - All 14 principles enforced before commits
-- **Intelligent agent orchestration** - 13 specialized agents across 6 departments with MCP integration
+  - Constitutional validation - All 15 principles enforced before commits
+- **Intelligent agent orchestration** - 14 specialized agents across 6 departments with MCP integration
 - **Agent Skills system** - Progressive disclosure for procedural knowledge (30-50% context reduction)
 - **Iterative refinement** - Up to 20 rounds with early stopping at 95% quality threshold
 - **Governance policies** - 6 comprehensive policies (Testing, Security, Code Review, Deployment, Branching, Release)
@@ -99,7 +99,7 @@ npm run setup:windows  # Windows (Git Bash)
 
 ### 2. Configure Project Constitution
 
-The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your project's 14 enforceable principles:
+The constitution (`/.specify/memory/constitution.md` v1.6.0) defines your project's 15 enforceable principles:
 
 **Core Immutable Principles** (I-III):
 - **Principle I**: Library-First Architecture
@@ -114,12 +114,13 @@ The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your projec
 - **Principle VIII**: Documentation Synchronization
 - **Principle IX**: Dependency Management
 
-**Workflow & Delegation Principles** (X-XIV):
+**Workflow & Delegation Principles** (X-XV):
 - **Principle X**: Agent Delegation Protocol (CRITICAL)
 - **Principle XI**: Input Validation and Output Sanitization
 - **Principle XII**: Design System Compliance
 - **Principle XIII**: Feature Access Control
 - **Principle XIV**: AI Model Selection Protocol
+- **Principle XV**: File and Folder Organization
 
 ⚠️ **Important**: When updating the constitution, follow `/.specify/memory/constitution_update_checklist.md`
 
@@ -127,7 +128,7 @@ The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your projec
 
 Run before commits and releases:
 ```bash
-# Check constitutional compliance (all 14 principles)
+# Check constitutional compliance (all 15 principles)
 ./.specify/scripts/bash/constitutional-check.sh
 
 # Verify framework sanitization
@@ -136,49 +137,67 @@ Run before commits and releases:
 
 ### 3. Set Up MCP Integrations
 
-Model Context Protocol (MCP) servers extend Claude's capabilities. Configure based on your project needs:
+Model Context Protocol (MCP) servers extend Claude's capabilities. The `/initialize-project` command will recommend MCPs based on your PRD, but you can also configure them manually.
 
-#### Required MCP Servers
+#### Claude Helps with MCP Setup
 
-1. **File System Access** (usually pre-configured)
-   - Enables file read/write operations
-   - Required for all framework operations
+Ask Claude to help you identify and configure MCPs:
 
-2. **Project-Specific MCPs**
-   ```json
-   // Example MCP configuration structure
-   {
-     "mcpServers": {
-       "your-service": {
-         "command": "npx",
-         "args": ["-y", "@your-org/mcp-server"],
-         "env": {
-           "API_KEY": "env:YOUR_API_KEY"
-         }
-       }
-     }
-   }
-   ```
+```
+"What MCP servers would benefit my project?"
+"Help me install the supabase MCP server"
+"Configure browser automation for E2E testing"
+```
 
-#### Common MCP Integrations
+**Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
 
-- **Database**: For schema management and migrations (e.g., `mcp__supabase`)
-- **Cloud Providers**: AWS, GCP, Azure for deployment
-- **Documentation**: API docs, knowledge bases (e.g., `mcp__ref-tools`)
-- **IDE Integration**: Code execution and diagnostics (e.g., `mcp__ide`)
-- **Browser Control**: Web automation and testing (e.g., `mcp__browsermcp`)
-- **Search & AI**: Enhanced search and AI capabilities (e.g., `mcp__perplexity`)
-- **Context Management**: Code indexing and search (e.g., `mcp__claude-context`)
+#### Common MCP Servers by Category
 
-#### Department-Specific MCP Access
+| Category | MCP Server | Install Command | Purpose |
+|----------|------------|-----------------|---------|
+| **Database** | supabase | `npx -y @anthropic-ai/mcp-supabase` | PostgreSQL, Auth, Storage via Supabase |
+| | postgres | `npx -y @anthropic-ai/mcp-postgres` | Direct PostgreSQL connections |
+| | sqlite | `npx -y @anthropic-ai/mcp-sqlite` | Local SQLite databases |
+| | firebase | `npx -y @anthropic-ai/mcp-firebase` | Firebase/Firestore projects |
+| **Cloud** | aws | `npx -y @anthropic-ai/mcp-aws` | AWS services (S3, Lambda, etc.) |
+| | gcp | `npx -y @anthropic-ai/mcp-gcp` | Google Cloud Platform |
+| | azure | `npx -y @anthropic-ai/mcp-azure` | Microsoft Azure |
+| | vercel | `npx -y @anthropic-ai/mcp-vercel` | Vercel deployment |
+| **Testing** | browsermcp | `npx -y @anthropic-ai/mcp-browsermcp` | Browser automation, E2E testing |
+| | playwright | `npx -y @anthropic-ai/mcp-playwright` | Playwright-based testing |
+| **Search** | perplexity | `npx -y @anthropic-ai/mcp-perplexity` | AI-powered research |
+| | context7 | `npx -y @anthropic-ai/mcp-context7` | Library documentation |
+| **Projects** | github | `npx -y @anthropic-ai/mcp-github` | GitHub repos, issues, PRs |
+| | linear | `npx -y @anthropic-ai/mcp-linear` | Linear project management |
+| | notion | `npx -y @anthropic-ai/mcp-notion` | Notion workspaces |
 
-Each department gets appropriate MCP servers:
-- **Architecture**: Documentation, search, analysis tools
-- **Engineering**: IDE, database, browser automation
-- **Quality**: Test execution, diagnostics
-- **Data**: Database management, migrations
-- **Product**: Documentation, browser, search
-- **Operations**: Deployment, logging, infrastructure
+#### MCP Configuration Example
+
+```json
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-supabase"],
+      "env": {
+        "SUPABASE_URL": "env:SUPABASE_URL",
+        "SUPABASE_ANON_KEY": "env:SUPABASE_ANON_KEY"
+      }
+    }
+  }
+}
+```
+
+#### Department-Specific MCP Recommendations
+
+| Department | Agents | Recommended MCPs |
+|------------|--------|------------------|
+| **Architecture** | backend-architect | aws/gcp/azure, postgres/supabase |
+| **Engineering** | frontend-specialist, full-stack-developer | browsermcp, github, context7 |
+| **Data** | database-specialist | postgres, supabase, firebase |
+| **Quality** | testing-specialist, security-specialist | browsermcp, playwright |
+| **Product** | specification-agent, planning-agent | github, notion, linear |
+| **Operations** | devops-engineer, performance-engineer | aws/gcp/azure, docker |
 
 ### 4. Secrets Management
 
@@ -227,7 +246,7 @@ The framework includes an **Agent Skills** system that provides procedural "how-
 - `sdd-tasks` - `/tasks` command procedure
 
 **Validation Skills**:
-- `constitutional-compliance` - Validate all 14 constitutional principles
+- `constitutional-compliance` - Validate all 15 constitutional principles
 - `domain-detection` - Identify domains and suggest appropriate agents
 
 ### Creating Custom Skills
@@ -271,7 +290,7 @@ The framework includes 6 comprehensive policies establishing standards for all d
 5. **Branching Strategy Policy** - Git workflows, branch naming, Principle VI compliance
 6. **Release Management Policy** - Semantic versioning, release workflow, deprecation policy
 
-All policies located in `.docs/policies/` and aligned with Constitution v1.5.0.
+All policies located in `.docs/policies/` and aligned with Constitution v1.6.0.
 
 ## 📚 Core Commands
 
@@ -346,14 +365,14 @@ When creating an agent, the system automatically:
 your-project/
 ├── .specify/                 # Framework core
 │   ├── memory/              # Constitutional documents
-│   │   ├── constitution.md  # 14 development principles (v1.5.0)
+│   │   ├── constitution.md  # 15 development principles (v1.6.0)
 │   │   ├── constitution_update_checklist.md  # Change management
 │   │   ├── agent-collaboration-triggers.md   # Agent delegation reference
 │   │   ├── agent-governance.md  # Agent compliance rules
 │   │   └── agent-collaboration.md  # Collaboration patterns
 │   ├── scripts/bash/        # Automation scripts
 │   │   ├── common.sh        # Shared functions + git approval
-│   │   ├── constitutional-check.sh  # 14-principle validator
+│   │   ├── constitutional-check.sh  # 15-principle validator
 │   │   ├── sanitization-audit.sh    # Framework sanitization
 │   │   ├── create-agent.sh  # Agent creation with auto-updates
 │   │   └── ...
@@ -507,6 +526,34 @@ Modify templates in `.specify/templates/` for your domain:
 ## 🔍 Troubleshooting
 
 ### Common Issues
+
+**Claude Code update fails with ENOTEMPTY error**
+```
+npm error ENOTEMPTY: directory not empty, rename '.../claude-code' -> '.../.claude-code-XXXXX'
+```
+
+This happens when a previous update was interrupted, leaving stale temp directories.
+
+**Quick fix:**
+```bash
+npm_prefix=$(npm config get prefix)
+rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+npm install -g @anthropic-ai/claude-code
+```
+
+**Permanent fix - add to ~/.bashrc or ~/.zshrc:**
+```bash
+# Claude Code update helper - cleans stale temp dirs before updating
+update-claude-code() {
+    local npm_prefix=$(npm config get prefix)
+    rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+    npm install -g @anthropic-ai/claude-code
+}
+```
+
+Then use `update-claude-code` instead of `npm install -g @anthropic-ai/claude-code`.
+
+---
 
 **"Constitution not found"**
 - Ensure `.specify/memory/constitution.md` exists

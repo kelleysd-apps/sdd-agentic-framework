@@ -1,8 +1,8 @@
 # Specification-Driven Development Constitution
 
-**Version**: 1.5.0
+**Version**: 1.6.0
 **Ratified**: 2025-11-06
-**Last Amended**: 2025-11-06
+**Last Amended**: 2025-11-30
 **Status**: Active
 
 ---
@@ -561,52 +561,153 @@ const FeatureGate = ({ requiredTier, children }) => {
 
 ### Principle XIV: AI Model Selection Protocol
 
-**Mandate**: Use appropriate AI models for tasks based on complexity, cost, and quality requirements.
+**Mandate**: Use appropriate AI models for tasks based on complexity, quality requirements, and cost considerations.
 
-**Default Model**: Claude Sonnet 4.5
+**Default Model**: Claude Opus 4.5 (RECOMMENDED)
+- Model ID: `claude-opus-4-5-20251101`
+- Use for: All specialized agent tasks by default
+- Cost: $15/MTok input, $75/MTok output
+- Context: 200K tokens
+- Rationale: Highest capability model ensures best quality output for spec-driven development
+
+**Fallback Model**: Claude Sonnet 4.5
 - Model ID: `claude-sonnet-4-5-20250929`
-- Use for: 90%+ of all agent tasks
-- Cost: $3/MTok input, $15/MTok output
+- Cost: $3/MTok input, $15/MTok output (5x cheaper)
 - Context: 200K tokens
-- Rationale: Best balance of speed, intelligence, and cost for coding tasks
+- Use for: Cost optimization, high-volume tasks, when Opus unavailable
 
-**Escalation Model**: Claude Opus 4.1
-- Model ID: `claude-opus-4-1-20250805`
-- Cost: $15/MTok input, $75/MTok output (5x more expensive)
-- Context: 200K tokens
-- Use for: Complex reasoning, safety-critical decisions
+**Quick Tasks Model**: Claude Haiku
+- Model ID: `claude-haiku` (latest)
+- Cost: Lowest tier
+- Use for: Simple file operations, formatting, quick lookups
 
-**Escalation Triggers** (use Opus if ANY apply):
-1. Multi-step complex reasoning (5+ interconnected logical steps)
-2. Safety-critical decisions (security, privacy, financial, data loss risk)
-3. Research depth required (novel problem spaces, no clear precedent)
-4. Accuracy over speed (costly mistakes, production-critical)
-5. User explicitly requests highest-capability model
-6. Repeated Sonnet failures (2+ attempts on same task)
+**Model Selection Hierarchy**:
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     MODEL SELECTION GUIDE                       │
+├─────────────────────────────────────────────────────────────────┤
+│  OPUS 4.5 (Default)                                             │
+│  ├─ Specialized agent work (all departments)                    │
+│  ├─ Architecture and design decisions                           │
+│  ├─ Security reviews and audits                                 │
+│  ├─ Complex multi-step reasoning                                │
+│  ├─ Novel problem solving                                       │
+│  └─ Production-critical implementations                         │
+├─────────────────────────────────────────────────────────────────┤
+│  SONNET 4.5 (Fallback)                                          │
+│  ├─ High-volume repetitive tasks                                │
+│  ├─ Cost-sensitive operations                                   │
+│  ├─ When Opus quota exceeded                                    │
+│  └─ Parallel task execution (cost optimization)                 │
+├─────────────────────────────────────────────────────────────────┤
+│  HAIKU (Quick Tasks)                                            │
+│  ├─ Simple file reads/searches                                  │
+│  ├─ Formatting and cleanup                                      │
+│  ├─ Quick information lookups                                   │
+│  └─ Status checks and validation                                │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**When to Use Sonnet Instead of Opus**:
+1. Budget constraints require cost optimization
+2. Task is well-defined with clear patterns (no novelty)
+3. High parallelization needed (cost multiplier consideration)
+4. Opus quota/rate limits reached
+5. User explicitly requests cost-efficient model
 
 **Decision Tree**:
 ```
 Task Type                    → Model        → Rationale
-Standard coding              → Sonnet 4.5   → Best coding model
-Routine analysis             → Sonnet 4.5   → Sufficient intelligence
-Complex architecture design  → Sonnet 4.5   → Try first, escalate if needed
-Security review              → Opus 4.1     → Safety-critical
-Novel research problem       → Opus 4.1     → Deep reasoning needed
-Failed 2x with Sonnet        → Opus 4.1     → Escalation trigger met
+Specialized agent work       → Opus 4.5     → Maximum capability
+Architecture design          → Opus 4.5     → Critical decisions
+Security review              → Opus 4.5     → Safety-critical
+Novel research               → Opus 4.5     → Deep reasoning needed
+Standard coding (budget)     → Sonnet 4.5   → Cost optimization
+Routine analysis             → Sonnet 4.5   → Sufficient capability
+High-volume parallel tasks   → Sonnet 4.5   → Cost efficiency
+Simple file operations       → Haiku        → Speed over depth
+Quick lookups                → Haiku        → Minimal reasoning needed
 ```
 
 **Documentation Requirements**:
-- Log model selection in task descriptions
-- Document escalation reason when using Opus
+- Log model selection in agent configurations
+- Document when using non-default model (Sonnet/Haiku) and why
 - Track costs for budget monitoring (future enhancement)
 
-**Rationale**: Cost efficiency while maintaining quality. Sonnet handles most tasks well at 1/5 the cost.
+**Rationale**: Quality-first approach. Opus 4.5 provides best results for specification-driven development where accuracy and reasoning depth matter most.
 
 **Compliance Check**:
-- [ ] Sonnet 4.5 used by default
-- [ ] Opus escalation justified
-- [ ] Escalation reason documented
-- [ ] Model selection logged
+- [ ] Opus 4.5 used by default for agent tasks
+- [ ] Sonnet/Haiku usage justified (cost, volume, simplicity)
+- [ ] Model selection documented in agent configs
+- [ ] Non-default model usage logged with reason
+
+---
+
+### Principle XV: File and Folder Organization
+
+**Mandate**: All file creation and folder management must follow established structure and naming conventions.
+
+**Core Rules**:
+1. **Verify Before Create**: Always check if parent directory exists before creating files
+2. **Edit Over Create**: Prefer modifying existing files over creating new ones
+3. **Templates First**: Use templates from `.specify/templates/` when available
+4. **Absolute Paths**: Always use absolute paths from repository root
+5. **Convention Compliance**: Follow naming conventions for each content type
+
+**Pre-Creation Checklist** (MANDATORY):
+```
+[ ] Is this file necessary? (Can existing file be modified?)
+[ ] Does the parent directory exist?
+[ ] Does a file with this name already exist?
+[ ] Does this follow naming conventions?
+[ ] Is there a template for this file type?
+[ ] Am I using absolute paths from repo root?
+```
+
+**Directory Structure** (SSOT):
+```
+.claude/agents/[dept]/          # Agent definitions
+.claude/skills/[category]/      # Skill definitions
+.claude/commands/               # Slash commands
+.docs/agents/[dept]/[agent]/    # Agent memory
+.docs/policies/                 # Framework policies
+.specify/templates/             # Document templates
+specs/###-[feature]/            # Feature specifications
+src/                            # Source code
+tests/                          # Test files
+```
+
+**Naming Conventions**:
+| Type | Pattern | Example |
+|------|---------|---------|
+| Agent | `[role]-[function].md` | `backend-architect.md` |
+| Skill folder | `[skill-name]/` | `domain-detection/` |
+| Skill file | `SKILL.md` | `SKILL.md` |
+| Policy | `[topic]-policy.md` | `testing-policy.md` |
+| Agent memory | `[agent]-[type].md` | `planning-agent-context.md` |
+| Feature dir | `###-[name]/` | `001-user-auth/` |
+
+**Prohibited Actions**:
+- Creating files without checking existence first
+- Creating arbitrary directory structures outside established locations
+- Using generic names (README.md) in agent memory directories
+- Creating documentation files proactively without request
+- Duplicating content in new files instead of editing existing
+
+**Enforcement**:
+- Skill: `.claude/skills/validation/file-organization/SKILL.md`
+- Policy: `.docs/policies/file-structure-policy.md`
+- Naming: `.docs/policies/agent-file-naming-convention.md`
+
+**Rationale**: Consistent file organization enables discoverability, maintainability, and scalability as projects grow.
+
+**Compliance Check**:
+- [ ] Parent directory verified before file creation
+- [ ] Existing files checked before creating new ones
+- [ ] Naming conventions followed
+- [ ] Templates used when available
+- [ ] Absolute paths used
 
 ---
 
@@ -637,6 +738,48 @@ Before any code can be merged:
 - Force pushes forbidden on main/master branches
 - All changes require pull request review
 - Squash merging preferred for feature branches
+
+### Task Management (SSOT Architecture)
+
+The framework uses a **Single Source of Truth (SSOT)** architecture for task management:
+
+**Three-Level Hierarchy**:
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ LEVEL 1: PROJECT TASKS (specs/###-feature/tasks.md)             │
+│ • Generated by /tasks command                                   │
+│ • Persists in version control                                   │
+│ • Full implementation checklist with dependencies               │
+│ • Source of truth for feature scope                             │
+├─────────────────────────────────────────────────────────────────┤
+│ LEVEL 2: SESSION TASKS (TodoWrite tool)                         │
+│ • Real-time tracking within Claude Code session                 │
+│ • Derived from project tasks                                    │
+│ • ONE task in_progress at a time                                │
+│ • Mark completed IMMEDIATELY                                    │
+├─────────────────────────────────────────────────────────────────┤
+│ LEVEL 3: AGENT HISTORY (.docs/agents/*/decisions/tasks/)        │
+│ • Completion records and decisions                              │
+│ • Cross-session continuity                                      │
+│ • Audit trail for agent work                                    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Task Management Rules**:
+1. Project tasks (`tasks.md`) are the authoritative source
+2. Session tasks (TodoWrite) track active work
+3. Only ONE task should be `in_progress` at any time
+4. Mark tasks `completed` IMMEDIATELY when done
+5. Sync completions back to `tasks.md`
+6. Use `/finalize` to validate all tasks before commit
+
+**TodoWrite Best Practices**:
+- Use for tasks requiring 3+ steps
+- Keep focused (3-10 items max)
+- Update frequently for user visibility
+- Derive from project-level tasks.md
+
+**Policy Reference**: `.docs/policies/todo-architecture-policy.md`
 
 ---
 
@@ -716,7 +859,7 @@ Need procedural guidance?
 - `sdd-tasks`: /tasks command procedure
 
 **Priority 2 (Validation)**:
-- `constitutional-compliance`: Validate 14 principles
+- `constitutional-compliance`: Validate 15 principles
 - `domain-detection`: Identify domains and suggest agents
 
 **When to Use Skills vs Agents**:
@@ -792,7 +935,7 @@ Run before commits, PRs, and releases:
 ### Manual Review Checklist
 
 Before declaring work complete:
-- [ ] All 14 principles reviewed for applicability
+- [ ] All 15 principles reviewed for applicability
 - [ ] Work Session Initiation Protocol followed
 - [ ] Appropriate agent(s) delegated to
 - [ ] Git operations approved by user
@@ -805,12 +948,14 @@ Before declaring work complete:
 
 **END OF CONSTITUTION**
 
-**Version**: 1.5.0
+**Version**: 1.6.0
 **Ratified**: 2025-11-06
-**Total Principles**: 14
+**Total Principles**: 15
 **Immutable Principles**: 3 (I, II, III)
 **Critical Principles**: 2 (VI, X)
-**Lines**: 550+ (expanded from 100 in v1.0.0)
+**Lines**: 950+ (expanded from 100 in v1.0.0)
+
+**Project Customization**: Use `/initialize-project` command after PRD completion to apply project-specific customizations to this constitution automatically.
 
 For amendment procedures, see: `.specify/memory/constitution_update_checklist.md`
 For agent delegation details, see: `.specify/memory/agent-collaboration-triggers.md`

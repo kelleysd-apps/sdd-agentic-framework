@@ -2,7 +2,7 @@
 name: performance-engineer
 description: Use PROACTIVELY for performance analysis, bottleneck identification, scalability optimization, monitoring setup, and load testing.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # Performance Engineer Agent

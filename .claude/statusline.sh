@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Fixed Status Line Script that reads live data from Claude Code session files
-# Works around the issue of Claude Code not sending JSON via stdin
+# Modernized Status Line Script for Claude Code
+# Supports stdin JSON (primary) + session file fallback
+# Handles all git states, expanded model/tool detection
 
 set -euo pipefail
 
@@ -9,95 +10,211 @@ set -euo pipefail
 readonly RESET='\033[0m'
 readonly DIM='\033[2m'
 readonly BOLD='\033[1m'
-readonly ITALIC='\033[3m'
 
 # Foreground colors
-readonly RED='\033[31m'
-readonly GREEN='\033[32m'
-readonly YELLOW='\033[33m'
-readonly BLUE='\033[34m'
-readonly MAGENTA='\033[35m'
-readonly CYAN='\033[36m'
 readonly WHITE='\033[37m'
-readonly GRAY='\033[90m'
 
 # Background colors for widgets
-readonly BG_BLUE='\033[44m'
-readonly BG_MAGENTA='\033[45m'
-readonly BG_CYAN='\033[46m'
-readonly BG_DARK_BLUE='\033[48;5;25m'  # Brighter blue
+readonly BG_DARK_BLUE='\033[48;5;25m'
 readonly BG_PURPLE='\033[48;5;54m'
-readonly BG_DARK_CYAN='\033[48;5;31m'  # Better contrast cyan
+readonly BG_DARK_CYAN='\033[48;5;31m'
 readonly BG_DARK_MAGENTA='\033[48;5;89m'
 readonly BG_DARK_RED='\033[48;5;52m'
+readonly BG_GREEN='\033[48;5;22m'
 
-# Box drawing removed - no framing needed
+# Check for jq dependency
+if ! command -v jq >/dev/null 2>&1; then
+    echo -e "${BG_DARK_RED}${BOLD}${WHITE} Warning: jq not installed - statusline features limited ${RESET}"
+fi
 
-# Get latest session file
-# Dynamically find session file based on current project directory
-project_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
-session_file=$(ls -t /home/codespace/.claude/projects/-workspaces-${project_name}/*.jsonl 2>/dev/null | head -1)
-
-# Extract live data from session file if it exists
+# Initialize variables
 context_used="0"
 context_total="200000"
 last_action="Ready"
 model_name="Claude"
+output_style=""
+app_version=""
+session_id=""
+stdin_data=""
 
-if [ -n "$session_file" ] && [ -f "$session_file" ]; then
-    # Get the last entry for context and other info
-    last_entry=$(tail -10 "$session_file" | grep '"usage":' | tail -1)
+# Try to read JSON from stdin (with timeout to prevent blocking)
+if read -t 0.1 -r stdin_line 2>/dev/null; then
+    stdin_data="$stdin_line"
+    # Read any additional lines
+    while read -t 0.1 -r line 2>/dev/null; do
+        stdin_data="$line"
+    done
+fi
 
-    if [ -n "$last_entry" ]; then
-        # Context is the cache_read_input_tokens from the last entry
-        cache_read=$(echo "$last_entry" | jq -r '.message.usage.cache_read_input_tokens // 0' 2>/dev/null || echo "0")
-        if [ "$cache_read" -gt 0 ]; then
-            context_used=$(awk "BEGIN { printf \"%.1f\", $cache_read / 1000 }" 2>/dev/null || echo "0")
+# Function to extract data from JSON
+extract_from_json() {
+    local json="$1"
+
+    if [ -z "$json" ] || ! command -v jq >/dev/null 2>&1; then
+        return 1
+    fi
+
+    # Extract display_name or model
+    local display_name
+    display_name=$(echo "$json" | jq -r '.display_name // empty' 2>/dev/null)
+    if [ -n "$display_name" ]; then
+        model_name="$display_name"
+    else
+        local model_raw
+        model_raw=$(echo "$json" | jq -r '.model // .message.model // empty' 2>/dev/null)
+        if [ -n "$model_raw" ]; then
+            parse_model_name "$model_raw"
         fi
+    fi
 
-        # Extract model name
-        model_raw=$(echo "$last_entry" | jq -r '.message.model // "claude"' 2>/dev/null)
-        if [ -n "$model_raw" ] && [ "$model_raw" != "null" ]; then
-            # Simplify model name (e.g., claude-opus-4-1-20250805 -> Opus 4.1)
-            case "$model_raw" in
-                *opus*) model_name="Opus 4.1" ;;
-                *sonnet*) model_name="Sonnet" ;;
-                *haiku*) model_name="Haiku" ;;
-                *) model_name="Claude" ;;
-            esac
-        fi
+    # Extract context/usage
+    local cache_read
+    cache_read=$(echo "$json" | jq -r '.message.usage.cache_read_input_tokens // .usage.cache_read_input_tokens // 0' 2>/dev/null || echo "0")
+    if [ "$cache_read" -gt 0 ] 2>/dev/null; then
+        context_used=$(awk "BEGIN { printf \"%.1f\", $cache_read / 1000 }" 2>/dev/null || echo "0")
+    fi
 
-        # Check message type and tool use for better action description
-        msg_type=$(echo "$last_entry" | jq -r '.type // ""' 2>/dev/null)
-        tool_name=$(echo "$last_entry" | jq -r '.message.content[0].name // ""' 2>/dev/null)
+    # Extract output style
+    local style
+    style=$(echo "$json" | jq -r '.output_style // empty' 2>/dev/null)
+    if [ -n "$style" ] && [ "$style" != "default" ] && [ "$style" != "null" ]; then
+        output_style="$style"
+    fi
 
-        # Determine action based on type and tool
-        if [ "$msg_type" = "assistant" ]; then
-            if [ -n "$tool_name" ] && [ "$tool_name" != "null" ]; then
-                # Show tool name (truncated if needed)
-                case "$tool_name" in
-                    "Bash") last_action="Running bash" ;;
-                    "Read") last_action="Reading file" ;;
-                    "Edit") last_action="Editing file" ;;
-                    "Write") last_action="Writing file" ;;
-                    "MultiEdit") last_action="Multi-editing" ;;
-                    "Grep") last_action="Searching" ;;
-                    "TodoWrite") last_action="Managing todos" ;;
-                    *)
-                        if [ ${#tool_name} -gt 12 ]; then
-                            last_action="${tool_name:0:12}..."
-                        else
-                            last_action="$tool_name"
-                        fi
-                        ;;
-                esac
-            else
-                last_action="Responding"
-            fi
-        elif [ "$msg_type" = "user" ]; then
-            last_action="Processing"
+    # Extract app version
+    local version
+    version=$(echo "$json" | jq -r '.app_version // .version // empty' 2>/dev/null)
+    if [ -n "$version" ] && [ "$version" != "null" ]; then
+        app_version="$version"
+    fi
+
+    # Extract session ID (truncated)
+    local sid
+    sid=$(echo "$json" | jq -r '.session_id // empty' 2>/dev/null)
+    if [ -n "$sid" ] && [ "$sid" != "null" ]; then
+        session_id="${sid:0:8}"
+    fi
+
+    # Extract tool/action
+    local msg_type tool_name
+    msg_type=$(echo "$json" | jq -r '.type // empty' 2>/dev/null)
+    tool_name=$(echo "$json" | jq -r '.message.content[0].name // .tool_name // empty' 2>/dev/null)
+
+    if [ "$msg_type" = "assistant" ] || [ -n "$tool_name" ]; then
+        if [ -n "$tool_name" ] && [ "$tool_name" != "null" ]; then
+            parse_tool_action "$tool_name"
         else
-            last_action="Active"
+            last_action="Responding"
+        fi
+    elif [ "$msg_type" = "user" ]; then
+        last_action="Processing"
+    fi
+
+    return 0
+}
+
+# Parse model name from raw model string
+parse_model_name() {
+    local model_raw="$1"
+
+    case "$model_raw" in
+        *opus-4-5*|*opus-4.5*) model_name="Opus 4.5" ;;
+        *opus-4-1*|*opus-4.1*) model_name="Opus 4.1" ;;
+        *opus-4*|*opus4*) model_name="Opus 4" ;;
+        *opus*) model_name="Opus" ;;
+        *sonnet-4-5*|*sonnet-4.5*) model_name="Sonnet 4.5" ;;
+        *sonnet-4*|*sonnet4*) model_name="Sonnet 4" ;;
+        *sonnet-3-7*|*sonnet-3.7*) model_name="Sonnet 3.7" ;;
+        *sonnet-3-5*|*sonnet-3.5*) model_name="Sonnet 3.5" ;;
+        *sonnet*) model_name="Sonnet" ;;
+        *haiku-3-5*|*haiku-3.5*) model_name="Haiku 3.5" ;;
+        *haiku*) model_name="Haiku" ;;
+        *) model_name="Claude" ;;
+    esac
+}
+
+# Parse tool name to action
+parse_tool_action() {
+    local tool_name="$1"
+
+    case "$tool_name" in
+        "Bash") last_action="Running bash" ;;
+        "Read") last_action="Reading file" ;;
+        "Edit") last_action="Editing file" ;;
+        "Write") last_action="Writing file" ;;
+        "MultiEdit") last_action="Multi-editing" ;;
+        "Grep") last_action="Searching code" ;;
+        "Glob") last_action="Finding files" ;;
+        "Task") last_action="Running agent" ;;
+        "WebFetch") last_action="Fetching URL" ;;
+        "WebSearch") last_action="Web search" ;;
+        "AskUserQuestion") last_action="Asking user" ;;
+        "NotebookEdit") last_action="Editing notebook" ;;
+        "TodoRead") last_action="Reading todos" ;;
+        "TodoWrite") last_action="Managing todos" ;;
+        "BashOutput") last_action="Reading output" ;;
+        "KillShell") last_action="Killing shell" ;;
+        mcp__*)
+            # MCP tool - extract server name
+            local mcp_name="${tool_name#mcp__}"
+            mcp_name="${mcp_name%%__*}"
+            if [ ${#mcp_name} -gt 10 ]; then
+                mcp_name="${mcp_name:0:10}"
+            fi
+            last_action="MCP: $mcp_name"
+            ;;
+        *)
+            if [ ${#tool_name} -gt 12 ]; then
+                last_action="${tool_name:0:12}..."
+            else
+                last_action="$tool_name"
+            fi
+            ;;
+    esac
+}
+
+# Find session file using multiple paths and find command
+find_session_file() {
+    local session_file=""
+    local project_name
+    project_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
+
+    # Session path patterns to search (in order of preference)
+    local -a search_paths=(
+        "$HOME/.claude/projects/-workspaces-${project_name}"
+        "$HOME/.claude/projects/${project_name}"
+        "$HOME/.claude/projects"
+        "/home/codespace/.claude/projects/-workspaces-${project_name}"
+        "/home/codespace/.claude/projects"
+    )
+
+    for search_path in "${search_paths[@]}"; do
+        if [ -d "$search_path" ]; then
+            # Use find with proper sorting (more efficient than ls -t)
+            session_file=$(find "$search_path" -maxdepth 2 -name "*.jsonl" -type f -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
+            if [ -n "$session_file" ] && [ -f "$session_file" ]; then
+                echo "$session_file"
+                return 0
+            fi
+        fi
+    done
+
+    return 1
+}
+
+# Try stdin first, then fall back to session file
+if [ -n "$stdin_data" ]; then
+    extract_from_json "$stdin_data"
+else
+    # Fall back to session file
+    session_file=$(find_session_file || echo "")
+
+    if [ -n "$session_file" ] && [ -f "$session_file" ] && command -v jq >/dev/null 2>&1; then
+        # More efficient: tail | tac | grep -m1 for first match from end
+        last_entry=$(tail -20 "$session_file" 2>/dev/null | tac | grep -m1 '"usage":' || echo "")
+
+        if [ -n "$last_entry" ]; then
+            extract_from_json "$last_entry"
         fi
     fi
 fi
@@ -122,10 +239,20 @@ if [ ${#rel_path} -gt 25 ]; then
     rel_path="...${rel_path: -22}"
 fi
 
-# Get git information
+# Get git information (handles all states including detached HEAD)
 git_branch=""
+git_dirty=""
 if git rev-parse --git-dir >/dev/null 2>&1; then
-    git_branch=$(git branch --show-current 2>/dev/null || echo "main")
+    # Try multiple methods for branch/ref detection
+    git_branch=$(git symbolic-ref --short HEAD 2>/dev/null) ||
+    git_branch=$(git describe --tags --exact-match 2>/dev/null) ||
+    git_branch=$(git rev-parse --short HEAD 2>/dev/null) ||
+    git_branch="detached"
+
+    # Check for uncommitted changes
+    if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
+        git_dirty="*"
+    fi
 fi
 
 # Get environment versions
@@ -138,41 +265,43 @@ if command -v python3 >/dev/null 2>&1; then
     python_version=$(python3 --version 2>/dev/null | cut -d' ' -f2 | cut -d'.' -f1-2)
 fi
 
-# Calculate context percentage (context_total is in k, context_used is in k)
+# Calculate context percentage
 context_percentage="0"
 if [ -n "$context_used" ] && [ "$context_used" != "0" ]; then
-    # Both values are already in k units
-    context_total_k=200  # 200k is the default
+    context_total_k=200
     context_percentage=$(awk "BEGIN { printf \"%.1f\", ($context_used * 100) / $context_total_k }" 2>/dev/null || echo "0")
 fi
 
-# No framing needed - removed helper functions
-
-# Build the status line (no borders)
+# Build the status line
 
 # Line 1: User, path, git, model
 line1=""
-line1="${line1}${BG_DARK_BLUE}${BOLD}${WHITE} 💻 ${user}@${hostname} ${RESET}"
-line1="${line1} ${DIM}|${RESET} ${BG_DARK_CYAN}${BOLD}${WHITE} 🔧 ${rel_path} ${RESET}"
+line1="${line1}${BG_DARK_BLUE}${BOLD}${WHITE} ${user}@${hostname} ${RESET}"
+line1="${line1} ${DIM}|${RESET} ${BG_DARK_CYAN}${BOLD}${WHITE} ${rel_path} ${RESET}"
 
 if [ -n "$git_branch" ]; then
     git_display="$git_branch"
-    if [ ${#git_display} -gt 8 ]; then
-        git_display="${git_display:0:8}"
+    if [ ${#git_display} -gt 12 ]; then
+        git_display="${git_display:0:12}"
     fi
-    line1="${line1} ${DIM}|${RESET} ${BG_PURPLE}${BOLD}${WHITE} 🌿 ${git_display} ${RESET}"
+    line1="${line1} ${DIM}|${RESET} ${BG_PURPLE}${BOLD}${WHITE} ${git_display}${git_dirty} ${RESET}"
 fi
 
-line1="${line1} ${DIM}|${RESET} ${BG_DARK_MAGENTA}${BOLD}${WHITE} 🧠 ${model_name} ${RESET}"
+line1="${line1} ${DIM}|${RESET} ${BG_DARK_MAGENTA}${BOLD}${WHITE} ${model_name} ${RESET}"
+
+# Add output style if not default
+if [ -n "$output_style" ]; then
+    line1="${line1} ${DIM}|${RESET} ${BG_GREEN}${BOLD}${WHITE} ${output_style} ${RESET}"
+fi
 
 printf "%b\n" "$line1"
 
-# Line 2: Environment, context, tokens, status
+# Line 2: Environment, context, status, version
 line2=""
 first_item=true
 
 if [ -n "$node_version" ]; then
-    line2="${line2}${BG_DARK_MAGENTA}${BOLD}${WHITE} 📗 ${node_version} ${RESET}"
+    line2="${line2}${BG_DARK_MAGENTA}${BOLD}${WHITE} node ${node_version} ${RESET}"
     first_item=false
 fi
 
@@ -180,17 +309,22 @@ if [ -n "$python_version" ]; then
     if [ "$first_item" = false ]; then
         line2="${line2} ${DIM}|${RESET} "
     fi
-    line2="${line2}${BG_DARK_BLUE}${BOLD}${WHITE} 🐍 ${python_version} ${RESET}"
+    line2="${line2}${BG_DARK_BLUE}${BOLD}${WHITE} py ${python_version} ${RESET}"
     first_item=false
 fi
 
-# Context widget (show 200k as the total)
+# Context widget
 if [ "$first_item" = false ]; then
     line2="${line2} ${DIM}|${RESET} "
 fi
-line2="${line2}${BG_PURPLE}${BOLD}${WHITE} 📊 ${context_used}k/200k (${context_percentage}%) ${RESET}"
+line2="${line2}${BG_PURPLE}${BOLD}${WHITE} ctx ${context_used}k/200k (${context_percentage}%) ${RESET}"
 
 # Status widget
-line2="${line2} ${DIM}|${RESET} ${BG_DARK_RED}${BOLD}${WHITE} 💬 ${last_action} ${RESET}"
+line2="${line2} ${DIM}|${RESET} ${BG_DARK_RED}${BOLD}${WHITE} ${last_action} ${RESET}"
+
+# App version (if available)
+if [ -n "$app_version" ]; then
+    line2="${line2} ${DIM}|${RESET} ${BG_DARK_CYAN}${BOLD}${WHITE} v${app_version} ${RESET}"
+fi
 
 printf "%b" "$line2"

@@ -2,7 +2,7 @@
 name: full-stack-developer
 description: Use PROACTIVELY for end-to-end feature development, API integration, database operations, and rapid prototyping across the entire stack.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # Full-Stack Developer Agent

@@ -156,40 +156,68 @@ if (-not $SkipClaudeCode) {
     }
     else {
         Write-Warning "Claude Code CLI not found"
-        Write-Info "Installing Claude Code CLI..."
-        Write-Host ""
-        Write-Info "Please follow these steps to install Claude Code:"
-        Write-Info "1. Visit: https://claude.ai/code"
-        Write-Info "2. Sign in or create an account"
-        Write-Info "3. Follow the installation instructions for Windows"
-        Write-Info "4. After installation, run: claude login"
+        Write-Info "Attempting to install Claude Code via npm..."
         Write-Host ""
 
-        $continue = Read-Host "Have you installed Claude Code CLI? (y/n)"
-        if ($continue -eq "y" -or $continue -eq "Y") {
-            # Refresh PATH
-            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        $claudeInstalled = $false
 
-            if (Test-Command claude) {
-                Write-Success "Claude Code CLI detected"
-            }
-            else {
-                Write-Warning "Claude Code CLI not detected in PATH. You may need to restart PowerShell."
-                Write-Info "Continue anyway? The framework will still work, but you won't have AI assistance."
-                $continueAnyway = Read-Host "(y/n)"
-                if ($continueAnyway -ne "y" -and $continueAnyway -ne "Y") {
-                    Write-Info "Setup cancelled. Please install Claude Code and run this script again."
-                    exit 0
+        # Try npm global install
+        if (Test-Command npm) {
+            try {
+                Write-Info "Running: npm install -g @anthropic-ai/claude-code"
+                npm install -g @anthropic-ai/claude-code 2>&1 | Out-Null
+
+                # Refresh PATH
+                $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+                if (Test-Command claude) {
+                    Write-Success "Claude Code installed successfully via npm"
+                    $claudeInstalled = $true
                 }
             }
+            catch {
+                Write-Warning "npm installation failed"
+            }
+        }
+
+        if (-not $claudeInstalled) {
+            Write-Host ""
+            Write-Warning "Automatic installation failed. Please install manually:"
+            Write-Host ""
+            Write-Info "========================================="
+            Write-Info "     CLAUDE CODE INSTALLATION OPTIONS"
+            Write-Info "========================================="
+            Write-Host ""
+            Write-Host "Option 1: npm (Recommended)" -ForegroundColor Yellow
+            Write-Host "  npm install -g @anthropic-ai/claude-code" -ForegroundColor Green
+            Write-Host ""
+            Write-Host "Option 2: Direct Download" -ForegroundColor Yellow
+            Write-Host "  Visit: https://claude.ai/code" -ForegroundColor Green
+            Write-Host "  Follow Windows installation instructions"
+            Write-Host ""
+            Write-Host "After installation:" -ForegroundColor Yellow
+            Write-Host "  claude login" -ForegroundColor Green
+            Write-Host ""
+            Write-Info "========================================="
+            Write-Host ""
+
+            $continue = Read-Host "Press Enter to continue setup, or Ctrl+C to install Claude Code first"
         }
         else {
-            Write-Info "Please install Claude Code from https://claude.ai/code"
-            Write-Info "Then run this script again, or continue without Claude Code."
-            $continueWithout = Read-Host "Continue without Claude Code? (y/n)"
-            if ($continueWithout -ne "y" -and $continueWithout -ne "Y") {
-                Write-Info "Setup cancelled. Install Claude Code and run again."
-                exit 0
+            # Prompt for login
+            Write-Host ""
+            Write-Info "Please authenticate Claude Code:"
+            Write-Host "  Run: " -NoNewline
+            Write-Host "claude login" -ForegroundColor Green
+            Write-Host ""
+            $loginNow = Read-Host "Would you like to login now? (y/n)"
+            if ($loginNow -eq "y" -or $loginNow -eq "Y") {
+                try {
+                    claude login
+                }
+                catch {
+                    Write-Warning "Login skipped or failed. Run 'claude login' later."
+                }
             }
         }
     }

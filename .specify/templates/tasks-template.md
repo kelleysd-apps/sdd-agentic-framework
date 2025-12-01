@@ -1,7 +1,28 @@
 # Tasks: [FEATURE NAME]
 
+**SSOT**: This file is the Single Source of Truth for feature implementation tasks.
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), research.md, data-model.md, contracts/
+**Policy**: See `.docs/policies/todo-architecture-policy.md` for task management standards.
+
+## SSOT Task Architecture
+
+```
+PROJECT LEVEL (This File)          SESSION LEVEL (TodoWrite)
+┌─────────────────────────┐        ┌─────────────────────────┐
+│ specs/###-feature/      │   ──>  │ Claude Code TodoWrite   │
+│     tasks.md            │        │ (real-time tracking)    │
+│ • Persists in git       │   <──  │ • Session-scoped        │
+│ • Full task list        │        │ • Active work focus     │
+│ • Check off when done   │        │ • One in_progress task  │
+└─────────────────────────┘        └─────────────────────────┘
+```
+
+**Workflow**:
+1. This file defines ALL implementation tasks (project SSOT)
+2. Agents use TodoWrite to track active work (session SSOT)
+3. Completions sync back to this file (check off tasks)
+4. `/finalize` validates all tasks completed before commit
 
 ## Execution Flow (main)
 ```
@@ -125,3 +146,55 @@ Task: "Integration test auth in tests/integration/test_auth.py"
 - [ ] Parallel tasks truly independent
 - [ ] Each task specifies exact file path
 - [ ] No task modifies same file as another [P] task
+
+---
+
+## SSOT Synchronization
+
+### Status Markers
+
+| Marker | Meaning | When to Use |
+|--------|---------|-------------|
+| `- [ ]` | Not started | Initial state |
+| `- [x]` | Completed | Task finished and verified |
+| `- [~]` | In progress | Currently being worked on |
+| `- [!]` | Blocked | Cannot proceed (document reason) |
+
+### Completion Protocol
+
+When completing a task:
+
+1. **Update TodoWrite** - Mark task as `completed` immediately
+2. **Update this file** - Change `[ ]` to `[x]`
+3. **Record in agent decisions** - Log completion details
+4. **Verify** - Run any validation scripts
+
+### Cross-Session Continuity
+
+When resuming work on this feature:
+
+1. Review this file for incomplete tasks (`[ ]` items)
+2. Check `.docs/agents/*/decisions/tasks/` for context
+3. Create TodoWrite list from next incomplete tasks
+4. Continue execution
+
+### Completion Summary
+
+*Updated as tasks complete*
+
+| Phase | Total | Completed | Remaining |
+|-------|-------|-----------|-----------|
+| Setup | 0 | 0 | 0 |
+| Tests | 0 | 0 | 0 |
+| Core | 0 | 0 | 0 |
+| Integration | 0 | 0 | 0 |
+| Polish | 0 | 0 | 0 |
+| **Total** | **0** | **0** | **0** |
+
+### Audit Log
+
+*Record significant task events*
+
+| Date | Task | Event | Agent/User |
+|------|------|-------|------------|
+| | | | |

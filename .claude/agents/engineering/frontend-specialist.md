@@ -2,7 +2,7 @@
 name: frontend-specialist
 description: Use PROACTIVELY for React/Next.js development, UI components, state management, responsive design, and frontend performance optimization.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # Frontend Specialist Agent

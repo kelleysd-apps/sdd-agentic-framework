@@ -2,7 +2,7 @@
 name: task-orchestrator
 description: Task Orchestration Agent that serves as a central coordination hub for multi-agent workflows in Claude Code environments. Intelligently analyzes complex requests, decomposes them into specialized tasks, and coordinates multiple specialized agents to deliver comprehensive solutions. Enhanced with DS-STAR Router Agent for intelligent domain detection and optimal agent selection.
 tools: Task, Read, Grep, Glob, TodoWrite, Bash
-model: sonnet
+model: opus
 ---
 
 # task-orchestrator Agent

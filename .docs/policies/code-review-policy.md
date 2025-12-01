@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0
 **Effective Date**: 2025-11-07
-**Authority**: Constitution v1.5.0 - Principle VIII (Documentation Synchronization)
+**Authority**: Constitution v1.6.0 - Principle VIII (Documentation Synchronization)
 **Review Cycle**: Quarterly
 
 ---
@@ -380,7 +380,7 @@ Why: [Specific reason]
 
 ## References
 
-- Constitution v1.5.0: `.specify/memory/constitution.md`
+- Constitution v1.6.0: `.specify/memory/constitution.md`
 - Testing Policy: `.docs/policies/testing-policy.md`
 - Security Policy: `.docs/policies/security-policy.md`
 - Deployment Policy: `.docs/policies/deployment-policy.md`

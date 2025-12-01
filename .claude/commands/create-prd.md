@@ -245,6 +245,20 @@ Before finalizing, verify:
 
 ## Next Steps After PRD
 
+**RECOMMENDED**: Use `/initialize-project` command to automate steps 1-2:
+
+```bash
+/initialize-project
+```
+
+This command will:
+- Update constitution with all PRD customizations
+- Create custom agents identified in Principle X
+- Update workflow documentation
+- Validate compliance and provide next steps
+
+**OR** proceed manually:
+
 1. **Update Constitution**
    ```bash
    # Edit .specify/memory/constitution.md
@@ -274,14 +288,10 @@ Before finalizing, verify:
 # - Customize constitutional principles
 # - Define success: 100 merchants onboarded in 3 months
 
-# 3. Update constitution with PRD customizations
-# Edit .specify/memory/constitution.md
+# 3. Initialize project (RECOMMENDED - automates constitution + agent creation)
+/initialize-project
 
-# 4. Create custom agents identified in PRD
-/create-agent payment-specialist "Payment processing and fraud detection"
-/create-agent inventory-specialist "Inventory management and stock tracking"
-
-# 5. Start feature development
+# 4. Start feature development
 /specify "Product catalog with search and filters"
 /plan
 /tasks
@@ -291,6 +301,19 @@ Before finalizing, verify:
 /plan
 /tasks
 # ... implement ...
+```
+
+### Alternative: Manual Initialization
+
+```bash
+# 3a. Manual constitution update
+# Edit .specify/memory/constitution.md with PRD customizations
+
+# 3b. Create custom agents identified in PRD
+/create-agent payment-specialist "Payment processing and fraud detection"
+/create-agent inventory-specialist "Inventory management and stock tracking"
+
+# 4. Start feature development...
 ```
 
 ## Files Created
@@ -344,6 +367,7 @@ Invest time here to save time everywhere else in the project!
 ---
 
 **Related Commands**:
+- `/initialize-project` - **NEXT STEP** - Initialize project from completed PRD
 - `/specify` - Create feature specifications (references PRD)
 - `/plan` - Generate implementation plans (references PRD)
 - `/create-agent` - Create custom agents (identified in PRD)

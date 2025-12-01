@@ -2,7 +2,7 @@
 name: tasks-agent
 description: Use PROACTIVELY for breaking down technical plans into actionable tasks, creating task lists, managing task dependencies, and coordinating task execution using Spec-Driven Development methodology.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # tasks agent Agent

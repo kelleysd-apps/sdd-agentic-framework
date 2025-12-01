@@ -2,7 +2,7 @@
 name: backend-architect
 description: Use PROACTIVELY for backend system design, API architecture, database schema design, and scalability planning. Expert in Node.js, Python, microservices, and cloud-native architectures.
 tools: Read, Write, Bash, MultiEdit
-model: sonnet
+model: opus
 ---
 
 # Backend Architect Agent

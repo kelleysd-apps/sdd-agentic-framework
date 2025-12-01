@@ -98,16 +98,37 @@ The setup will recommend creating a PRD first. This serves as your Single Source
 /create-prd "Your Project Name"
 ```
 
-### Step 2: Customize the Constitution
+### Step 2: Initialize Project from PRD
 
-Edit `.specify/memory/constitution.md` using guidance from your PRD to customize all 14 principles for your project.
-
-### Step 3: Create Specialized Agents (Optional)
+After completing the PRD, run `/initialize-project` to automatically:
+- Customize all 15 constitutional principles based on your PRD
+- Create custom agents identified in your PRD (Principle X)
+- Recommend and configure MCP servers for your tech stack
+- Update workflow documentation for your project context
 
 ```bash
 # In Claude Code:
-/create-agent "agent-name" "Description of what this agent does"
+/initialize-project
 ```
+
+### Step 3: Configure MCP Servers (if needed)
+
+MCP (Model Context Protocol) servers extend Claude's capabilities. The `/initialize-project` command will recommend MCPs based on your PRD, but you can also ask Claude directly:
+
+```bash
+# In Claude Code, ask:
+"What MCP servers would benefit my project?"
+"Help me install the supabase MCP server"
+"Configure browser automation for E2E testing"
+```
+
+**Common MCP Servers**:
+- **Database**: `supabase`, `postgres`, `sqlite`, `firebase`
+- **Cloud/Deploy**: `aws`, `gcp`, `azure`, `vercel`, `netlify`
+- **Testing**: `browsermcp`, `playwright`
+- **Search/Docs**: `perplexity`, `context7`, `github`
+
+**Important**: Add any required API keys to your `.env` file (never commit secrets!)
 
 ### Step 4: Start Feature Development
 
@@ -117,6 +138,13 @@ Edit `.specify/memory/constitution.md` using guidance from your PRD to customize
 /plan                    # Generate implementation plan
 /tasks                   # Create task list
 ```
+
+### Alternative: Manual Initialization (Advanced)
+
+If you prefer manual control, you can skip `/initialize-project` and instead:
+- Edit `.specify/memory/constitution.md` manually with PRD customizations
+- Use `/create-agent` for each agent identified in PRD Principle X
+- Configure MCP servers manually in Claude Code settings
 
 ---
 
@@ -137,11 +165,20 @@ If the automatic setup doesn't work for any reason, you can install dependencies
    - Restart PowerShell
 
 3. **Install Claude Code**
-   - Visit [claude.ai/code](https://claude.ai/code)
-   - Follow Windows installation instructions
-   - Run `claude login` in PowerShell
+   ```powershell
+   # Option 1: npm (Recommended)
+   npm install -g @anthropic-ai/claude-code
 
-4. **Run Framework Setup**
+   # Option 2: Direct Download
+   # Visit https://claude.ai/code
+   ```
+
+4. **Authenticate Claude Code**
+   ```powershell
+   claude login
+   ```
+
+5. **Run Framework Setup**
    ```powershell
    npm install
    ```
@@ -174,11 +211,23 @@ If the automatic setup doesn't work for any reason, you can install dependencies
    ```
 
 3. **Install Claude Code**
-   - Visit [claude.ai/code](https://claude.ai/code)
-   - Follow installation instructions for your platform
-   - Run `claude login`
+   ```bash
+   # Option 1: npm (Recommended - works on all platforms)
+   npm install -g @anthropic-ai/claude-code
 
-4. **Run Framework Setup**
+   # Option 2: Homebrew (macOS only)
+   brew install claude-code
+
+   # Option 3: Direct Download
+   # Visit https://claude.ai/code
+   ```
+
+4. **Authenticate Claude Code**
+   ```bash
+   claude login
+   ```
+
+5. **Run Framework Setup**
    ```bash
    npm install
    ```
@@ -301,14 +350,61 @@ powershell -ExecutionPolicy Bypass -File .specify\scripts\setup-windows.ps1
   - Git: https://git-scm.com/
   - Claude Code: https://claude.ai/code
 
+### Claude Code Update Fails (ENOTEMPTY Error)
+
+**Symptoms:**
+```
+npm error ENOTEMPTY: directory not empty, rename '.../claude-code' -> '.../.claude-code-XXXXX'
+```
+
+**Cause:** A previous update was interrupted, leaving stale temp directories.
+
+**Fix:**
+```bash
+npm_prefix=$(npm config get prefix)
+rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+npm install -g @anthropic-ai/claude-code
+```
+
+**Permanent Fix - Add to ~/.bashrc or ~/.zshrc:**
+```bash
+update-claude-code() {
+    local npm_prefix=$(npm config get prefix)
+    rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+    npm install -g @anthropic-ai/claude-code
+}
+```
+
+Then use `update-claude-code` instead of `npm install -g`.
+
 ### Claude Code Won't Install
 
-Claude Code installation may require manual steps:
+Try these installation methods in order:
+
+**Method 1: npm (Recommended)**
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+**Method 2: Homebrew (macOS only)**
+```bash
+brew install claude-code
+```
+
+**Method 3: Direct Download**
 1. Visit https://claude.ai/code
 2. Sign in or create an account
 3. Follow platform-specific installation instructions
-4. Run `claude login` after installation
-5. Re-run the setup script
+
+**After installation:**
+```bash
+claude login
+```
+
+**Common Issues:**
+- Permission errors on npm? Try: `sudo npm install -g @anthropic-ai/claude-code`
+- PATH not updated? Restart your terminal/PowerShell
+- Still not working? Re-run the setup script after installation
 
 ### Still Stuck?
 
@@ -347,18 +443,19 @@ Once setup is complete, you'll have access to:
 | Command | Purpose | When to Use |
 |---------|---------|-------------|
 | `/create-prd` | Create Product Requirements Document | **Start here** - Before any code |
+| `/initialize-project` | Initialize project from PRD | **After PRD** - Customizes framework |
 | `/specify` | Create feature specification | Beginning of each feature |
 | `/plan` | Generate implementation plan | After specification |
 | `/tasks` | Create dependency-ordered task list | After planning |
 | `/create-agent` | Create specialized AI agent | When you need domain expertise |
 | `/finalize` | Pre-commit compliance validation | Before committing code |
 
-### 14 Constitutional Principles
+### 15 Constitutional Principles
 
-The framework enforces 14 core principles:
+The framework enforces 15 core principles:
 - **Principle I-III:** Library-First, Test-First, Contract-First (Immutable)
 - **Principle IV-IX:** Quality & Safety (Idempotency, Progressive Enhancement, Git Approval, Observability, Documentation Sync, Dependency Management)
-- **Principle X-XIV:** Workflow & Delegation (Agent Delegation, Input Validation, Design System, Access Control, AI Model Selection)
+- **Principle X-XV:** Workflow & Delegation (Agent Delegation, Input Validation, Design System, Access Control, AI Model Selection, File Organization)
 
 ### DS-STAR Multi-Agent System
 
@@ -368,6 +465,26 @@ The framework enforces 14 core principles:
 - **RouterAgent** - Intelligent multi-agent orchestration
 - **AutoDebugAgent** - Self-healing (>70% fix rate target)
 - **ContextAnalyzerAgent** - Codebase intelligence
+
+### MCP Server Integration
+
+MCP (Model Context Protocol) servers extend Claude Code's capabilities. Ask Claude to help you configure:
+
+| Category | MCP Servers | Purpose |
+|----------|-------------|---------|
+| **Database** | supabase, postgres, sqlite, firebase | Database operations, schema, migrations |
+| **Cloud** | aws, gcp, azure, vercel, netlify | Deployment, infrastructure management |
+| **Testing** | browsermcp, playwright | E2E testing, browser automation |
+| **Search** | perplexity, brave-search, context7 | Research, documentation lookup |
+| **Projects** | github, linear, jira, notion | Issue tracking, documentation |
+
+**Claude can help you**:
+- Determine which MCPs your project needs
+- Install and configure MCPs
+- Troubleshoot connection issues
+- Manage credentials securely
+
+**Skill**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
 
 ---
 
@@ -421,9 +538,9 @@ You'll know setup succeeded when:
    /create-prd "Your Project Name"
    ```
 
-3. **Customize constitution** with guidance from PRD
+3. **Initialize project from PRD** (Automates constitution + agents)
    ```
-   Edit: .specify/memory/constitution.md
+   /initialize-project
    ```
 
 4. **Create your first feature**
@@ -442,7 +559,7 @@ You'll know setup succeeded when:
 - **Always start with a PRD** - It saves time by providing clear direction
 - **Use Claude Code for everything** - It's your co-pilot, not just a tool
 - **Read the constitution** - `.specify/memory/constitution.md` explains the rules
-- **Follow the workflow** - PRD → Spec → Plan → Tasks → Implement → Finalize
+- **Follow the workflow** - PRD → Initialize → Spec → Plan → Tasks → Implement → Finalize
 - **Ask Claude when stuck** - "How do I [task]?" works great
 - **Trust the quality gates** - They prevent bugs and enforce best practices
 
@@ -454,7 +571,7 @@ After completing setup, explore these files:
 
 - **CLAUDE.md** - Complete AI assistant instructions
 - **README.md** - Framework features and architecture
-- **.specify/memory/constitution.md** - 14 development principles
+- **.specify/memory/constitution.md** - 15 development principles (v1.6.0)
 - **AGENTS.md** - Specialized agent documentation
 - **.claude/commands/** - Custom command documentation
 
