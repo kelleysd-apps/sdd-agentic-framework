@@ -19,8 +19,8 @@ This implementation extends spec-kit with:
   - Intelligent routing (RouterAgent) - Multi-agent orchestration with dependency graphs
   - Self-healing (AutoDebugAgent) - Automatic error repair with >70% fix rate target
   - Codebase intelligence (ContextAnalyzerAgent) - Semantic search with <2s retrieval
-  - Constitutional validation - All 14 principles enforced before commits
-- **Intelligent agent orchestration** - 13 specialized agents across 6 departments with MCP integration
+  - Constitutional validation - All 15 principles enforced before commits
+- **Intelligent agent orchestration** - 14 specialized agents across 6 departments with MCP integration
 - **Agent Skills system** - Progressive disclosure for procedural knowledge (30-50% context reduction)
 - **Iterative refinement** - Up to 20 rounds with early stopping at 95% quality threshold
 - **Governance policies** - 6 comprehensive policies (Testing, Security, Code Review, Deployment, Branching, Release)
@@ -99,7 +99,7 @@ npm run setup:windows  # Windows (Git Bash)
 
 ### 2. Configure Project Constitution
 
-The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your project's 14 enforceable principles:
+The constitution (`/.specify/memory/constitution.md` v1.6.0) defines your project's 15 enforceable principles:
 
 **Core Immutable Principles** (I-III):
 - **Principle I**: Library-First Architecture
@@ -114,12 +114,13 @@ The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your projec
 - **Principle VIII**: Documentation Synchronization
 - **Principle IX**: Dependency Management
 
-**Workflow & Delegation Principles** (X-XIV):
+**Workflow & Delegation Principles** (X-XV):
 - **Principle X**: Agent Delegation Protocol (CRITICAL)
 - **Principle XI**: Input Validation and Output Sanitization
 - **Principle XII**: Design System Compliance
 - **Principle XIII**: Feature Access Control
 - **Principle XIV**: AI Model Selection Protocol
+- **Principle XV**: File and Folder Organization
 
 ⚠️ **Important**: When updating the constitution, follow `/.specify/memory/constitution_update_checklist.md`
 
@@ -127,7 +128,7 @@ The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your projec
 
 Run before commits and releases:
 ```bash
-# Check constitutional compliance (all 14 principles)
+# Check constitutional compliance (all 15 principles)
 ./.specify/scripts/bash/constitutional-check.sh
 
 # Verify framework sanitization
@@ -245,7 +246,7 @@ The framework includes an **Agent Skills** system that provides procedural "how-
 - `sdd-tasks` - `/tasks` command procedure
 
 **Validation Skills**:
-- `constitutional-compliance` - Validate all 14 constitutional principles
+- `constitutional-compliance` - Validate all 15 constitutional principles
 - `domain-detection` - Identify domains and suggest appropriate agents
 
 ### Creating Custom Skills
@@ -289,7 +290,7 @@ The framework includes 6 comprehensive policies establishing standards for all d
 5. **Branching Strategy Policy** - Git workflows, branch naming, Principle VI compliance
 6. **Release Management Policy** - Semantic versioning, release workflow, deprecation policy
 
-All policies located in `.docs/policies/` and aligned with Constitution v1.5.0.
+All policies located in `.docs/policies/` and aligned with Constitution v1.6.0.
 
 ## 📚 Core Commands
 
@@ -364,14 +365,14 @@ When creating an agent, the system automatically:
 your-project/
 ├── .specify/                 # Framework core
 │   ├── memory/              # Constitutional documents
-│   │   ├── constitution.md  # 14 development principles (v1.5.0)
+│   │   ├── constitution.md  # 15 development principles (v1.6.0)
 │   │   ├── constitution_update_checklist.md  # Change management
 │   │   ├── agent-collaboration-triggers.md   # Agent delegation reference
 │   │   ├── agent-governance.md  # Agent compliance rules
 │   │   └── agent-collaboration.md  # Collaboration patterns
 │   ├── scripts/bash/        # Automation scripts
 │   │   ├── common.sh        # Shared functions + git approval
-│   │   ├── constitutional-check.sh  # 14-principle validator
+│   │   ├── constitutional-check.sh  # 15-principle validator
 │   │   ├── sanitization-audit.sh    # Framework sanitization
 │   │   ├── create-agent.sh  # Agent creation with auto-updates
 │   │   └── ...

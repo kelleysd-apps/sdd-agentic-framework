@@ -586,6 +586,7 @@ Checks for:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1.0 | 2025-12-01 | Updated for Constitution v1.6.0 (15 principles) |
 | 1.0.0 | 2025-11-06 | Initial creation for Constitution v1.5.0 |
 
 ---

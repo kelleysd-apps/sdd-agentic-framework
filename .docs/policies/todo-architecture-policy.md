@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0
 **Effective Date**: 2025-11-29
-**Authority**: Constitution v1.5.0 - Principles VIII (Documentation Sync), X (Agent Delegation)
+**Authority**: Constitution v1.6.0 - Principles VIII (Documentation Sync), X (Agent Delegation)
 **Review Cycle**: Quarterly
 
 ---
@@ -455,7 +455,7 @@ notes: "Implemented per data-model.md specification"
 
 ## References
 
-- Constitution v1.5.0: `.specify/memory/constitution.md`
+- Constitution v1.6.0: `.specify/memory/constitution.md`
 - Tasks Template: `.specify/templates/tasks-template.md`
 - Tasks Agent: `.claude/agents/product/tasks-agent.md`
 - Tasks Command: `.claude/commands/tasks.md`

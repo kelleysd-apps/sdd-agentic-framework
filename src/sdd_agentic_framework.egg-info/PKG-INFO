@@ -39,7 +39,7 @@ This framework builds upon **[GitHub's spec-kit](https://github.com/github/spec-
 ### Extensions and Enhancements
 This implementation extends spec-kit with:
 - **Enhanced AI governance** - Constitutional principles and enforced quality gates
-- **Intelligent agent orchestration** - 13 specialized agents across 6 departments with MCP integration
+- **Intelligent agent orchestration** - 14 specialized agents across 6 departments with MCP integration
 - **Agent Skills system** - Progressive disclosure for procedural knowledge (30-50% context reduction)
 - **Governance policies** - 6 comprehensive policies (Testing, Security, Code Review, Deployment, Branching, Release)
 - **Advanced workflow automation** - Validation scripts and command system
@@ -103,7 +103,7 @@ npm run setup
 
 ### 2. Configure Project Constitution
 
-The constitution (`/.specify/memory/constitution.md` v1.5.0) defines your project's 14 enforceable principles:
+The constitution (`/.specify/memory/constitution.md` v1.6.0) defines your project's 14 enforceable principles:
 
 **Core Immutable Principles** (I-III):
 - **Principle I**: Library-First Architecture
@@ -275,7 +275,7 @@ The framework includes 6 comprehensive policies establishing standards for all d
 5. **Branching Strategy Policy** - Git workflows, branch naming, Principle VI compliance
 6. **Release Management Policy** - Semantic versioning, release workflow, deprecation policy
 
-All policies located in `.docs/policies/` and aligned with Constitution v1.5.0.
+All policies located in `.docs/policies/` and aligned with Constitution v1.6.0.
 
 ## 📚 Core Commands
 
@@ -350,7 +350,7 @@ When creating an agent, the system automatically:
 your-project/
 ├── .specify/                 # Framework core
 │   ├── memory/              # Constitutional documents
-│   │   ├── constitution.md  # 14 development principles (v1.5.0)
+│   │   ├── constitution.md  # 14 development principles (v1.6.0)
 │   │   ├── constitution_update_checklist.md  # Change management
 │   │   ├── agent-collaboration-triggers.md   # Agent delegation reference
 │   │   ├── agent-governance.md  # Agent compliance rules

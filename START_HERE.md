@@ -350,6 +350,33 @@ powershell -ExecutionPolicy Bypass -File .specify\scripts\setup-windows.ps1
   - Git: https://git-scm.com/
   - Claude Code: https://claude.ai/code
 
+### Claude Code Update Fails (ENOTEMPTY Error)
+
+**Symptoms:**
+```
+npm error ENOTEMPTY: directory not empty, rename '.../claude-code' -> '.../.claude-code-XXXXX'
+```
+
+**Cause:** A previous update was interrupted, leaving stale temp directories.
+
+**Fix:**
+```bash
+npm_prefix=$(npm config get prefix)
+rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+npm install -g @anthropic-ai/claude-code
+```
+
+**Permanent Fix - Add to ~/.bashrc or ~/.zshrc:**
+```bash
+update-claude-code() {
+    local npm_prefix=$(npm config get prefix)
+    rm -rf "$npm_prefix/lib/node_modules/@anthropic-ai/.claude-code-"* 2>/dev/null
+    npm install -g @anthropic-ai/claude-code
+}
+```
+
+Then use `update-claude-code` instead of `npm install -g`.
+
 ### Claude Code Won't Install
 
 Try these installation methods in order:
@@ -544,7 +571,7 @@ After completing setup, explore these files:
 
 - **CLAUDE.md** - Complete AI assistant instructions
 - **README.md** - Framework features and architecture
-- **.specify/memory/constitution.md** - 14 development principles
+- **.specify/memory/constitution.md** - 15 development principles (v1.6.0)
 - **AGENTS.md** - Specialized agent documentation
 - **.claude/commands/** - Custom command documentation
 
