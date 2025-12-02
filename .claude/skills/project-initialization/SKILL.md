@@ -344,6 +344,64 @@ test -f .docs/prd/prd.md && echo "PRD found" || echo "PRD MISSING - run /create-
 
 ---
 
+### Procedure 5.5: MCP Server Setup (Docker MCP Toolkit)
+
+**Goal**: Configure MCP servers for the project using Docker MCP Toolkit
+
+**Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
+
+**Docker MCP Toolkit** is pre-installed during framework setup and provides:
+- Dynamic discovery of 310+ servers via `mcp-find` tool
+- Runtime installation via `mcp-add` tool
+- Containerized execution (no local dependencies)
+
+**Steps**:
+
+1. **Verify Docker MCP Toolkit**:
+   ```bash
+   docker mcp version      # Should show v0.30.0 or later
+   docker mcp tools ls     # Should show mcp-find, mcp-add, etc.
+   ```
+
+2. **Analyze PRD for MCP requirements**:
+   - Extract database type from Technical Constraints
+   - Identify cloud provider needs
+   - Note integration requirements
+   - Review testing strategy
+
+3. **Search Docker catalog**:
+   For each requirement:
+   ```
+   Use mcp-find: "Find servers for [requirement]"
+   ```
+
+4. **Present recommendations to user with tiers**:
+   - Required (core functionality)
+   - Recommended (workflow enhancement)
+   - Optional (nice to have)
+
+5. **Install with user approval**:
+   For each approved server:
+   ```
+   Use mcp-add: "Add the [server] server"
+   Use mcp-config-set: "Set [credential] for [server]"
+   ```
+
+6. **Fallback for servers not in Docker catalog**:
+   Add to `.mcp.json` with npx configuration
+
+7. **Guide credential setup**:
+   - Identify required environment variables
+   - Guide user to add to `.env` file
+   - Never commit credentials
+
+8. **Verify connections**:
+   ```bash
+   docker mcp tools ls  # Should show all enabled server tools
+   ```
+
+---
+
 ### Procedure 6: Validation and Reporting
 
 **Goal**: Verify initialization and report results

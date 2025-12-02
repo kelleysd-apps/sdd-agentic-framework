@@ -1,10 +1,10 @@
 ---
 name: mcp-server-setup
 description: |
-  MCP (Model Context Protocol) server selection and configuration skill.
-  Guides users through identifying, installing, and configuring MCP servers
-  based on their project's PRD requirements. Should be executed after
-  /initialize-project to extend Claude Code's capabilities for the project.
+  MCP (Model Context Protocol) server selection and configuration skill using
+  Docker MCP Toolkit as the primary orchestration method. Guides dynamic server
+  discovery, installation via Docker gateway, and fallback to direct installation.
+  Should be executed after /initialize-project to extend Claude Code's capabilities.
 allowed-tools: Read, Write, Edit, Bash, WebSearch, WebFetch, AskUserQuestion
 ---
 
@@ -12,11 +12,12 @@ allowed-tools: Read, Write, Edit, Bash, WebSearch, WebFetch, AskUserQuestion
 
 ## Purpose
 
-This skill guides the selection and installation of MCP (Model Context Protocol) servers after project initialization. MCP servers extend Claude Code's capabilities by providing:
+Configure MCP servers for your project using **Docker MCP Toolkit** as the primary method. The toolkit provides:
 
-- **Tool Access**: Database connections, cloud services, browsers, APIs
-- **Context Enhancement**: Code indexing, documentation, knowledge bases
-- **Automation**: CI/CD, deployment, testing infrastructure
+- **Dynamic Discovery**: Search 310+ servers via `mcp-find` tool
+- **Runtime Composition**: Add servers during conversations via `mcp-add`
+- **Containerized Execution**: No local dependency management
+- **Unified Gateway**: Single entry point for all MCPs
 
 ## When to Use
 
@@ -37,71 +38,202 @@ This skill guides the selection and installation of MCP (Model Context Protocol)
 
 ---
 
-## MCP Server Categories
+## Installation Methods (Priority Order)
 
-### Category 1: Core Infrastructure (Usually Pre-Installed)
+### Method 1: Docker MCP Toolkit (Primary - Recommended)
 
-These are typically available by default in Claude Code:
+Docker MCP Toolkit is **pre-installed** during framework setup. It provides dynamic server management through Claude Code tools.
 
-| Server | Purpose | Tools Provided |
-|--------|---------|----------------|
-| **filesystem** | File operations | Read, Write, Edit, Glob, Grep |
-| **ide** | VS Code integration | getDiagnostics, executeCode |
+#### Discovery Tools
+
+| Tool | Purpose | Example |
+|------|---------|---------|
+| `mcp-find` | Search 310+ servers | "Find servers for PostgreSQL" |
+| `mcp-add` | Add server to session | "Add the supabase server" |
+| `mcp-config-set` | Configure credentials | "Set SUPABASE_URL for supabase" |
+| `mcp-exec` | Execute any tool | "Execute search_docs from supabase" |
+| `code-mode` | Combine multiple MCPs | "Create a tool using supabase and github" |
+
+#### Discovery Example
+
+```
+User: "What MCP servers are available for database operations?"
+
+Claude uses mcp-find: Searches catalog for "database"
+
+Result: Found 15 servers including:
+- supabase: Supabase PostgreSQL, Auth, Storage
+- postgres: Direct PostgreSQL connection
+- sqlite: SQLite database operations
+- prisma: Prisma ORM integration
+- firebase: Firebase/Firestore
+```
+
+#### Installation Example
+
+```
+User: "Add the supabase MCP server"
+
+Claude uses mcp-add: Adds supabase to session
+
+Result: Server enabled. Configure with:
+- SUPABASE_URL
+- SUPABASE_ANON_KEY
+- SUPABASE_SERVICE_ROLE_KEY
+```
+
+#### Configuration Example
+
+```
+User: "Configure my Supabase credentials"
+
+Claude uses mcp-config-set: Sets each credential
+
+Alternative: Add to .env file and server reads automatically
+```
+
+### Method 2: Direct Installation (Fallback)
+
+For servers not in Docker catalog or special requirements.
+
+**When to use**:
+- Server not found in Docker catalog
+- Need specific version or configuration
+- Custom/internal MCP servers
+
+**Configuration in `.mcp.json`**:
+```json
+{
+  "mcpServers": {
+    "server-name": {
+      "command": "npx",
+      "args": ["-y", "@org/mcp-server-name"],
+      "env": {
+        "API_KEY": "env:SERVER_API_KEY"
+      }
+    }
+  }
+}
+```
+
+**GitHub Registry**: https://github.com/modelcontextprotocol/servers
+
+### Method 3: Self-Contained Docker Images
+
+For custom or self-hosted servers.
+
+```json
+{
+  "mcpServers": {
+    "custom-server": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "my-registry/my-mcp-server:latest"]
+    }
+  }
+}
+```
+
+---
+
+## Docker MCP Toolkit CLI Commands
+
+### Server Management
+
+| Command | Purpose |
+|---------|---------|
+| `docker mcp catalog show docker-mcp` | Browse all 310+ available servers |
+| `docker mcp server enable <name>` | Enable a server from catalog |
+| `docker mcp server ls` | List enabled servers |
+| `docker mcp server disable <name>` | Disable a server |
+
+### Configuration
+
+| Command | Purpose |
+|---------|---------|
+| `docker mcp config read` | View current configuration |
+| `docker mcp secret set <key> <value>` | Set a secret value |
+
+### Tools
+
+| Command | Purpose |
+|---------|---------|
+| `docker mcp tools ls` | List all available tools |
+| `docker mcp tools inspect <name>` | Show tool details |
+| `docker mcp tools call <name>` | Test a tool |
+
+### Gateway
+
+| Command | Purpose |
+|---------|---------|
+| `docker mcp gateway run` | Run the MCP gateway (used by Claude Code) |
+| `docker mcp gateway run --dry-run` | Test configuration without starting |
+
+---
+
+## Server Categories
+
+### Category 1: Core Infrastructure (Pre-configured)
+
+These tools are available via Docker MCP gateway by default:
+
+| Tool | Purpose | Always Available |
+|------|---------|------------------|
+| `mcp-find` | Search server catalog | Yes |
+| `mcp-add` | Add servers dynamically | Yes |
+| `mcp-config-set` | Configure servers | Yes |
+| `mcp-exec` | Execute any tool | Yes |
+| `code-mode` | Combine MCPs in JavaScript | Yes |
+| `mcp-remove` | Remove servers | Yes |
 
 ### Category 2: Database & Backend
 
-| Server | Purpose | Install Command | When to Use |
-|--------|---------|-----------------|-------------|
-| **supabase** | Supabase projects | `npx -y @anthropic-ai/mcp-supabase` | PostgreSQL, Auth, Storage via Supabase |
-| **postgres** | Direct PostgreSQL | `npx -y @anthropic-ai/mcp-postgres` | Direct PostgreSQL connections |
-| **sqlite** | SQLite databases | `npx -y @anthropic-ai/mcp-sqlite` | Local SQLite databases |
-| **prisma** | Prisma ORM | `npx -y @prisma/mcp-prisma` | Projects using Prisma |
-| **firebase** | Firebase/Firestore | `npx -y @anthropic-ai/mcp-firebase` | Firebase projects |
+| Need | Docker Server | Fallback (npx) |
+|------|---------------|----------------|
+| Supabase | `supabase` | `npx -y @anthropic-ai/mcp-supabase` |
+| PostgreSQL | `postgres` | `npx -y @anthropic-ai/mcp-postgres` |
+| SQLite | `SQLite` | `npx -y @anthropic-ai/mcp-sqlite` |
+| Prisma | `prisma` | `npx -y @prisma/mcp-prisma` |
+| Firebase | `firebase` | `npx -y @anthropic-ai/mcp-firebase` |
+| MongoDB | `mongodb` | `npx -y @anthropic-ai/mcp-mongodb` |
 
 ### Category 3: Cloud & Deployment
 
-| Server | Purpose | Install Command | When to Use |
-|--------|---------|-----------------|-------------|
-| **aws** | AWS services | `npx -y @anthropic-ai/mcp-aws` | AWS infrastructure |
-| **gcp** | Google Cloud | `npx -y @anthropic-ai/mcp-gcp` | GCP projects |
-| **azure** | Microsoft Azure | `npx -y @anthropic-ai/mcp-azure` | Azure deployments |
-| **vercel** | Vercel deployment | `npx -y @anthropic-ai/mcp-vercel` | Vercel hosting |
-| **netlify** | Netlify deployment | `npx -y @anthropic-ai/mcp-netlify` | Netlify hosting |
-| **docker** | Container management | `npx -y @anthropic-ai/mcp-docker` | Docker/containerized apps |
+| Need | Docker Server | Fallback (npx) |
+|------|---------------|----------------|
+| AWS | `aws` or `aws-api` | `npx -y @anthropic-ai/mcp-aws` |
+| GCP | `gcp` | `npx -y @anthropic-ai/mcp-gcp` |
+| Azure | `azure` or `aks` | `npx -y @anthropic-ai/mcp-azure` |
+| Vercel | `vercel` | `npx -y @anthropic-ai/mcp-vercel` |
+| Netlify | `netlify` | `npx -y @anthropic-ai/mcp-netlify` |
+| Docker | `docker` | `npx -y @anthropic-ai/mcp-docker` |
 
 ### Category 4: Browser & Testing
 
-| Server | Purpose | Install Command | When to Use |
-|--------|---------|-----------------|-------------|
-| **browsermcp** | Browser automation | `npx -y @anthropic-ai/mcp-browsermcp` | E2E testing, web scraping |
-| **playwright** | Playwright testing | `npx -y @anthropic-ai/mcp-playwright` | Playwright-based testing |
-| **puppeteer** | Puppeteer control | `npx -y @anthropic-ai/mcp-puppeteer` | Puppeteer automation |
+| Need | Docker Server | Fallback (npx) |
+|------|---------------|----------------|
+| Browser automation | `browsermcp` | `npx -y @anthropic-ai/mcp-browsermcp` |
+| Playwright | `playwright` | `npx -y @anthropic-ai/mcp-playwright` |
+| Puppeteer | `puppeteer` | `npx -y @anthropic-ai/mcp-puppeteer` |
 
 ### Category 5: Search & Documentation
 
-| Server | Purpose | Install Command | When to Use |
-|--------|---------|-----------------|-------------|
-| **perplexity** | AI-powered search | `npx -y @anthropic-ai/mcp-perplexity` | Research, documentation lookup |
-| **brave-search** | Brave Search API | `npx -y @anthropic-ai/mcp-brave-search` | Web search integration |
-| **github** | GitHub API | `npx -y @anthropic-ai/mcp-github` | GitHub repos, issues, PRs |
-| **notion** | Notion workspace | `npx -y @anthropic-ai/mcp-notion` | Notion documentation |
-| **confluence** | Atlassian docs | `npx -y @anthropic-ai/mcp-confluence` | Confluence wikis |
+| Need | Docker Server | Fallback (npx) |
+|------|---------------|----------------|
+| AI Search | `perplexity` | `npx -y @anthropic-ai/mcp-perplexity` |
+| Brave Search | `brave-search` | `npx -y @anthropic-ai/mcp-brave-search` |
+| GitHub | `github-official` | `npx -y @anthropic-ai/mcp-github` |
+| Notion | `notion` | `npx -y @anthropic-ai/mcp-notion` |
+| Confluence | `atlassian` | `npx -y @anthropic-ai/mcp-confluence` |
+| Library docs | `context7` | `npx -y @anthropic-ai/mcp-context7` |
 
 ### Category 6: Communication & Collaboration
 
-| Server | Purpose | Install Command | When to Use |
-|--------|---------|-----------------|-------------|
-| **slack** | Slack integration | `npx -y @anthropic-ai/mcp-slack` | Team notifications |
-| **linear** | Linear project mgmt | `npx -y @anthropic-ai/mcp-linear` | Issue tracking with Linear |
-| **jira** | Jira integration | `npx -y @anthropic-ai/mcp-jira` | Jira issue tracking |
-
-### Category 7: Code & Context
-
-| Server | Purpose | Install Command | When to Use |
-|--------|---------|-----------------|-------------|
-| **context7** | Library docs | `npx -y @anthropic-ai/mcp-context7` | Up-to-date library documentation |
-| **memory** | Persistent memory | `npx -y @anthropic-ai/mcp-memory` | Cross-session context |
-| **sequential-thinking** | Complex reasoning | `npx -y @anthropic-ai/mcp-sequential-thinking` | Multi-step problem solving |
+| Need | Docker Server | Fallback (npx) |
+|------|---------------|----------------|
+| Slack | `slack` | `npx -y @anthropic-ai/mcp-slack` |
+| Linear | `linear` | `npx -y @anthropic-ai/mcp-linear` |
+| Jira | `atlassian` | `npx -y @anthropic-ai/mcp-jira` |
+| Asana | `asana` | `npx -y @anthropic-ai/mcp-asana` |
 
 ---
 
@@ -125,23 +257,35 @@ Read the PRD and extract:
    - E2E testing needs
    - Browser automation requirements
 
-### Step 2: Map Requirements to MCPs
+### Step 2: Search Docker Catalog First
 
-Create a mapping table:
+For each requirement, search the Docker catalog:
+
+```
+Use mcp-find: "Find servers for [requirement]"
+```
+
+**Priority Logic**:
+1. If found in Docker catalog → use `mcp-add`
+2. If not found → fall back to direct installation
+
+### Step 3: Map Requirements to MCPs
+
+Create a mapping table for user:
 
 ```markdown
 ## MCP Selection for [Project Name]
 
-| Requirement | Source (PRD Section) | Recommended MCP | Priority |
-|-------------|---------------------|-----------------|----------|
-| PostgreSQL database | Technical Constraints | supabase or postgres | Required |
-| AWS deployment | Technical Constraints | aws | Required |
-| E2E testing | Principle II | browsermcp | Required |
-| GitHub integration | Integration Requirements | github | Recommended |
-| Slack notifications | Integration Requirements | slack | Optional |
+| Requirement | Source (PRD Section) | Method | Server | Priority |
+|-------------|---------------------|--------|--------|----------|
+| PostgreSQL | Technical Constraints | Docker | supabase | Required |
+| AWS deploy | Technical Constraints | Docker | aws | Required |
+| E2E testing | Principle II | Docker | browsermcp | Required |
+| GitHub | Integration | Docker | github-official | Recommended |
+| Slack notify | Integration | Docker | slack | Optional |
 ```
 
-### Step 3: Present Recommendations to User
+### Step 4: Present Recommendations to User
 
 ```markdown
 ## Recommended MCP Servers
@@ -150,126 +294,97 @@ Based on your PRD, I recommend the following MCP servers:
 
 ### Required (for core functionality)
 1. **supabase** - PostgreSQL database with auth and storage
-2. **aws** - AWS S3 and Lambda deployment
+   - Method: Docker Toolkit (`mcp-add`)
+   - Credentials: SUPABASE_URL, SUPABASE_ANON_KEY
+
+2. **aws** - AWS infrastructure access
+   - Method: Docker Toolkit (`mcp-add`)
+   - Credentials: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+
 3. **browsermcp** - E2E testing with browser automation
+   - Method: Docker Toolkit (`mcp-add`)
+   - Credentials: None required
 
 ### Recommended (enhance workflow)
-4. **github** - GitHub issues and PR integration
-5. **context7** - Up-to-date documentation for your tech stack
+4. **github-official** - GitHub issues and PR integration
+   - Method: Docker Toolkit (`mcp-add`)
+   - Credentials: GITHUB_TOKEN
 
 ### Optional (nice to have)
-6. **slack** - Team notifications for deployments
+5. **slack** - Team notifications
+   - Method: Docker Toolkit (`mcp-add`)
+   - Credentials: SLACK_BOT_TOKEN
 
-Would you like me to install these? I'll configure each one and guide you through any API keys needed.
+Would you like me to add these servers? I'll configure each one and guide you through any credentials needed.
 ```
 
-### Step 4: Install Selected MCPs
+### Step 5: Install Selected MCPs
 
 For each approved MCP:
 
-1. **Check if already installed**:
-   ```bash
-   # MCPs are configured in Claude Code settings
-   # Check ~/.claude/settings.json or project .claude.json
-   ```
+**Docker Toolkit Method**:
+```
+1. Use mcp-add: "Add the [server] server"
+2. Use mcp-config-set: "Configure [credential] for [server]"
+   OR add credentials to .env file
+3. Verify with mcp-exec or test operation
+```
 
-2. **Install and configure**:
-   ```json
-   // Add to Claude Code MCP configuration
-   {
-     "mcpServers": {
-       "server-name": {
-         "command": "npx",
-         "args": ["-y", "@org/mcp-server-name"],
-         "env": {
-           "API_KEY": "env:SERVER_API_KEY"
-         }
-       }
-     }
-   }
-   ```
-
-3. **Guide user through credentials**:
-   - Identify required environment variables
-   - Provide instructions for obtaining API keys
-   - Add to `.env` file (never commit!)
-
----
-
-## Configuration Patterns
-
-### Pattern 1: Database MCP
-
+**Direct Installation Method** (fallback):
 ```json
+// Add to .mcp.json
 {
   "mcpServers": {
-    "supabase": {
+    "server-name": {
       "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-supabase"],
+      "args": ["-y", "@org/mcp-server"],
       "env": {
-        "SUPABASE_URL": "env:SUPABASE_URL",
-        "SUPABASE_ANON_KEY": "env:SUPABASE_ANON_KEY",
-        "SUPABASE_SERVICE_ROLE_KEY": "env:SUPABASE_SERVICE_ROLE_KEY"
+        "API_KEY": "env:API_KEY"
       }
     }
   }
 }
 ```
 
-**.env additions**:
+### Step 6: Configure Credentials
+
+**For Docker Toolkit servers**:
+- Use `mcp-config-set` for each credential
+- Or create/update `.env` file with values
+
+**For direct installation**:
+- Add to `.mcp.json` with `env:VAR_NAME` syntax
+- Add actual values to `.env`
+
+**.env Template**:
 ```bash
-# Supabase credentials (from project settings)
+# Database
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Cloud
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_REGION=us-east-1
+
+# APIs
+GITHUB_TOKEN=ghp_your-token
+SLACK_BOT_TOKEN=xoxb-your-token
 ```
 
-### Pattern 2: Cloud Provider MCP
+### Step 7: Verify Connections
 
-```json
-{
-  "mcpServers": {
-    "aws": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-aws"],
-      "env": {
-        "AWS_ACCESS_KEY_ID": "env:AWS_ACCESS_KEY_ID",
-        "AWS_SECRET_ACCESS_KEY": "env:AWS_SECRET_ACCESS_KEY",
-        "AWS_REGION": "env:AWS_REGION"
-      }
-    }
-  }
-}
+Test each server:
+```bash
+docker mcp tools ls  # Should show all enabled server tools
 ```
 
-### Pattern 3: Browser Automation MCP
-
-```json
-{
-  "mcpServers": {
-    "browsermcp": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-browsermcp"],
-      "env": {}
-    }
-  }
-}
+Or in conversation:
 ```
-
-### Pattern 4: Search/Documentation MCP
-
-```json
-{
-  "mcpServers": {
-    "perplexity": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-perplexity"],
-      "env": {
-        "PERPLEXITY_API_KEY": "env:PERPLEXITY_API_KEY"
-      }
-    }
-  }
-}
+"List all tables in my database" (tests supabase)
+"Show my GitHub repositories" (tests github)
+"Take a screenshot of https://example.com" (tests browsermcp)
 ```
 
 ---
@@ -281,85 +396,50 @@ Based on agent departments, recommend appropriate MCPs:
 | Department | Agents | Recommended MCPs |
 |------------|--------|------------------|
 | **Architecture** | backend-architect | aws/gcp/azure, postgres/supabase |
-| **Engineering** | frontend-specialist, full-stack-developer | browsermcp, github, context7 |
+| **Engineering** | frontend-specialist, full-stack-developer | browsermcp, github-official, context7 |
 | **Data** | database-specialist | postgres, supabase, firebase |
 | **Quality** | testing-specialist, security-specialist | browsermcp, playwright |
-| **Product** | specification-agent, planning-agent, tasks-agent | github, notion, linear |
+| **Product** | specification-agent, planning-agent, tasks-agent | github-official, notion, linear |
 | **Operations** | devops-engineer, performance-engineer | aws/gcp/azure, docker |
 
 ---
 
-## Claude Assistance
+## Troubleshooting
 
-Claude can help with MCP setup in several ways:
+### Docker MCP Toolkit Issues
 
-### 1. Identify Needed MCPs
+| Issue | Solution |
+|-------|----------|
+| `docker mcp: command not found` | Run framework setup script or install manually |
+| Gateway won't start | Check Docker daemon is running |
+| Server not in catalog | Use direct installation method |
+| OAuth errors | Use `.env` credentials instead of OAuth |
+| Timeout errors | Increase timeout or check network |
 
-Ask Claude:
-```
-"Based on my PRD at .docs/prd/prd.md, what MCP servers would benefit this project?"
-```
-
-### 2. Installation Guidance
-
-Ask Claude:
-```
-"Help me install and configure the supabase MCP server"
-```
-
-### 3. Troubleshooting
-
-Ask Claude:
-```
-"The postgres MCP isn't connecting. Here's the error: [paste error]"
+**Manual Installation**:
+```bash
+# Download and install Docker MCP Toolkit
+ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+curl -sL "https://github.com/docker/mcp-gateway/releases/download/v0.30.0/docker-mcp-${OS}-${ARCH}.tar.gz" | tar -xz -C ~/.docker/cli-plugins/
+chmod +x ~/.docker/cli-plugins/docker-mcp
 ```
 
-### 4. Discovery
+### Direct Installation Issues
 
-Ask Claude:
+| Issue | Solution |
+|-------|----------|
+| MCP won't start | Check Node.js v18+ installed |
+| npx not found | Install npm: `npm install -g npm` |
+| Authentication errors | Verify env vars in .env |
+| Port conflicts | Check for other processes on port |
+
+### Verification Script
+
+Run the verification script to check installation:
+```bash
+./.specify/scripts/bash/verify-mcp-toolkit.sh
 ```
-"What MCP servers are available for [specific need]?"
-```
-
----
-
-## Validation Checklist
-
-After MCP setup, verify:
-
-```
-[ ] All required MCPs installed based on PRD
-[ ] API keys/credentials configured in .env
-[ ] .env is in .gitignore (never commit secrets!)
-[ ] MCPs tested with simple operations
-[ ] Department agents have access to relevant MCPs
-[ ] Documentation updated with MCP dependencies
-```
-
----
-
-## Common Issues
-
-### MCP Won't Start
-
-1. Check Node.js version (v18+ required)
-2. Verify npx is available
-3. Check for port conflicts
-4. Review Claude Code logs
-
-### Authentication Errors
-
-1. Verify environment variables are set
-2. Check API key validity
-3. Ensure correct permissions/scopes
-4. Test credentials independently
-
-### MCP Not Available in Claude
-
-1. Restart Claude Code after configuration
-2. Check MCP configuration syntax (JSON validity)
-3. Verify command path is correct
-4. Check for npm package availability
 
 ---
 
@@ -370,13 +450,20 @@ After MCP setup, verify:
    - Use `env:VAR_NAME` syntax in MCP config
    - Never hardcode credentials
    - Rotate credentials regularly
+   - Ensure `.env` is in `.gitignore`
 
 2. **Access Scope**
    - Use least-privilege API keys
    - Limit MCP access to needed resources
    - Review permissions before granting
 
-3. **Audit Trail**
+3. **Docker Toolkit Security**
+   - Containerized execution provides isolation
+   - CPU limit: 1 core per container
+   - Memory limit: 2GB per container
+   - Request filtering blocks sensitive data
+
+4. **Audit Trail**
    - Log MCP usage for sensitive operations
    - Monitor for unusual activity
    - Document all configured MCPs
@@ -392,38 +479,85 @@ After completing MCP setup, provide this summary:
 
 **Project**: [Name]
 **Date**: [Date]
+**Method**: Docker MCP Toolkit (primary)
 
 ### Installed MCPs
 
-| MCP | Purpose | Status |
-|-----|---------|--------|
-| supabase | Database access | Configured |
-| aws | Cloud deployment | Configured |
-| browsermcp | E2E testing | Ready |
+| MCP | Method | Purpose | Status |
+|-----|--------|---------|--------|
+| supabase | Docker Toolkit | Database access | ✓ Configured |
+| aws | Docker Toolkit | Cloud deployment | ✓ Configured |
+| browsermcp | Docker Toolkit | E2E testing | ✓ Ready |
+| github-official | Direct Install | GitHub integration | ✓ Configured |
 
-### Environment Variables Added
+### Environment Variables Required
 
+Add to `.env`:
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_ANON_KEY` - Supabase anonymous key
 - `AWS_ACCESS_KEY_ID` - AWS access key
 - `AWS_SECRET_ACCESS_KEY` - AWS secret key
+- `GITHUB_TOKEN` - GitHub personal access token
 
-### Next Steps
+### Docker Toolkit Tools Available
 
-1. Test each MCP with a simple operation
-2. Run `/specify` for first feature
-3. MCPs are now available to all agents
+- `mcp-find` - Search for more servers
+- `mcp-add` - Add servers during development
+- `mcp-exec` - Execute tools from any server
+- `code-mode` - Combine MCPs in JavaScript
 
 ### Verification Commands
 
-To test your MCP connections, try:
+Test your MCP connections:
 - "Query the users table" (tests supabase)
 - "List S3 buckets" (tests aws)
 - "Open https://example.com in browser" (tests browsermcp)
+- "Show my GitHub repos" (tests github-official)
+
+### Next Steps
+
+1. Add credentials to `.env`
+2. Test each MCP with a simple operation
+3. Run `/specify` for first feature
+4. MCPs are now available to all agents
 ```
 
 ---
 
-**Skill Version**: 1.0.0
-**Last Updated**: 2025-11-30
+## Quick Reference
+
+### Most Common Operations
+
+```
+# Search for servers
+Ask Claude: "Find MCP servers for [need]"
+
+# Add a server
+Ask Claude: "Add the [server] MCP server"
+
+# Configure credentials
+Ask Claude: "Configure [credential] for [server]"
+Or: Add to .env file
+
+# List available tools
+Run: docker mcp tools ls
+
+# Browse catalog
+Run: docker mcp catalog show docker-mcp
+```
+
+### File Locations
+
+| File | Purpose |
+|------|---------|
+| `.mcp.json` | Project MCP configuration (direct install) |
+| `.env` | Credentials (never commit!) |
+| `~/.docker/mcp/` | Docker MCP Toolkit config |
+| `~/.docker/cli-plugins/docker-mcp` | Docker MCP CLI plugin |
+
+---
+
+**Skill Version**: 2.0.0
+**Last Updated**: 2025-12-02
 **Constitutional Version**: 1.6.0
+**Docker MCP Toolkit Version**: v0.30.0

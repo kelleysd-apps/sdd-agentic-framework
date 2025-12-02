@@ -76,75 +76,69 @@ Engineering Agent (implementation) →
 └── Security Agent (vulnerability check)
 ```
 
-## MCP Server Assignments by Department
+## MCP Server Access (Docker MCP Toolkit)
+
+The framework uses **Docker MCP Toolkit** as the primary method for MCP access, providing 310+ containerized servers via dynamic discovery.
+
+### Docker MCP Toolkit Tools (All Agents)
+
+All agents have access to these Docker MCP gateway tools:
+
+| Tool | Purpose |
+|------|---------|
+| `mcp-find` | Search 310+ servers in Docker catalog |
+| `mcp-add` | Add server to current session dynamically |
+| `mcp-config-set` | Configure server credentials |
+| `mcp-exec` | Execute tools from any enabled server |
+| `code-mode` | Combine multiple MCP tools in JavaScript |
+
+### Department-Specific MCP Servers
+
+Agents can dynamically add these servers during task execution:
 
 ### Architecture Department
-```json
-{
-  "mcpServers": {
-    "documentation": ["mcp__ref-tools", "mcp__supabase__search_docs"],
-    "search": ["mcp__perplexity", "WebSearch"],
-    "analysis": ["mcp__claude-context"]
-  }
-}
-```
+- **Cloud**: aws, gcp, azure
+- **Database**: supabase, postgres
+- **Documentation**: context7, perplexity
+- **Search**: WebSearch
 
 ### Engineering Department
-```json
-{
-  "mcpServers": {
-    "ide": ["mcp__ide"],
-    "database": ["mcp__supabase"],
-    "documentation": ["mcp__ref-tools"],
-    "browser": ["mcp__browsermcp"],
-    "search": ["mcp__claude-context", "WebSearch"]
-  }
-}
-```
+- **IDE**: mcp__ide (pre-configured)
+- **Testing**: browsermcp, playwright
+- **Database**: supabase, postgres
+- **Docs**: context7, github-official
 
 ### Quality Department
-```json
-{
-  "mcpServers": {
-    "testing": ["mcp__ide__executeCode"],
-    "analysis": ["mcp__ide__getDiagnostics"],
-    "documentation": ["mcp__ref-tools"]
-  }
-}
-```
+- **Testing**: browsermcp, playwright
+- **Analysis**: mcp__ide__getDiagnostics (pre-configured)
+- **Documentation**: context7
 
 ### Data Department
-```json
-{
-  "mcpServers": {
-    "database": ["mcp__supabase"],
-    "migration": ["mcp__supabase__apply_migration"],
-    "query": ["mcp__supabase__execute_sql"]
-  }
-}
-```
+- **Database**: supabase, postgres, firebase, sqlite
+- **Migration**: via supabase tools
+- **Query**: via database server tools
 
 ### Product Department
-```json
-{
-  "mcpServers": {
-    "documentation": ["mcp__ref-tools"],
-    "browser": ["mcp__browsermcp"],
-    "search": ["WebSearch", "mcp__perplexity"]
-  }
-}
-```
+- **Documentation**: notion, confluence
+- **Browser**: browsermcp
+- **Search**: WebSearch, perplexity
+- **Projects**: github-official, linear
 
 ### Operations Department
-```json
-{
-  "mcpServers": {
-    "deployment": ["mcp__supabase__deploy_edge_function"],
-    "monitoring": ["mcp__supabase__get_logs"],
-    "infrastructure": ["mcp__supabase__create_project"]
-  }
-}
+- **Cloud**: aws, gcp, azure, vercel
+- **Containers**: docker
+- **Monitoring**: via cloud server tools
+
+### Dynamic MCP Access Pattern
+
+Agents can add MCPs during task execution:
 ```
+1. Use mcp-find: "Find servers for [need]"
+2. Use mcp-add: "Add the [server] server"
+3. Use mcp-exec: "Execute [tool] from [server]"
+```
+
+**Fallback**: If server not in Docker catalog, add to `.mcp.json` with npx configuration.
 
 ## Inter-Agent Communication Protocol
 

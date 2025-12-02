@@ -219,6 +219,69 @@ echo -e "${BLUE}Setting up SDD workflow scripts...${NC}"
 chmod +x .specify/scripts/bash/*.sh 2>/dev/null || true
 echo -e "${GREEN}[OK]${NC} Scripts are executable"
 
+# ====================================
+# Docker MCP Toolkit Installation
+# ====================================
+echo ""
+echo -e "${BLUE}Checking Docker MCP Toolkit...${NC}"
+
+# Check if Docker is available first
+if ! command -v docker &> /dev/null; then
+    echo -e "${YELLOW}[INFO]${NC} Docker not detected - skipping MCP Toolkit installation"
+    echo -e "${YELLOW}       Docker MCP Toolkit requires Docker to be installed${NC}"
+else
+    # Check if docker-mcp plugin is already installed
+    if docker mcp version &>/dev/null 2>&1; then
+        MCP_VERSION=$(docker mcp version 2>/dev/null)
+        echo -e "${GREEN}[OK]${NC} Docker MCP Toolkit already installed: ${MCP_VERSION}"
+    else
+        echo -e "${BLUE}Installing Docker MCP Toolkit CLI...${NC}"
+
+        # Detect architecture
+        ARCH=$(uname -m)
+        case $ARCH in
+            x86_64) ARCH="amd64" ;;
+            aarch64|arm64) ARCH="arm64" ;;
+            *)
+                echo -e "${YELLOW}[WARNING]${NC} Unsupported architecture: $ARCH"
+                echo -e "${YELLOW}         Docker MCP Toolkit installation skipped${NC}"
+                ARCH=""
+                ;;
+        esac
+
+        if [ -n "$ARCH" ]; then
+            # Detect OS
+            MCP_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+
+            # Download and install
+            MCP_VERSION="v0.30.0"
+            DOWNLOAD_URL="https://github.com/docker/mcp-gateway/releases/download/${MCP_VERSION}/docker-mcp-${MCP_OS}-${ARCH}.tar.gz"
+
+            mkdir -p "$HOME/.docker/cli-plugins/"
+
+            if curl -sL "$DOWNLOAD_URL" | tar -xz -C "$HOME/.docker/cli-plugins/" 2>/dev/null; then
+                chmod +x "$HOME/.docker/cli-plugins/docker-mcp"
+
+                if docker mcp version &>/dev/null 2>&1; then
+                    echo -e "${GREEN}[OK]${NC} Docker MCP Toolkit installed: $(docker mcp version)"
+                else
+                    echo -e "${YELLOW}[WARNING]${NC} Docker MCP Toolkit installation may have failed"
+                fi
+            else
+                echo -e "${YELLOW}[WARNING]${NC} Could not download Docker MCP Toolkit"
+                echo -e "${YELLOW}         You can install manually later${NC}"
+            fi
+        fi
+    fi
+
+    # Configure Claude Code connection if MCP Toolkit is available
+    if docker mcp version &>/dev/null 2>&1; then
+        echo -e "${BLUE}Configuring Claude Code MCP gateway connection...${NC}"
+        docker mcp client connect claude-code --global 2>/dev/null || true
+        echo -e "${GREEN}[OK]${NC} Claude Code MCP gateway configured"
+    fi
+fi
+
 # Check Claude configuration
 if [ -d ".claude" ]; then
     echo -e "${GREEN}[OK]${NC} Claude Code configuration found"

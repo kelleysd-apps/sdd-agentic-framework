@@ -139,8 +139,18 @@ Users can explicitly request this agent by saying:
 ### Authorized Tools
 Read, Write, Bash, MultiEdit
 
-### MCP Server Access
-mcp__ide__executeCode, mcp__ide__getDiagnostics, mcp__ref-tools
+### MCP Server Access (Docker MCP Toolkit)
+
+**Docker MCP Toolkit Tools** (always available):
+- `mcp-find` - Search 310+ servers in Docker catalog
+- `mcp-add` - Add servers dynamically during tasks
+- `mcp-config-set` - Configure server credentials
+- `mcp-exec` - Execute tools from any enabled server
+
+**Recommended Servers** (add via `mcp-add` as needed):
+- Testing: browsermcp, playwright, puppeteer
+- Documentation: context7
+- IDE: mcp__ide (pre-configured)
 
 ### Restricted Operations
 - No unauthorized Git operations

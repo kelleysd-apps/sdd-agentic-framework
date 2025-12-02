@@ -137,51 +137,72 @@ Run before commits and releases:
 
 ### 3. Set Up MCP Integrations
 
-Model Context Protocol (MCP) servers extend Claude's capabilities. The `/initialize-project` command will recommend MCPs based on your PRD, but you can also configure them manually.
+Model Context Protocol (MCP) servers extend Claude's capabilities. The framework uses **Docker MCP Toolkit** as the primary orchestration method, providing access to 310+ containerized servers.
 
-#### Claude Helps with MCP Setup
+#### Docker MCP Toolkit (Pre-installed)
 
-Ask Claude to help you identify and configure MCPs:
+Docker MCP Toolkit is automatically installed during framework setup. It provides:
+
+- **Dynamic Discovery**: Search 310+ servers via `mcp-find` tool
+- **Runtime Installation**: Add servers during conversations via `mcp-add`
+- **Containerized Execution**: No local dependency management
+- **Unified Gateway**: Single entry point for all MCPs
+
+#### Using Docker MCP Toolkit
+
+Ask Claude to help with MCP setup:
 
 ```
-"What MCP servers would benefit my project?"
-"Help me install the supabase MCP server"
-"Configure browser automation for E2E testing"
+"Find MCP servers for database operations"  (uses mcp-find)
+"Add the supabase MCP server"               (uses mcp-add)
+"Configure my AWS credentials"               (uses mcp-config-set)
 ```
 
-**Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
+**Docker MCP Toolkit Tools**:
+
+| Tool | Purpose |
+|------|---------|
+| `mcp-find` | Search 310+ servers in Docker catalog |
+| `mcp-add` | Add server to current session dynamically |
+| `mcp-config-set` | Configure server credentials |
+| `mcp-exec` | Execute tools from any enabled server |
+| `code-mode` | Combine multiple MCP tools in JavaScript |
+
+**CLI Commands**:
+```bash
+docker mcp catalog show docker-mcp  # Browse all 310+ servers
+docker mcp server enable <name>     # Enable a server
+docker mcp tools ls                 # List available tools
+```
 
 #### Common MCP Servers by Category
 
-| Category | MCP Server | Install Command | Purpose |
-|----------|------------|-----------------|---------|
-| **Database** | supabase | `npx -y @anthropic-ai/mcp-supabase` | PostgreSQL, Auth, Storage via Supabase |
-| | postgres | `npx -y @anthropic-ai/mcp-postgres` | Direct PostgreSQL connections |
-| | sqlite | `npx -y @anthropic-ai/mcp-sqlite` | Local SQLite databases |
-| | firebase | `npx -y @anthropic-ai/mcp-firebase` | Firebase/Firestore projects |
-| **Cloud** | aws | `npx -y @anthropic-ai/mcp-aws` | AWS services (S3, Lambda, etc.) |
-| | gcp | `npx -y @anthropic-ai/mcp-gcp` | Google Cloud Platform |
-| | azure | `npx -y @anthropic-ai/mcp-azure` | Microsoft Azure |
-| | vercel | `npx -y @anthropic-ai/mcp-vercel` | Vercel deployment |
-| **Testing** | browsermcp | `npx -y @anthropic-ai/mcp-browsermcp` | Browser automation, E2E testing |
-| | playwright | `npx -y @anthropic-ai/mcp-playwright` | Playwright-based testing |
-| **Search** | perplexity | `npx -y @anthropic-ai/mcp-perplexity` | AI-powered research |
-| | context7 | `npx -y @anthropic-ai/mcp-context7` | Library documentation |
-| **Projects** | github | `npx -y @anthropic-ai/mcp-github` | GitHub repos, issues, PRs |
-| | linear | `npx -y @anthropic-ai/mcp-linear` | Linear project management |
-| | notion | `npx -y @anthropic-ai/mcp-notion` | Notion workspaces |
+| Category | Docker Server | Fallback (Direct Install) |
+|----------|---------------|---------------------------|
+| **Database** | supabase, postgres, sqlite | `npx @anthropic-ai/mcp-*` |
+| **Cloud** | aws, gcp, azure, vercel | `npx @anthropic-ai/mcp-*` |
+| **Testing** | browsermcp, playwright | `npx @anthropic-ai/mcp-*` |
+| **Search** | perplexity, context7 | `npx @anthropic-ai/mcp-*` |
+| **Projects** | github-official, linear, notion | `npx @anthropic-ai/mcp-*` |
 
-#### MCP Configuration Example
+#### Installation Methods (Priority Order)
+
+1. **Docker Toolkit** (Primary): Use `mcp-add` tool - containerized, no local deps
+2. **Direct Install**: Add to `.mcp.json` for servers not in Docker catalog
+3. **GitHub Registry**: https://github.com/modelcontextprotocol/servers
+
+#### Direct Installation Example (Fallback)
+
+For servers not in Docker catalog, add to `.mcp.json`:
 
 ```json
 {
   "mcpServers": {
-    "supabase": {
+    "custom-server": {
       "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-supabase"],
+      "args": ["-y", "@org/mcp-server"],
       "env": {
-        "SUPABASE_URL": "env:SUPABASE_URL",
-        "SUPABASE_ANON_KEY": "env:SUPABASE_ANON_KEY"
+        "API_KEY": "env:API_KEY"
       }
     }
   }
@@ -198,6 +219,8 @@ Ask Claude to help you identify and configure MCPs:
 | **Quality** | testing-specialist, security-specialist | browsermcp, playwright |
 | **Product** | specification-agent, planning-agent | github, notion, linear |
 | **Operations** | devops-engineer, performance-engineer | aws/gcp/azure, docker |
+
+**Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
 
 ### 4. Secrets Management
 

@@ -113,8 +113,18 @@ Users can explicitly request this agent by saying:
 ### Authorized Tools
 Read, Grep, Glob, WebSearch, TodoWrite
 
-### MCP Server Access
-mcp__ref-tools, mcp__supabase__search_docs, mcp__perplexity, mcp__claude-context
+### MCP Server Access (Docker MCP Toolkit)
+
+**Docker MCP Toolkit Tools** (always available):
+- `mcp-find` - Search 310+ servers in Docker catalog
+- `mcp-add` - Add servers dynamically during tasks
+- `mcp-config-set` - Configure server credentials
+- `mcp-exec` - Execute tools from any enabled server
+
+**Recommended Servers** (add via `mcp-add` as needed):
+- Cloud: aws, gcp, azure
+- Database: supabase, postgres, firebase
+- Documentation: context7, perplexity
 
 ### Restricted Operations
 - No unauthorized Git operations

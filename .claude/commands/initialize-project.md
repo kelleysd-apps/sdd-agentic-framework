@@ -164,52 +164,89 @@ Update the following files with project-specific guidance:
 
 **Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
 
-MCP (Model Context Protocol) servers extend Claude Code's capabilities. This phase ensures the right tools are available for your project.
+MCP (Model Context Protocol) servers extend Claude Code's capabilities. This phase ensures the right tools are available for your project using **Docker MCP Toolkit** as the primary method.
 
-1. **Analyze PRD for MCP requirements**:
+**Docker MCP Toolkit** is pre-installed during framework setup and provides:
+- Dynamic discovery of 310+ servers via `mcp-find` tool
+- Runtime installation via `mcp-add` tool
+- Containerized execution (no local dependencies)
+
+1. **Verify Docker MCP Toolkit**:
+   ```bash
+   docker mcp version      # Should show v0.30.0 or later
+   docker mcp tools ls     # Should show mcp-find, mcp-add, etc.
+   ```
+
+2. **Analyze PRD for MCP requirements**:
    - Extract database type from Technical Constraints
    - Identify cloud provider needs
    - Note integration requirements (APIs, services)
    - Review testing strategy for browser automation needs
 
-2. **Recommend MCPs based on PRD**:
+3. **Search Docker catalog for matches**:
 
-   | PRD Requirement | Recommended MCP |
-   |-----------------|-----------------|
-   | PostgreSQL/Supabase | `supabase` or `postgres` |
-   | AWS deployment | `aws` |
-   | GCP deployment | `gcp` |
-   | E2E testing | `browsermcp` |
-   | GitHub integration | `github` |
-   | Documentation lookup | `context7` |
+   For each requirement, use `mcp-find`:
+   ```
+   Use mcp-find: "Find servers for [requirement]"
+   ```
 
-3. **Present recommendations to user**:
+   | PRD Requirement | Docker Server | Fallback |
+   |-----------------|---------------|----------|
+   | PostgreSQL/Supabase | `supabase` | npx install |
+   | AWS deployment | `aws` | npx install |
+   | GCP deployment | `gcp` | npx install |
+   | E2E testing | `browsermcp` | npx install |
+   | GitHub integration | `github-official` | npx install |
+   | Documentation lookup | `context7` | npx install |
+
+4. **Present recommendations to user**:
    ```markdown
    ## Recommended MCP Servers
 
    Based on your PRD, I recommend:
 
    ### Required (for core functionality)
-   - **[mcp-name]**: [purpose based on PRD]
+   - **[server]**: [purpose] - Method: Docker Toolkit (`mcp-add`)
 
    ### Recommended (enhance workflow)
-   - **[mcp-name]**: [purpose]
+   - **[server]**: [purpose] - Method: Docker Toolkit (`mcp-add`)
 
-   Would you like me to help configure these?
+   Would you like me to add these servers?
    ```
 
-4. **Guide installation** (with user approval):
-   - Provide configuration snippets
-   - List required environment variables
-   - Guide credential acquisition
-   - Update `.env` template
+5. **Install via Docker Toolkit** (with user approval):
 
-5. **Verify MCP connections**:
-   - Test each configured MCP
-   - Report any connection issues
-   - Provide troubleshooting guidance
+   For each approved server:
+   ```
+   Use mcp-add: "Add the [server] server"
+   Use mcp-config-set: "Set [credential] for [server]"
+   ```
 
-**User Approval Required**: MCP installation and configuration changes
+   Or guide user to add credentials to `.env` file.
+
+6. **Fallback to direct installation** (if server not in Docker catalog):
+
+   Add to `.mcp.json`:
+   ```json
+   {
+     "mcpServers": {
+       "server-name": {
+         "command": "npx",
+         "args": ["-y", "@org/mcp-server"],
+         "env": { "API_KEY": "env:API_KEY" }
+       }
+     }
+   }
+   ```
+
+7. **Verify MCP connections**:
+   ```bash
+   docker mcp tools ls  # Should show all enabled server tools
+   ```
+
+   Or test with a simple operation in conversation.
+
+**User Approval Required**: All MCP installations and configuration changes
 
 ---
 

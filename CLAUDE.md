@@ -173,23 +173,51 @@ This is a specification-driven development framework that uses structured templa
 
 ### MCP Server Configuration
 
-MCP (Model Context Protocol) servers extend Claude Code's capabilities. The `/initialize-project` command includes MCP setup, but you can also configure them manually.
+MCP (Model Context Protocol) servers extend Claude Code's capabilities. The framework uses **Docker MCP Toolkit** as the primary orchestration method, providing access to 310+ containerized MCP servers.
+
+**Docker MCP Toolkit** (Pre-installed during setup):
+- Dynamic discovery of 310+ servers via `mcp-find` tool
+- Runtime installation via `mcp-add` tool
+- Containerized execution (no local dependencies)
+- Unified gateway for all MCP servers
 
 **Ask Claude for help with MCPs**:
-- "What MCP servers would benefit my project?" (based on PRD)
-- "Help me install the supabase MCP server"
-- "Configure browser automation for E2E testing"
+- "Find MCP servers for database operations" (uses `mcp-find`)
+- "Add the supabase MCP server" (uses `mcp-add`)
+- "Configure my AWS credentials" (uses `mcp-config-set`)
+
+**Docker MCP Toolkit Tools**:
+
+| Tool | Purpose |
+|------|---------|
+| `mcp-find` | Search 310+ servers in Docker catalog |
+| `mcp-add` | Add server to current session dynamically |
+| `mcp-config-set` | Configure server credentials |
+| `mcp-exec` | Execute tools from any enabled server |
+| `code-mode` | Combine multiple MCP tools in JavaScript |
 
 **Common MCP Servers by Use Case**:
 
-| Use Case | MCP Server | Purpose |
-|----------|------------|---------|
-| **Database** | `supabase`, `postgres`, `sqlite` | Database operations, migrations |
-| **Cloud** | `aws`, `gcp`, `azure`, `vercel` | Deployment, infrastructure |
-| **Testing** | `browsermcp`, `playwright` | E2E testing, browser automation |
-| **Search** | `perplexity`, `brave-search` | Research, documentation lookup |
-| **Docs** | `context7`, `notion`, `github` | Library docs, knowledge bases |
-| **Projects** | `linear`, `jira`, `github` | Issue tracking, project management |
+| Use Case | Docker Server | Fallback (npx) |
+|----------|---------------|----------------|
+| **Database** | supabase, postgres, sqlite | `npx @anthropic-ai/mcp-*` |
+| **Cloud** | aws, gcp, azure, vercel | `npx @anthropic-ai/mcp-*` |
+| **Testing** | browsermcp, playwright | `npx @anthropic-ai/mcp-*` |
+| **Search** | perplexity, brave-search | `npx @anthropic-ai/mcp-*` |
+| **Docs** | context7, github, notion | `npx @anthropic-ai/mcp-*` |
+| **Projects** | linear, atlassian, github | `npx @anthropic-ai/mcp-*` |
+
+**Installation Methods** (Priority Order):
+1. **Docker Toolkit** (Primary): Use `mcp-add` tool - containerized, no local deps
+2. **Direct Install**: Add to `.mcp.json` with npx command
+3. **GitHub Registry**: https://github.com/modelcontextprotocol/servers
+
+**CLI Commands**:
+```bash
+docker mcp catalog show docker-mcp  # Browse 310+ servers
+docker mcp server enable <name>     # Enable a server
+docker mcp tools ls                 # List available tools
+```
 
 **Skill Reference**: `.claude/skills/integration/mcp-server-setup/SKILL.md`
 
@@ -197,6 +225,7 @@ MCP (Model Context Protocol) servers extend Claude Code's capabilities. The `/in
 - Store all MCP credentials in `.env` (never commit!)
 - Use `env:VAR_NAME` syntax in MCP configuration
 - Use least-privilege API keys when possible
+- Docker Toolkit provides container isolation (1 CPU, 2GB RAM limits)
 
 ### Feature Specification Workflow
 

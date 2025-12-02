@@ -111,22 +111,43 @@ After completing the PRD, run `/initialize-project` to automatically:
 /initialize-project
 ```
 
-### Step 3: Configure MCP Servers (if needed)
+### Step 3: Configure MCP Servers (Docker MCP Toolkit)
 
-MCP (Model Context Protocol) servers extend Claude's capabilities. The `/initialize-project` command will recommend MCPs based on your PRD, but you can also ask Claude directly:
+**Docker MCP Toolkit** is pre-installed during framework setup, providing access to 310+ containerized MCP servers.
+
+#### Using Docker MCP Toolkit in Claude Code
+
+Ask Claude to help with MCP setup - it uses the toolkit tools automatically:
 
 ```bash
 # In Claude Code, ask:
-"What MCP servers would benefit my project?"
-"Help me install the supabase MCP server"
-"Configure browser automation for E2E testing"
+"Find MCP servers for database operations"    # Uses mcp-find
+"Add the supabase MCP server"                 # Uses mcp-add
+"Configure my AWS credentials"                 # Uses mcp-config-set
+```
+
+#### Docker MCP Toolkit Tools Available
+
+| Tool | Purpose |
+|------|---------|
+| `mcp-find` | Search 310+ servers in Docker catalog |
+| `mcp-add` | Add server to current session dynamically |
+| `mcp-config-set` | Configure server credentials |
+| `mcp-exec` | Execute tools from any enabled server |
+
+#### CLI Commands (Terminal)
+
+```bash
+docker mcp catalog show docker-mcp  # Browse all 310+ servers
+docker mcp server enable <name>     # Enable a server
+docker mcp tools ls                 # List available tools
 ```
 
 **Common MCP Servers**:
 - **Database**: `supabase`, `postgres`, `sqlite`, `firebase`
 - **Cloud/Deploy**: `aws`, `gcp`, `azure`, `vercel`, `netlify`
 - **Testing**: `browsermcp`, `playwright`
-- **Search/Docs**: `perplexity`, `context7`, `github`
+- **Search/Docs**: `perplexity`, `context7`, `github-official`
 
 **Important**: Add any required API keys to your `.env` file (never commit secrets!)
 

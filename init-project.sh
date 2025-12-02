@@ -174,6 +174,75 @@ else
     echo -e "${YELLOW}ℹ${NC}  Git repository already exists"
 fi
 
+# ====================================
+# Docker MCP Toolkit Installation
+# ====================================
+echo ""
+echo -e "${BLUE}Checking Docker MCP Toolkit...${NC}"
+
+# Check if Docker is available first
+if ! command -v docker &> /dev/null; then
+    echo -e "${YELLOW}ℹ${NC}  Docker not detected - skipping MCP Toolkit installation"
+    echo -e "${YELLOW}   Docker MCP Toolkit requires Docker to be installed${NC}"
+else
+    # Check if docker-mcp plugin is already installed
+    if docker mcp version &>/dev/null 2>&1; then
+        MCP_VERSION=$(docker mcp version 2>/dev/null)
+        echo -e "${GREEN}✓${NC} Docker MCP Toolkit already installed: ${MCP_VERSION}"
+    else
+        echo -e "${BLUE}Installing Docker MCP Toolkit CLI...${NC}"
+
+        # Detect architecture
+        ARCH=$(uname -m)
+        case $ARCH in
+            x86_64) ARCH="amd64" ;;
+            aarch64|arm64) ARCH="arm64" ;;
+            *)
+                echo -e "${YELLOW}⚠${NC}  Unsupported architecture: $ARCH"
+                echo -e "${YELLOW}   Docker MCP Toolkit installation skipped${NC}"
+                ARCH=""
+                ;;
+        esac
+
+        if [ -n "$ARCH" ]; then
+            # Detect OS
+            MCP_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+
+            # Download and install
+            MCP_RELEASE_VERSION="v0.30.0"
+            DOWNLOAD_URL="https://github.com/docker/mcp-gateway/releases/download/${MCP_RELEASE_VERSION}/docker-mcp-${MCP_OS}-${ARCH}.tar.gz"
+
+            mkdir -p "$HOME/.docker/cli-plugins/"
+
+            if curl -sL "$DOWNLOAD_URL" | tar -xz -C "$HOME/.docker/cli-plugins/" 2>/dev/null; then
+                chmod +x "$HOME/.docker/cli-plugins/docker-mcp"
+
+                if docker mcp version &>/dev/null 2>&1; then
+                    echo -e "${GREEN}✓${NC} Docker MCP Toolkit installed: $(docker mcp version)"
+                else
+                    echo -e "${YELLOW}⚠${NC}  Docker MCP Toolkit installation may have failed"
+                fi
+            else
+                echo -e "${YELLOW}⚠${NC}  Could not download Docker MCP Toolkit"
+                echo -e "${YELLOW}   You can install manually later${NC}"
+            fi
+        fi
+    fi
+
+    # Configure Claude Code connection if MCP Toolkit is available
+    if docker mcp version &>/dev/null 2>&1; then
+        echo -e "${BLUE}Configuring Claude Code MCP gateway connection...${NC}"
+        docker mcp client connect claude-code --global 2>/dev/null || true
+        echo -e "${GREEN}✓${NC} Claude Code MCP gateway configured"
+        echo ""
+        echo -e "${BLUE}Docker MCP Toolkit provides:${NC}"
+        echo -e "  • ${GREEN}mcp-find${NC}    - Search 310+ MCP servers in Docker catalog"
+        echo -e "  • ${GREEN}mcp-add${NC}     - Add MCP servers dynamically during conversations"
+        echo -e "  • ${GREEN}mcp-exec${NC}    - Execute tools from any enabled server"
+        echo -e "  • ${GREEN}code-mode${NC}   - Combine multiple MCP tools in JavaScript"
+    fi
+fi
+
 # Run the main setup script
 echo ""
 echo -e "${BLUE}Running framework setup...${NC}"
@@ -204,12 +273,12 @@ echo -e "   → Creates custom agents identified in PRD (Principle X)"
 echo -e "   → Recommends and configures MCP servers for your tech stack"
 echo -e "   → Validates compliance and provides next steps"
 echo ""
-echo -e "${YELLOW}3. Configure MCP Servers (if needed)${NC}"
-echo -e "   Ask Claude: ${GREEN}\"Help me install the [service] MCP server\"${NC}"
-echo -e "   → Database: supabase, postgres, sqlite, firebase"
-echo -e "   → Cloud: aws, gcp, azure, vercel, netlify"
-echo -e "   → Testing: browsermcp, playwright"
-echo -e "   → Search: perplexity, context7, github"
+echo -e "${YELLOW}3. Configure MCP Servers (Docker MCP Toolkit)${NC}"
+echo -e "   Docker MCP Toolkit is ${GREEN}pre-installed${NC} - use dynamic discovery:"
+echo -e "   → Ask Claude: ${GREEN}\"Find MCP servers for databases\"${NC} (uses mcp-find)"
+echo -e "   → Ask Claude: ${GREEN}\"Add the supabase MCP server\"${NC} (uses mcp-add)"
+echo -e "   → Or browse: ${GREEN}docker mcp catalog show docker-mcp${NC}"
+echo -e "   → 310+ servers available: database, cloud, testing, search, docs"
 echo ""
 echo -e "${YELLOW}4. Begin Feature Development${NC}"
 echo -e "   Use: ${GREEN}/specify${NC}, ${GREEN}/plan${NC}, ${GREEN}/tasks${NC}"

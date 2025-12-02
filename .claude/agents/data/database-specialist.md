@@ -134,8 +134,17 @@ Users can explicitly request this agent by saying:
 ### Authorized Tools
 Read, Edit, Bash, Grep, Glob, TodoWrite
 
-### MCP Server Access
-mcp__supabase, mcp__supabase__apply_migration, mcp__supabase__execute_sql
+### MCP Server Access (Docker MCP Toolkit)
+
+**Docker MCP Toolkit Tools** (always available):
+- `mcp-find` - Search 310+ servers in Docker catalog
+- `mcp-add` - Add servers dynamically during tasks
+- `mcp-config-set` - Configure server credentials
+- `mcp-exec` - Execute tools from any enabled server
+
+**Recommended Servers** (add via `mcp-add` as needed):
+- Database: supabase, postgres, sqlite, firebase, mongodb
+- Documentation: context7
 
 ### Restricted Operations
 - No unauthorized Git operations

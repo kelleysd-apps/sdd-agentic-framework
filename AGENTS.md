@@ -313,14 +313,39 @@ Multiple domains (2+)? ───────────────────
 
 ## MCP Server Access by Department
 
-| Department | MCP Servers | Purpose |
-|------------|-------------|---------|
-| Product | ref-tools, claude-context | Research, context |
-| Architecture | ref-tools, supabase_search_docs | Documentation, design |
-| Engineering | ide, supabase, browsermcp | Development, testing |
-| Quality | ide_getDiagnostics, ref-tools | Analysis, validation |
-| Data | supabase, execute_sql | Database operations |
-| Operations | supabase_deploy, get_logs | Deployment, monitoring |
+The framework uses **Docker MCP Toolkit** as the primary method for MCP access, providing 310+ containerized servers via dynamic discovery.
+
+### Docker MCP Toolkit Tools (Available to All Agents)
+
+| Tool | Purpose |
+|------|---------|
+| `mcp-find` | Search 310+ servers in Docker catalog |
+| `mcp-add` | Add server to current session dynamically |
+| `mcp-config-set` | Configure server credentials |
+| `mcp-exec` | Execute tools from any enabled server |
+| `code-mode` | Combine multiple MCP tools in JavaScript |
+
+### Department-Specific MCP Servers
+
+| Department | Recommended Servers | Purpose |
+|------------|---------------------|---------|
+| Product | github-official, notion, linear | Project management, documentation |
+| Architecture | aws/gcp/azure, postgres/supabase | Cloud, database design |
+| Engineering | browsermcp, context7, github-official | Testing, docs, version control |
+| Quality | browsermcp, playwright | E2E testing, browser automation |
+| Data | supabase, postgres, firebase | Database operations |
+| Operations | aws/gcp/azure, docker | Deployment, monitoring |
+
+### MCP Access Pattern
+
+Agents can dynamically add MCPs during task execution:
+```
+1. Use mcp-find to search for needed server
+2. Use mcp-add to install server
+3. Use mcp-exec to call server tools
+```
+
+**Fallback**: If server not in Docker catalog, add to `.mcp.json` with npx configuration.
 
 ---
 
