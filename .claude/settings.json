@@ -1,4 +1,5 @@
 {
+  "agent": "constitutional-governance-agent",
   "statusLine": {
     "type": "command",
     "command": "bash .claude/statusline.sh"

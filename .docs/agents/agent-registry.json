@@ -19,10 +19,21 @@
       "status": "active",
       "file": "/workspaces/sdd-agentic-framework/.claude/agents/product/prd-specialist.md",
       "memory": "/workspaces/sdd-agentic-framework/.docs/agents/product/prd-specialist/"
+    },
+    "constitutional-governance-agent": {
+      "department": "product",
+      "description": "Primary orchestration agent that serves as the main thread entry point for all Claude Code sessions. Enforces the 4-step pre-flight compliance protocol on every user message, routes specialized work to domain agents per Principle X, gates all git operations per Principle VI, and maintains constitutional governance across the session. Designed to be set as the default agent via settings.json agent field.",
+      "created": "2025-12-05T05:24:27Z",
+      "tools": "Read, Write, Edit, MultiEdit, Bash, Grep, Glob, WebSearch, Task, TodoWrite",
+      "mcp_access": "All MCP servers (full access for delegation routing)",
+      "model": "opus",
+      "status": "active",
+      "file": "/workspaces/sdd-agentic-framework/.claude/agents/product/constitutional-governance-agent.md",
+      "memory": "/workspaces/sdd-agentic-framework/.docs/agents/product/constitutional-governance-agent/"
     }
   },
   "departments": {
     "architecture": 1,
-    "product": 1
+    "product": 2
   }
 }

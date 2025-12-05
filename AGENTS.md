@@ -1,9 +1,9 @@
 # SDD Framework Agent Registry
 
-**Version**: 2.0.0
-**Last Updated**: 2025-11-29
+**Version**: 2.1.0
+**Last Updated**: 2025-12-05
 **Constitution**: v1.6.0 (15 Principles)
-**Total Agents**: 14
+**Total Agents**: 15
 **Departments**: 6
 
 ---
@@ -20,13 +20,48 @@ This file is the **Single Source of Truth (SSOT)** for agent information in the 
 
 ---
 
+## Primary Agent (settings.json)
+
+### constitutional-governance-agent ⭐ DEFAULT
+
+**Purpose**: Primary orchestration agent that serves as the **main thread entry point** for all Claude Code sessions. Unlike subagents, this agent runs as THE primary conversation thread when configured via `settings.json`.
+
+| Setting | Value |
+|---------|-------|
+| **Model** | opus (required for governance decisions) |
+| **Tools** | Full access (Read, Write, Edit, MultiEdit, Bash, Grep, Glob, WebSearch, Task, TodoWrite) |
+| **Location** | `.claude/agents/product/constitutional-governance-agent.md` |
+
+**Configuration** (`.claude/settings.json`):
+```json
+{
+  "agent": "constitutional-governance-agent"
+}
+```
+
+**Key Responsibilities**:
+1. Enforce 4-step pre-flight compliance on EVERY user message
+2. Route specialized work to domain agents (Principle X)
+3. Gate ALL git operations (Principle VI - CRITICAL)
+4. Maintain constitutional governance across session
+
+**Difference from task-orchestrator**:
+| Aspect | constitutional-governance-agent | task-orchestrator |
+|--------|--------------------------------|-------------------|
+| Role | Primary/main thread | Subagent |
+| Scope | ALL messages | Multi-domain tasks only |
+| Invocation | Automatic (settings.json) | Explicit delegation |
+
+---
+
 ## Agent Overview by Department
 
-### Product Department (5 agents)
-Specification, planning, and task management
+### Product Department (6 agents)
+Specification, planning, task management, and governance
 
 | Agent | Purpose | Model | Tools |
 |-------|---------|-------|-------|
+| **constitutional-governance-agent** ⭐ | Primary entry point, governance | opus | Full access |
 | **prd-specialist** | PRD creation, product strategy | opus | Read, Write, Edit, Grep, Glob, AskUserQuestion, TodoWrite |
 | **specification-agent** | Feature specs, user stories | opus | Read, Write, Bash, MultiEdit |
 | **planning-agent** | Implementation planning, /plan command | opus | Read, Write, Bash, MultiEdit |
@@ -228,6 +263,7 @@ All agents enforce Constitution v1.6.0 (15 Principles):
 │   ├── devops-engineer.md
 │   └── performance-engineer.md
 ├── product/
+│   ├── constitutional-governance-agent.md  ⭐ PRIMARY
 │   ├── prd-specialist.md
 │   ├── planning-agent.md
 │   ├── specification-agent.md
@@ -353,6 +389,7 @@ Agents can dynamically add MCPs during task execution:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.1.0 | 2025-12-05 | Added constitutional-governance-agent as primary entry point (15 agents total) |
 | 2.0.0 | 2025-11-29 | Complete rewrite, added 5 product agents, updated to 14 total, constitution v1.6.0 |
 | 1.0.0 | 2025-09-19 | Initial creation with 9 agents |
 
