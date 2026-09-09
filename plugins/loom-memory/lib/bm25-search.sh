@@ -338,15 +338,22 @@ backend_search() {
     fi
 
     # Determine scope filter paths (for filtering results). In session scope we
-    # restrict to the working/recall tiers: specs, .docs, the features/ SUMMARY
-    # files (retro.md, plan-review.md, prd.md, sprints/**/result.md — never raw
-    # exploration/ dumps), and the home retro-memory dir where /retro writes.
+    # restrict to the working/recall tiers: specs, .docs, .brain/wiki/ (the
+    # distilled-knowledge tier /distill promotes captures into — LOOM-0063,
+    # a fixed in-repo path searched regardless of memory_backend), the
+    # features/ SUMMARY files (retro.md, plan-review.md, prd.md,
+    # sprints/**/result.md — never raw exploration/ dumps), and the home
+    # retro-memory dir where /retro writes.
+    # Note: .brain/wiki/*.md is already swept into the index by
+    # _bm25_find_indexable_files (it excludes only .git/node_modules/
+    # .loom-memory-index/vendor), so global scope (no scope_pattern) already
+    # searches it; this pattern is what makes session scope see it too.
     local scope_pattern=""
     if [ "$scope" = "session" ]; then
         local home_memory_esc
         # Escape regex metachars in the absolute path before embedding it.
         home_memory_esc=$(printf '%s/' "$(_bm25_durable_memory_dir)" | sed 's/[.[\/*^$()+?{|]/\\&/g')
-        scope_pattern='^(specs/|\.docs/|features/.*/(retro|plan-review|prd)\.md$|features/.*/sprints/.*/result\.md$|'"$home_memory_esc"')'
+        scope_pattern='^(specs/|\.docs/|\.brain/wiki/|features/.*/(retro|plan-review|prd)\.md$|features/.*/sprints/.*/result\.md$|'"$home_memory_esc"')'
     fi
 
     # Build a temporary file with all term data needed for scoring.

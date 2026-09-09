@@ -249,6 +249,41 @@ hidden; close them with the defense-in-depth stack above, not by trusting hooks.
    host a readable, harmless command still resolves to `allow`, so only genuinely
    unreadable payloads escalate.
 
+8. **The governance-file Bash guard is a token matcher, and these forms still
+   pass it (LOOM-0059 / LOOM-0069, partially closed 2026-09-08).** The guard was
+   substring-matching raw command text; it now resolves candidate path tokens
+   lexically, tracks a `cd`/`pushd` prefix across segments, unwraps `sh -c`
+   indirection, and recognises a wider mutator set. A 253-row contract test
+   (`test_governance_hooks.sh`) pins 12 verbs x 6 path spellings x 2 agent kinds.
+
+   **What still passes, verified by probe on 2026-09-08 — do not read the test's
+   253/253 as "closed":**
+   - `eval "rm .claude/settings.json"` — eval is not unwrapped.
+   - `python3 -c "open('.claude/settings.json','w')"` — interpreter indirection,
+     the long-standing residual #1.
+   - `D=.claude; rm $D/settings.json` — no variable expansion.
+   - `xargs rm < list.txt` — the target is in a file, not the command.
+   - `find .claude -name settings.json -delete` — the protected path never
+     appears as a single token; catching it requires understanding `find`.
+   - `rm -f 'fix;note' .claude/settings.json` — the segment splitter is not
+     quote-aware, so a `;` inside quotes shears the path into a segment whose
+     command word is not a mutator. Confirmed present WITH AND WITHOUT the
+     `sh -c` unwrap, so it is the splitter (the LOOM-0058 class), not the unwrap.
+
+   **A known false POSITIVE, accepted deliberately:** `cp .claude/settings.json
+   /tmp/backup.json` is gated even though it only READS the protected file. The
+   mutator list keys on the command word, not on which operand is the target.
+   This is the direction the design chooses on purpose — a loud false positive
+   over a silent false negative.
+
+   **Why this list is not simply worked through.** Every entry above is another
+   case in a list, and two independent external reviews (Codex and Antigravity,
+   2026-09-02 and 09-08) reached the same conclusion the git tokenizer work
+   reached in LOOM-0044 and LOOM-0058: a shell-parsing gate cannot be completed
+   by adding cases. Closing this class means enforcing on resolved paths rather
+   than parsing command strings — recorded as **LOOM-0071**, and a maintainer
+   decision because it is a rewrite of the floor.
+
 6. **The subagent read-only git allowlist is still a string gate (new in §7.3).**
    Two honest consequences of replacing the blanket subagent-git deny with an
    allowlist:

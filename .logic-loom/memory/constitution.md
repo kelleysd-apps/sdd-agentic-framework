@@ -106,9 +106,19 @@ Start simple, add complexity only when proven necessary.
 **Status**: UNCHANGED - CRITICAL
 
 ```
-CRITICAL: NO autonomous Git operations
-ALL git commands require explicit user approval
+CRITICAL: NO autonomous IRREVERSIBLE git operations
+Operations that can leave this repository — push, history rewriting — plus
+merge, rebase and reset REQUIRE explicit user approval and cannot be silenced.
+Cheap-to-undo local operations (commit, add, checkout, stash, fetch) run
+without a prompt BY DESIGN: they stay logged and in the transcript, and
+approval is taken at /git-push.
+Subagents may run an allowlisted READ-ONLY git subset; all mutating git and
+all gh are denied to them.
 ```
+
+The per-operation verdicts are declared in `.logic-loom/config/gate-policy.conf`,
+which is the arbiter. This principle states the floor — the five operations that
+refuse a `silent` setting — not a blanket rule that every git verb prompts.
 
 ### Principle VII: Observability
 
@@ -158,10 +168,14 @@ no skills-first gate to "violate."
 
 Enforcement lives in hooks, not in model recitation:
 
-- `subagent-git-guard.sh` (PreToolUse · Bash) — Principle VI: denies ALL git
-  from subagents (`agent_id` present).
-- `git-safety-gate.sh` (PreToolUse · Bash) — Principle VI: git mutations force
-  an approval prompt.
+- `subagent-git-guard.sh` (PreToolUse · Bash) — Principle VI: denies all
+  MUTATING git and all `gh` from subagents (`agent_id` present). An explicitly
+  allowlisted read-only subset (`status`, `log`, `diff`, `show`, listings,
+  `rev-parse`, …) is permitted; everything else is denied.
+- `git-safety-gate.sh` (PreToolUse · Bash) — Principle VI: main-agent git
+  operations are gated per `gate-policy.conf`, which decides ask vs silent per
+  operation. Push and history rewriting are floor entries that cannot be
+  silenced; `commit`, `add` and `checkout` are deliberately silent.
 - `protect-governance-files.sh` (PreToolUse · Write/Edit + Bash) — edits to the
   governance surface (hooks, settings, this constitution, governance.conf) are
   subagent-`deny` / main-`ask`, so the model cannot soften its own rules.

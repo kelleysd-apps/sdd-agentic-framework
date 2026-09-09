@@ -843,7 +843,9 @@ The framework's cloner-init machinery is **UNTOUCHED**:
 ## What changed in v6.1 (Opus 4.8 re-base + agnostic core)
 
 - **Governance is now hook-enforced** (not model-recited): `git-safety-gate.sh`
-  forces approval on git mutations; `guard-dangerous-commands.sh` wired; the
+  gates git mutations per `gate-policy.conf` (push/history-rewrite ask; cheap
+  local ops like commit/add/checkout are silent by design — see Governance
+  above); `guard-dangerous-commands.sh` wired; the
   mandatory per-message 4-step ceremony is gone. New `LOOM_GOVERNANCE_MODE`
   (`lean` default / `strict` for weaker models).
 - **Workflow-agnostic reframe**: governance core + interchangeable packs

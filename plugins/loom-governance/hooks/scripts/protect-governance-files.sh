@@ -234,6 +234,23 @@ case "$TOOL" in
     seg_is_mutator() { # segment -> 0 if its command word writes files
       case "$(seg_cmd_word "$1")" in
         tee|truncate|chmod|chown|install|rm|mv) return 0 ;;
+        # LOOM-0059. These four were absent and a subagent could overwrite any
+        # governance file with them. `ln` is the worst of the four: it does not
+        # just overwrite once, it repoints the path OUTSIDE the repo, and
+        # rel_of() canonicalizes with realpath, so every SUBSEQUENT Write/Edit
+        # to that path then resolves outside $REPO_ROOT and is allowed.
+        cp|ln|patch|rsync) return 0 ;;
+        # Archive/fetch tools that write a named target. Flagged by the
+        # Antigravity review as still-open after cp/ln/patch/rsync.
+        tar|unzip) return 0 ;;
+        # `find <dir> -delete` and `find ... -exec rm {} +` mutate without any
+        # mutator command word of their own.
+        find) printf '%s' "$1" | grep -qE '(^|[[:space:]])-(delete|exec|execdir)([[:space:]]|$)' && return 0 ;;
+        # Short (-o) and long (--output=) forms both name a write target. The
+        # earlier pattern only matched the short form because `[a-zA-Z]*` cannot
+        # cross the second dash of a long option.
+        curl) printf '%s' "$1" | grep -qE '(^|[[:space:]])(-[a-zA-Z]*[oO]|--output|--remote-name)([[:space:]]|=|$)' && return 0 ;;
+        wget) printf '%s' "$1" | grep -qE '(^|[[:space:]])(-[a-zA-Z]*O|--output-document)([[:space:]]|=|$)' && return 0 ;;
         dd)  printf '%s' "$1" | grep -qE '(^|[[:space:]])of=' && return 0 ;;
         sed) printf '%s' "$1" | grep -qE '(^|[[:space:]])-i' && return 0 ;;
       esac
@@ -246,27 +263,116 @@ case "$TOOL" in
         | sed -e 's/^>>*//' -e 's/^[[:space:]]*//'
     }
 
+    # LOOM-0069. The Write/Edit branch canonicalizes with rel_of(); this branch
+    # used to substring-match the RAW segment text, so three trivial spellings
+    # walked straight past it: `.claude/./settings.json`, `a/../settings.json`,
+    # and `cd .claude && rm settings.json` (the `cd` splits the path off the
+    # mutating segment entirely). Normalize lexically — normpath does NOT touch
+    # the filesystem, so this stays a pure text decision and cannot be fooled by
+    # a symlink that does not exist yet.
+    norm_path() { # raw token -> lexically normalized
+      local out=""
+      if command -v python3 >/dev/null 2>&1; then
+        out=$(python3 -c 'import os,sys; print(os.path.normpath(sys.argv[1]))' "$1" 2>/dev/null)
+      fi
+      if [ -z "$out" ]; then
+        # No python3. Collapse //, /./ and one-level seg/../ LEXICALLY, looping
+        # until stable. Without this the degraded path left `a/../b` unresolved,
+        # which is weaker than the pre-fix behaviour for that spelling.
+        out=$(printf '%s' "$1" | sed -e 's://*:/:g' -e 's:/\./:/:g' -e 's:^\./::')
+        _np_prev=""
+        while [ "$out" != "$_np_prev" ]; do
+          _np_prev="$out"
+          out=$(printf '%s' "$out" | sed -e 's:[^/][^/]*/\.\./::g' -e 's:^\./::')
+        done
+      fi
+      printf '%s' "$out"
+    }
+
+    # Does this segment name $prot, in ANY spelling, given the cwd a preceding
+    # `cd` established? Compares normalized candidates, not raw substrings.
+    seg_names_prot() { # segment prot cd_prefix -> 0 if it does
+      local seg="$1" prot="$2" cdp="$3" tok cand
+      for tok in $seg; do
+        [ -n "$tok" ] || continue
+        # Strip a key= prefix BEFORE discarding options. `dd of=<path>` and
+        # `curl --output=<path>` both carry the target after an `=`; doing the
+        # `-*` skip first threw the long-option form away with the flag.
+        case "$tok" in
+          *=*) tok="${tok#*=}"; [ -n "$tok" ] || continue ;;
+          -*)  continue ;;
+        esac
+        cand="$tok"
+        case "$cand" in
+          /*) ;;
+          *) [ -n "$cdp" ] && cand="$cdp/$cand" ;;
+        esac
+        cand="$(norm_path "$cand")"
+        case "$cand" in
+          "$prot"|"$prot"/*) return 0 ;;
+        esac
+        # keep the old raw-substring behaviour as a floor: normalization must
+        # only ever ADD coverage, never remove a case that used to be caught.
+        case "$tok" in *"$prot"*) return 0 ;; esac
+      done
+      return 1
+    }
+
     # Token list comes from the verdict lib so the Bash branch and the Write/Edit
     # branch protect the SAME set — including any additive governance.conf
     # entries. Computed once, outside the segment loop.
     PROT_TOKENS="$(protected_tokens || true)"
 
+    # LOOM-0069. Unwrap interpreter indirection BEFORE splitting. `bash -c "rm
+    # .claude/settings.json"` put the command word `bash` in front, which is not
+    # a mutator, so the whole segment was skipped without ever inspecting the
+    # inner command. Stripping the wrapper hands the inner command to the same
+    # scan — which also means `bash -c "cat .claude/settings.json"` stays an
+    # allowed READ, rather than being blanket-gated for being an interpreter.
+    SCAN_CMD="$CMD"
+    UNWRAP_N=0
+    while [ "$UNWRAP_N" -lt 3 ]; do
+      case "$SCAN_CMD" in
+        *[Bb]ash\ -c\ *|*sh\ -c\ *|*zsh\ -c\ *)
+          SCAN_CMD="$(printf '%s' "$SCAN_CMD" \
+            | sed -e 's/[a-z]*sh[[:space:]]*-c[[:space:]]*//g' -e "s/[\"']//g")"
+          UNWRAP_N=$((UNWRAP_N + 1))
+          ;;
+        *) break ;;
+      esac
+    done
+
+    CD_PREFIX=""
     while IFS= read -r SEG; do
       [ -n "$SEG" ] || continue
+      # Track `cd <dir>` so a later relative path resolves against it.
+      case "$(seg_cmd_word "$SEG")" in cd|pushd) SEG_IS_CD=1 ;; *) SEG_IS_CD=0 ;; esac
+      if [ "$SEG_IS_CD" = 1 ]; then
+        # -E: BSD sed (stock macOS) has no \| alternation in basic regex, and
+        # silently produced a wrong CD_ARG rather than erroring.
+        CD_ARG="$(printf '%s' "$SEG" | sed -E -e 's/^[[:space:]]*(cd|pushd)[[:space:]]*//' -e 's/[[:space:]].*$//')"
+        case "$CD_ARG" in
+          ''|-*) ;;
+          /*) CD_PREFIX="$CD_ARG" ;;
+          *)  [ -n "$CD_PREFIX" ] && CD_PREFIX="$CD_PREFIX/$CD_ARG" || CD_PREFIX="$CD_ARG" ;;
+        esac
+        CD_PREFIX="$(norm_path "$CD_PREFIX")"
+        continue
+      fi
       SEG_MUTATES=0
       seg_is_mutator "$SEG" && SEG_MUTATES=1
       RTARGETS="$(seg_redirect_targets "$SEG" || true)"
       [ "$SEG_MUTATES" = 0 ] && [ -z "$RTARGETS" ] && continue
       while IFS= read -r prot; do
         [ -n "$prot" ] || continue
-        if [ "$SEG_MUTATES" = 1 ] && printf '%s' "$SEG" | grep -qF "$prot"; then
+        if [ "$SEG_MUTATES" = 1 ] && seg_names_prot "$SEG" "$prot" "$CD_PREFIX"; then
           gate_bash "$prot"
         fi
-        if [ -n "$RTARGETS" ] && printf '%s' "$RTARGETS" | grep -qF "$prot"; then
+        if [ -n "$RTARGETS" ] && seg_names_prot "$RTARGETS" "$prot" "$CD_PREFIX"; then
           gate_bash "$prot"
         fi
       done <<< "$PROT_TOKENS"
-    done <<< "$(printf '%s' "$CMD" | tr ';|&(){}`' '\n\n\n\n\n\n\n\n')"
+    done <<< "$(printf '%s' "$SCAN_CMD" | tr ';|&(){}`' '\n\n\n\n\n\n\n\n')"
     ;;
 esac
 

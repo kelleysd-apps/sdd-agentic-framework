@@ -319,6 +319,26 @@ assert "check-generated-freshness.sh is NOT excluded from the payload" \
   "! grep -qE '^exclude:[[:space:]]+\.logic-loom/scripts/bash/check-generated-freshness\.sh[[:space:]]*\$' \"$MANIFEST\""
 assert "the manifest records WHY it now ships (the reason expired, not just deleted silently)" \
   "grep -qi 'expired' \"$MANIFEST\" && grep -q 'check-generated-freshness.sh' \"$MANIFEST\""
+# ─────────────────────────────────────────────────────────────────────────────
+# LOOM-0060 — the SHIPPED governance mode must be `lean`.
+# ─────────────────────────────────────────────────────────────────────────────
+# `strict` re-injects a per-message recitation designed as the degradation path
+# for weaker models. It is a legitimate LOCAL setting for a maintainer, and it
+# was committed on dev-main for exactly that reason — but the payload ships
+# `.logic-loom` wholesale and no release step resets it, so a local convenience
+# silently becomes every adopter's default.
+#
+# This asserts the shipped default, not the maintainer's preference: set
+# LOOM_GOVERNANCE_MODE=strict in your environment if you want the assist. That
+# env var takes precedence over the file and ships to nobody.
+echo ""
+echo "LOOM-0060: shipped governance mode"
+GOV_CONF="$ROOT/.logic-loom/config/governance.conf"
+assert "governance.conf exists" "[ -f '$GOV_CONF' ]"
+SHIPPED_MODE="$(grep -E '^[[:space:]]*mode[[:space:]]*=' "$GOV_CONF" 2>/dev/null | head -1 | sed 's/.*=[[:space:]]*//; s/[[:space:]]*$//')"
+assert "shipped governance mode is 'lean' [found: '$SHIPPED_MODE'] — strict is a local override via LOOM_GOVERNANCE_MODE, never a shipped default" \
+  "[ \"$SHIPPED_MODE\" = 'lean' ]"
+
 echo ""
 
 echo "========================================"

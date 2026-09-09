@@ -78,7 +78,7 @@
       ]
     },
     "git_operations": {
-      "description": "Git operations requiring user approval (Constitutional Principle VI)",
+      "description": "Intentionally empty. Git approval (Constitutional Principle VI) is owned by git-safety-gate.sh via .logic-loom/config/gate-policy.conf, not by this file — patterns here would duplicate and could conflict with that gate. This section stays present (and iterated by .logic-loom/lib/policy.sh) so removing it doesn't change parse behavior, but it is deliberately never populated.",
       "action": "require_approval",
       "patterns": []
     },

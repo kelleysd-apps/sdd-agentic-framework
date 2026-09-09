@@ -240,6 +240,14 @@ backend_search() {
                -o \( -path '*/sprints/*' -name 'result.md' \) \) 2>/dev/null)
     fi
 
+    # Distilled knowledge tier — .brain/wiki/ (concepts/ + decisions/), where
+    # /distill promotes captures. FIXED in-repo path, NOT backend-dependent:
+    # unlike durable memory below, this lives in-tree regardless of whether
+    # memory_backend resolves to `repo` or `project`, so it is never derived
+    # from the resolver. Searched in every scope — without this, LOOM-0063:
+    # distillation writes to a shelf no query ever reads.
+    [ -d "$KEYWORD_REPO_ROOT/.brain/wiki" ] && search_paths+=("$KEYWORD_REPO_ROOT/.brain/wiki")
+
     # Durable memory tier — where /retro writes lessons. RESOLVED, not assumed:
     # the destination is a project setting (memory-backend.conf), and retrieval
     # has to follow the write target or the learning loop reads an empty store.

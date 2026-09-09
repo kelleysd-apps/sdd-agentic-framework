@@ -7,9 +7,14 @@
 #   a product decision, not a research finding. This file is the recommendation
 #   from .docs/design/adopt-package-research.md § 6 PRE-1, re-derived row by row
 #   against the repo, with the evidence inline. It is REVIEWABLE: the maintainer
-#   overrules it by editing this one file. Nothing reads it yet — the installer
-#   is not written. tests/contract/test_adopt_payload_manifest.sh is the only
-#   current consumer, and it holds the boundary to the invariants below.
+#   overrules it by editing this one file. The installer IS written and reads
+#   this file at both plan and apply time — packaging/adopt/lib/plan.js parses
+#   it to build the plan, packaging/adopt/lib/fsops.js consults it to decide
+#   what to skip, and packaging/adopt/lib/render.js cites its line numbers in
+#   output. Editing this file changes what an adopter actually receives.
+#   tests/contract/test_adopt_payload_manifest.sh is one consumer among
+#   several — the contract test, not the only reader — and it holds the
+#   boundary to the invariants below.
 #
 #   THIS FILE IS MAINTAINER-ONLY. `packaging` is a template-strip-manifest entry,
 #   so nothing under packaging/ ever reaches a customer or an adopter.

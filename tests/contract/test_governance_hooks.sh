@@ -281,6 +281,171 @@ assert "LOOM-0044 anti-lockout: a READABLE harmless write still allows on a degr
 
 rm -rf "$NOBIN"
 
+# ── LOOM-0070 ────────────────────────────────────────────────────────────────
+# Root cause behind LOOM-0059/LOOM-0069: this suite had exactly ONE Bash-
+# mutation assertion for the governance surface (a redirect, `echo x >
+# settings.json`) and ZERO verb-based assertions. It pinned the mechanism the
+# implementation happened to use and asserted nothing about the CLASS "a
+# subagent must not modify a governance file by any means". This block asserts
+# the class: VERB x PATH-SPELLING x AGENT-KIND, table-driven, so a new evasion
+# shape fails CI instead of waiting for an external reviewer to find it.
+#
+# This is written BEFORE the fix (protect-governance-files.sh is owned by
+# someone else, concurrently) — it describes desired behaviour, and is EXPECTED
+# to show FAIL rows against today's implementation. Do not weaken an assertion
+# or skip a row to make it pass; the fail rows ARE the deliverable.
+#
+# Nothing here is ever actually executed as a shell command — every probe is a
+# synthetic PreToolUse JSON payload fed on stdin to the real hook script, which
+# only inspects the command TEXT. No rm/mv/cp/tee/etc. ever runs.
+echo ""
+echo "== LOOM-0070: table-driven CLASS assertions (verb x path-spelling x agent-kind) =="
+echo "Contract: subagent + ANY verb + ANY spelling of a protected path -> deny;"
+echo "          main agent + same -> ask; non-protected path or read-only cmd -> allow."
+
+# Sanity gate (match the $NOBIN pattern above): every probe below needs grep,
+# sed and printf on PATH. If any of them silently vanished, string-matching
+# below would find nothing and every probe would return a false 'allow' —
+# fail loudly instead of passing an empty suite.
+for _l70_tool in grep sed printf; do
+  assert "LOOM-0070 sanity: '$_l70_tool' is on PATH (else every row below is void)" \
+    "command -v $_l70_tool >/dev/null 2>&1"
+done
+
+# json-escape a command string for embedding as a JSON string value (single
+# line commands only — no newline handling needed).
+l70_json_escape() {
+  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+# Build a plausible single-line mutating command for VERB against TARGET.
+# Assembled from parts (verb, static filler paths, target) rather than typed
+# as one literal, and never executed — only ever placed inside a JSON payload
+# read by the hook script's text parser.
+l70_build_cmd() { # verb target
+  case "$1" in
+    rm)        printf 'rm %s' "$2" ;;
+    mv)        printf 'mv %s /tmp/loom-l70-mv-dst' "$2" ;;
+    cp)        printf 'cp /tmp/loom-l70-cp-src %s' "$2" ;;
+    'ln -sf')  printf 'ln -sf /tmp/loom-l70-src %s' "$2" ;;
+    tee)       printf 'printf pwned | tee %s' "$2" ;;
+    install)   printf 'install -m 644 /tmp/loom-l70-src %s' "$2" ;;
+    patch)     printf 'patch %s < /tmp/loom-l70.patch' "$2" ;;
+    rsync)     printf 'rsync /tmp/loom-l70-src %s' "$2" ;;
+    truncate)  printf 'truncate -s 0 %s' "$2" ;;
+    chmod)     printf 'chmod 000 %s' "$2" ;;
+    'sed -i')  printf "sed -i '' 's/a/b/' %s" "$2" ;;
+    'dd of=')  printf 'dd if=/dev/null of=%s' "$2" ;;
+  esac
+}
+
+# One of the 6 required path spellings, as a DIR/FILE variant. cd-split and
+# the two indirection forms wrap a whole command rather than substitute a
+# path token, so they are built inline in the loop below instead.
+l70_variant() { # spelling dir file
+  case "$1" in
+    plain)       printf '%s/%s' "$2" "$3" ;;
+    dot-segment) printf '%s/./%s' "$2" "$3" ;;
+    parent-hop)  printf '%s/zz/../%s' "$2" "$3" ;;
+  esac
+}
+
+l70_check() { # label cmd expected_sub expected_main
+  local cmd="$1" exp_sub="$2" exp_main="$3" label="$4" esc sub_json main_json d_sub d_main
+  esc="$(l70_json_escape "$cmd")"
+  sub_json="{\"tool_name\":\"Bash\",\"agent_id\":\"a1\",\"agent_type\":\"general-purpose\",\"tool_input\":{\"command\":\"$esc\"}}"
+  main_json="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"$esc\"}}"
+  d_sub="$(pdecision "$sub_json")"
+  d_main="$(pdecision "$main_json")"
+  assert "LOOM-0070 [$label] subagent -> $exp_sub (got '$d_sub') cmd=[$cmd]" "[ '$d_sub' = '$exp_sub' ]"
+  assert "LOOM-0070 [$label] main agent -> $exp_main (got '$d_main') cmd=[$cmd]" "[ '$d_main' = '$exp_main' ]"
+}
+
+VERBS_L70="rm
+mv
+cp
+ln -sf
+tee
+install
+patch
+rsync
+truncate
+chmod
+sed -i
+dd of="
+
+SPELLINGS_L70="plain
+dot-segment
+parent-hop
+cd-split
+indirection
+sh-indirection"
+
+# Primary target for the full cross-product: .claude/settings.json.
+L70_DIR=".claude"; L70_FILE="settings.json"; L70_PLAIN="$L70_DIR/$L70_FILE"
+
+while IFS= read -r L70_VERB; do
+  [ -n "$L70_VERB" ] || continue
+  while IFS= read -r L70_SPELL; do
+    [ -n "$L70_SPELL" ] || continue
+    case "$L70_SPELL" in
+      plain|dot-segment|parent-hop)
+        L70_TARGET="$(l70_variant "$L70_SPELL" "$L70_DIR" "$L70_FILE")"
+        L70_CMD="$(l70_build_cmd "$L70_VERB" "$L70_TARGET")"
+        ;;
+      cd-split)
+        L70_INNER="$(l70_build_cmd "$L70_VERB" "$L70_FILE")"
+        L70_CMD="cd $L70_DIR && $L70_INNER"
+        ;;
+      indirection)
+        L70_INNER="$(l70_build_cmd "$L70_VERB" "$L70_PLAIN")"
+        L70_CMD="bash -c \"$L70_INNER\""
+        ;;
+      sh-indirection)
+        L70_INNER="$(l70_build_cmd "$L70_VERB" "$L70_PLAIN")"
+        L70_CMD="sh -c \"$L70_INNER\""
+        ;;
+    esac
+    l70_check "$L70_CMD" deny ask "$L70_VERB / $L70_SPELL"
+  done <<< "$SPELLINGS_L70"
+done <<< "$VERBS_L70"
+
+echo ""
+echo "-- LOOM-0070: non-protected path never triggers (no false positives) --"
+L70_NP="web/src/app.ts"
+while IFS= read -r L70_VERB; do
+  [ -n "$L70_VERB" ] || continue
+  L70_CMD="$(l70_build_cmd "$L70_VERB" "$L70_NP")"
+  l70_check "$L70_CMD" allow allow "$L70_VERB / non-protected"
+done <<< "$VERBS_L70"
+
+echo ""
+echo "-- LOOM-0070: read-only commands naming a protected path must allow --"
+L70_RO="cat .claude/settings.json
+ls -la .claude
+grep foo .claude/settings.json
+head .claude/settings.json
+find .claude -name settings.json
+wc -l .claude/settings.json"
+while IFS= read -r L70_CMD; do
+  [ -n "$L70_CMD" ] || continue
+  l70_check "$L70_CMD" allow allow "read-only: $L70_CMD"
+done <<< "$L70_RO"
+
+echo ""
+echo "-- LOOM-0070: coverage for the other protected targets (>=1 verb each) --"
+L70_OTHER="constitution|.logic-loom/memory|constitution.md
+governance-conf|.logic-loom/config|governance.conf
+verdicts-lib|.logic-loom/lib|governance-verdicts.sh
+git-guard-hook|plugins/loom-governance/hooks/scripts|subagent-git-guard.sh"
+while IFS= read -r L70_ROW; do
+  [ -n "$L70_ROW" ] || continue
+  L70_LABEL="${L70_ROW%%|*}"; L70_REST="${L70_ROW#*|}"
+  L70_ODIR="${L70_REST%%|*}"; L70_OFILE="${L70_REST#*|}"
+  L70_CMD="$(l70_build_cmd rm "$L70_ODIR/$L70_OFILE")"
+  l70_check "$L70_CMD" deny ask "$L70_LABEL (rm)"
+done <<< "$L70_OTHER"
+
 echo ""
 echo "======================================="
 echo " Results: ${PASS}/${TOTAL} passed, ${FAIL} failed"

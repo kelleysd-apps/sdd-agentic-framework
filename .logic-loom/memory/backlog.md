@@ -976,7 +976,11 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       carried forward as LOOM-0058, not silently dropped. Recorded as residual #7
       in `.docs/architecture/governance-threat-model.md`.
 
-- [ ] LOOM-0067 — `constitution.md` states two enforcement facts that the shipped hooks contradict `status:open`
+- [x] LOOM-0067 — `constitution.md` states two enforcement facts that the shipped hooks contradict `status:done`
+      RESOLVED 2026-09-08. constitution.md Principle VI block and both
+      enforcement bullets corrected; CLAUDE.md:845 corrected. Verified no
+      remaining "forces approval on git mutations" or "ALL git commands require
+      explicit user approval" in CLAUDE.md, constitution.md or AGENTS.md.
       Filed 2026-09-04 from the codex cross-check; VERIFIED here. This is the
       single best find of that round and NEITHER the 17-agent audit nor my own
       re-verification surfaced it.
@@ -1006,7 +1010,9 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       constitution's enforcement claims to the verdict library's actual verdicts
       so the two cannot drift again.
 
-- [ ] LOOM-0068 — The payload manifest's header says nothing reads it; the installer reads it `status:open`
+- [x] LOOM-0068 — The payload manifest's header says nothing reads it; the installer reads it `status:done`
+      RESOLVED 2026-09-08. Header now states the installer reads the manifest
+      at plan and apply time and names the three consuming files.
       Filed 2026-09-04. Found because an external reviewer BELIEVED the header
       and used it to argue a real finding away.
       `packaging/adopt/payload-manifest.txt:2` calls itself "(PROPOSAL, not a
@@ -1025,7 +1031,11 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       Fix: rewrite the header to state that the installer consumes it and that
       editing it changes what adopters receive.
 
-- [ ] LOOM-0070 — The governance contract test has ZERO verb-based Bash assertions, which is why every bypass went unnoticed `status:open`
+- [x] LOOM-0070 — The governance contract test has ZERO verb-based Bash assertions, which is why every bypass went unnoticed `status:done`
+      RESOLVED 2026-09-08. Table-driven block added: 12 verbs x 6 path
+      spellings x 2 agent kinds, plus non-protected-path and read-only rows to
+      catch false positives. Written BEFORE the fix and failed 124/253 on the
+      then-current code, which is what defined the fix.
       Filed 2026-09-04 from the Antigravity cross-check; VERIFIED. This is the
       root cause behind LOOM-0059 and LOOM-0069, and it should be fixed first.
       `tests/contract/test_governance_hooks.sh` has exactly one Bash-mutation
@@ -1040,6 +1050,20 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       Fix before either code fix: a table-driven test over verbs x path
       spellings x agent kind, so a new evasion class fails CI rather than waiting
       for an external reviewer to notice.
+
+- [x] LOOM-0072 — The preflight hook called GNU `timeout` unconditionally, silently emptying memory on stock macOS `status:done`
+      FIXED 2026-09-08, found during the LOOM-0063 review.
+      `governance-preflight.sh:259` ran
+      `timeout ... bash "$MEMORY_SEARCH" ... || echo ""`. `timeout` is GNU
+      coreutils and stock macOS ships no equivalent, so the call exited 127 and
+      the trailing `|| echo ""` swallowed it into an empty string —
+      indistinguishable from "no memory matched". Every adopter on a clean Mac
+      lost memory retrieval and got no signal at all.
+      Now resolves `timeout`, then `gtimeout`, and otherwise runs UNBOUNDED
+      rather than not at all: the hook is advisory and never blocks, so a slow
+      search costs a pause while a silent empty result costs the whole feature.
+      Proven: with a PATH lacking GNU timeout the search returned 1 byte before
+      and 1912 bytes after; the hook's injected context went 1 -> 1324 bytes.
 
 - [ ] LOOM-0071 — Consider replacing shell-parsing in the governance guard with path-based enforcement `status:open`
       Filed 2026-09-04. Both external reviewers converged on this independently,
@@ -1074,7 +1098,9 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       cannot evaluate arguably should not authorize, but that risks the same
       lockout tradeoff adjudicated in LOOM-0044/0058.
 
-- [ ] LOOM-0062 — Delete `.logic-loom/lib/parallel.sh`; it contradicts a stated invariant and nothing calls it `status:open`
+- [x] LOOM-0062 — Delete `.logic-loom/lib/parallel.sh`; it contradicts a stated invariant and nothing calls it `status:done`
+      RESOLVED 2026-09-08. Deleted after re-verifying zero callers outside the
+      stale worktree; the two doc examples now cite `.logic-loom/lib/logging.sh`.
       Filed 2026-09-04, verified. 345 lines implementing a background-process
       manager with a shared state directory, while CLAUDE.md Pillar 2 states
       there is "no process manager, no shared swarm-state file". The repo's own
@@ -1085,7 +1111,10 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       `project-graph/SKILL.md:57-58`. Those example strings need updating with
       the deletion, or the graph freshness gate will cite a path that is gone.
 
-- [ ] LOOM-0063 — Memory retrieval never searches `.brain/wiki/`, so distilled decisions are unreachable `status:open`
+- [x] LOOM-0063 — Memory retrieval never searches `.brain/wiki/`, so distilled decisions are unreachable `status:done`
+      RESOLVED 2026-09-08. `.brain/wiki/` added to the searched set in both
+      backends, proven with a marker token found by each and then removed. Score
+      saturation at keyword-backend.sh:171 confirmed in code but left alone.
       Filed 2026-09-04, verified: zero references to `brain/wiki` in either
       backend (`plugins/loom-memory/lib/keyword-backend.sh`,
       `plugins/loom-memory/lib/bm25-search.sh`).
@@ -1122,7 +1151,10 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       not a cleanup. Until then, every repo-wide audit must exclude that path
       explicitly and say so.
 
-- [ ] LOOM-0065 — `VISION.md` header is two minor versions stale `status:open`
+- [x] LOOM-0065 — `VISION.md` header is two minor versions stale `status:done`
+      RESOLVED 2026-09-08. Header bumped to v6.6.2 / 2026-09-08. Threads #2
+      and #5 verified done against the tree before being marked resolved. No new
+      threads added — that is a maintainer call.
       Filed 2026-09-04, verified: `VISION.md:18-19` states framework state
       v6.4.1 / last updated 2026-08-24, against `package.json` 6.6.2 and roughly
       forty commits since. The workflow also reports Threads #2 and #5 listed as
@@ -1134,7 +1166,10 @@ lost, and so the next person hits the reasoning instead of re-deriving it.
       current, or declare explicitly that the backlog is the live list and VISION
       records direction only.
 
-- [ ] LOOM-0066 — `git_operations` is a dead policy section that reads as governance `status:open`
+- [x] LOOM-0066 — `git_operations` is a dead policy section that reads as governance `status:done`
+      RESOLVED 2026-09-08. Section kept (policy.sh iterates it) but the
+      description now states git approval is owned by git-safety-gate.sh via
+      gate-policy.conf and that the section is intentionally empty.
       Filed 2026-09-04, verified. `.claude/policies/tool-restrictions.json`
       declares a `git_operations` section with
       `"description": "Git operations requiring user approval (Constitutional

@@ -255,8 +255,27 @@ run_memory_search() {
     fi
 
     if [ -x "$MEMORY_SEARCH" ]; then
-        # Run with a bounded timeout, capture output
-        memory_context=$(timeout "${MEMORY_SEARCH_TIMEOUT:-2}" bash "$MEMORY_SEARCH" "$message" 2>/dev/null || echo "")
+        # Run with a bounded timeout, capture output.
+        #
+        # `timeout` is GNU coreutils and stock macOS does NOT ship it (no BSD
+        # equivalent). Calling it unconditionally exited 127, and the trailing
+        # `|| echo ""` swallowed that into an empty string — so on a clean Mac
+        # the memory search returned nothing, silently, and was indistinguishable
+        # from "no memory matched". Found during the LOOM-0063 review.
+        #
+        # Resolve a bounding command if one exists (gtimeout is the Homebrew
+        # coreutils name); otherwise run UNBOUNDED rather than not at all. This
+        # hook is advisory and never blocks, so a slow search costs a pause,
+        # whereas a silent empty result costs every adopter their memory.
+        LOOM_TIMEOUT_BIN=""
+        if command -v timeout >/dev/null 2>&1; then LOOM_TIMEOUT_BIN="timeout"
+        elif command -v gtimeout >/dev/null 2>&1; then LOOM_TIMEOUT_BIN="gtimeout"
+        fi
+        if [ -n "$LOOM_TIMEOUT_BIN" ]; then
+            memory_context=$("$LOOM_TIMEOUT_BIN" "${MEMORY_SEARCH_TIMEOUT:-2}" bash "$MEMORY_SEARCH" "$message" 2>/dev/null || echo "")
+        else
+            memory_context=$(bash "$MEMORY_SEARCH" "$message" 2>/dev/null || echo "")
+        fi
 
         # Log memory search (background, non-blocking)
         if [ -x "$MEMORY_LOG" ] && [ -n "$memory_context" ]; then

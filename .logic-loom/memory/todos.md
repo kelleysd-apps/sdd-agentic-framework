@@ -429,7 +429,10 @@ item is done, and say so here.
 
 ### Release, distribution and externalization
 
-- [ ] LOOM-0059 — Governance-file Bash guard misses `cp`, `ln`, `patch`, `rsync`, so a subagent can overwrite a hook `status:open`
+- [x] LOOM-0059 — Governance-file Bash guard misses `cp`, `ln`, `patch`, `rsync`, so a subagent can overwrite a hook `status:done`
+      RESOLVED 2026-09-08. Mutator list extended: cp, ln, patch, rsync, tar,
+      unzip, and curl/wget only when they name an output target. The persistent
+      realpath-unprotect via `ln -sf` is closed with it. Same test proves it.
       Filed 2026-09-04 from the Fable vision-vs-reality workflow, then VERIFIED
       here by live probe against the live tree (not the stale worktree).
       `protect-governance-files.sh` recognises a fixed mutator list —
@@ -464,7 +467,11 @@ item is done, and say so here.
       a main-agent write still only asks, and assert that a symlinked governance
       path does NOT become writable.
 
-- [ ] LOOM-0060 — `mode = strict` is committed on dev-main and will ship to every adopter on the next release `status:open`
+- [x] LOOM-0060 — `mode = strict` is committed on dev-main and will ship to every adopter on the next release `status:done`
+      RESOLVED 2026-09-08. governance.conf flipped to `lean`, and
+      tests/contract/test_adopt_payload_manifest.sh now ASSERTS the shipped mode
+      is lean — proven to fail on `strict`. A maintainer keeps the assist locally
+      via LOOM_GOVERNANCE_MODE=strict, which outranks the file and ships to nobody.
       Filed 2026-09-04. VERIFIED with `git show`: `dev-main` carries
       `mode = strict` (set 2026-09-01 to close a maintainer compliance gap, not
       because a weaker model needed the assist), while `origin/main` and tag
@@ -489,7 +496,13 @@ item is done, and say so here.
       assertion that the shipped mode is lean, which closes the leak regardless
       of what is set locally.
 
-- [ ] LOOM-0069 — The Bash branch matches protected paths as RAW SUBSTRINGS, so `cd`, `bash -c` and `./` all evade it `status:open`
+- [x] LOOM-0069 — The Bash branch matches protected paths as RAW SUBSTRINGS, so `cd`, `bash -c` and `./` all evade it `status:done`
+      RESOLVED 2026-09-08. Bash branch now resolves candidate path tokens
+      (lexical normpath, no filesystem touch) instead of raw-substring matching,
+      tracks a `cd` prefix across segments, and unwraps `sh -c` indirection before
+      splitting. All four spellings closed; verified by 253/253 in
+      tests/contract/test_governance_hooks.sh and a 12-command false-positive
+      battery that still allows ordinary work.
       Filed 2026-09-04 from the Antigravity cross-check; VERIFIED here by live
       probe. This is SIMPLER and therefore worse than LOOM-0059: it needs no
       unusual verb at all, just `rm` and a trivial path spelling.

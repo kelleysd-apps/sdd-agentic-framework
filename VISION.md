@@ -15,8 +15,8 @@ short. Acceptance criteria and schemas belong in a PRD/plan, not here.
 
 **Product**: `logic-loom` (brand: **LogicLoom**)
 **Document**: product north-star (living)
-**Version**: 2.3 · **Last updated**: 2026-08-24 · **Owner**: brian@kelleysd.com
-**Framework state**: v6.4.1 · constitution v3.3.0 · dev line `dev-main` · template line `main` (v6.4.1, 2026-08-13)
+**Version**: 2.4 · **Last updated**: 2026-09-08 · **Owner**: brian@kelleysd.com
+**Framework state**: v6.6.2 · constitution v3.3.0 · dev line `dev-main` · template line `main` (v6.4.1, 2026-08-13)
 
 ---
 
@@ -237,11 +237,19 @@ is the record that the question was real. Anything not marked `✅ RESOLVED` or
    release branch);
    (d) pinned issue #66 telling already-cloned users what to expect.
 
-2. **Fix the `.gitignore` portability bug.** Committed `.gitignore` has `.local/`
-   and `*.local`, and `*.local` matches **neither** `settings.local.json` nor
-   `CLAUDE.local.md`. They are ignored on the maintainer's machine only via a
-   personal global ignore. A cloner would **commit their own local overrides**,
-   breaking the Pillar-7 preservation model before it starts. Two lines.
+2. ✅ **RESOLVED (verified 2026-09-08) — Fix the `.gitignore` portability bug.**
+   Committed `.gitignore` has `.local/` and `*.local`, and `*.local` matches
+   **neither** `settings.local.json` nor `CLAUDE.local.md`. They are ignored on
+   the maintainer's machine only via a personal global ignore. A cloner would
+   **commit their own local overrides**, breaking the Pillar-7 preservation
+   model before it starts. Two lines.
+   **Fix:** `.gitignore` now carries explicit `**/.claude/settings.local.json`
+   (line 67) and `**/CLAUDE.local.md` (line 69) entries alongside the original
+   `.local/` / `*.local` globs, with an inline comment explaining why the
+   globs alone didn't match (gitignore matches the whole basename, and these
+   two files end in `.json` / `.md`, not `.local`). Verified with
+   `git check-ignore -v .claude/settings.local.json CLAUDE.local.md` — both
+   report ignored, against `.gitignore:67` and `.gitignore:69` respectively.
 
 3. ✅ **RESOLVED (2026-08-17, v6.4.1) — Land the uncommitted increment on
    `dev-main`** (17 untracked + 6 modified
@@ -268,10 +276,16 @@ is the record that the question was real. Anything not marked `✅ RESOLVED` or
    harvester; Understand-Anything and Obsidian are user-layer-only) — only
    placement is open.
 
-5. **Register `artifacts/` as a first-class directory.** The new repo-root
-   `artifacts/` (who/what/why/where — vision, research, forensics, docs; never
-   a plan) is untracked and absent from `CLAUDE.md`'s directory structure and
-   the file-structure policy.
+5. ✅ **RESOLVED (verified 2026-09-08) — Register `artifacts/` as a
+   first-class directory.** The new repo-root `artifacts/` (who/what/why/where
+   — vision, research, forensics, docs; never a plan) is untracked and absent
+   from `CLAUDE.md`'s directory structure and the file-structure policy.
+   **Fix:** `artifacts/` is now git-tracked (`git ls-files artifacts/` lists
+   `.gitkeep`, `README.md`, `backlog-dashboard.html`,
+   `harness-graph.html`, and other contents) and documented in `CLAUDE.md`
+   both in the directory-structure block (line 520) and in a dedicated
+   `### artifacts/ - Standalone deliverables (who/what/why/where)` section
+   (line 283), and in `.docs/policies/file-structure-policy.md`.
 
 6. ✅ **RESOLVED (2026-08-13, v6.4.1) — Fix the one failing contract
    assertion** — `test_update_framework.sh`: "Help text mentions release tags"

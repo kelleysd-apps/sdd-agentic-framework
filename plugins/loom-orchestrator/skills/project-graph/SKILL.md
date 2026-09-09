@@ -54,8 +54,8 @@ One JSON object per line. Node ids are **repo-relative paths**.
 
 ```jsonl
 {"type":"entity","name":".docs/architecture/loom-architecture.md","entityType":"note","observations":["Full architectural reference (LogicLoom shape)"]}
-{"type":"entity","name":".logic-loom/lib/parallel.sh","entityType":"code-path","observations":["shared shell lib"]}
-{"type":"relation","from":".docs/architecture/loom-architecture.md","to":".logic-loom/lib/parallel.sh","relationType":"mentions"}
+{"type":"entity","name":".logic-loom/lib/logging.sh","entityType":"code-path","observations":["shared shell lib"]}
+{"type":"relation","from":".docs/architecture/loom-architecture.md","to":".logic-loom/lib/logging.sh","relationType":"mentions"}
 ```
 
 **Entity** — `{"type":"entity","name":"<repo-relative-path>","entityType":"note"|"code-path","observations":["title or one-line"]}`.
